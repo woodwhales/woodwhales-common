@@ -18,12 +18,12 @@ public class DataTool {
 
     /**
      * list 转 map 集合
-     * @param source
-     * @param keyMapper
-     * @param valueMapper
-     * @param <K>
-     * @param <S>
-     * @param <T>
+     * @param source 数据源集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param valueMapper map 集合中的 value 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> map 集合中的 value 类型
      * @return
      */
     public static <K, S, T> Map<K,T> toMap(List<S> source,
@@ -38,13 +38,13 @@ public class DataTool {
 
     /**
      * list 转 map 集合
-     * @param source
-     * @param keyMapper
-     * @param valueMapper
-     * @param mergeFunction
-     * @param <K>
-     * @param <S>
-     * @param <T>
+     * @param source 数据源集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param valueMapper map 集合中的 value 获取规则
+     * @param mergeFunction 存在相同 key 时取 value 的规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> map 集合中的 value 类型
      * @return
      */
     public static <K, S, T> Map<K,T> toMap(List<S> source,
@@ -61,10 +61,10 @@ public class DataTool {
     /**
      * list 转 map 集合
      * map 的 value 为集合元素本身
-     * @param source
-     * @param keyMapper
-     * @param <K>
-     * @param <S>
+     * @param source 数据源集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
      * @return
      */
     public static <K, S> Map<K, S> toMap(List<S> source,
@@ -75,11 +75,11 @@ public class DataTool {
     /**
      * list 转 map 集合
      * map 的 value 为集合元素本身
-     * @param source
-     * @param keyMapper
-     * @param mergeFunction
-     * @param <K>
-     * @param <S>
+     * @param source 数据源集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param mergeFunction 存在相同 key 时取 value 的规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
      * @return
      */
     public static <K, S> Map<K, S> toMap(List<S> source,
@@ -92,10 +92,10 @@ public class DataTool {
      * list 转 map 集合
      * map 的 value 为集合元素本身
      * 如果出现 key 重复，则取前一个元素
-     * @param source
-     * @param keyMapper
-     * @param <K>
-     * @param <S>
+     * @param source 数据源集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
      * @return
      */
     public static <K, S> Map<K, S> toMapForSaveOld(List<S> source,
@@ -106,12 +106,12 @@ public class DataTool {
     /**
      * list 转 map 集合
      * 如果出现 key 重复，则取前一个元素
-     * @param source
-     * @param keyMapper
-     * @param valueMapper
-     * @param <K>
-     * @param <S>
-     * @param <T>
+     * @param source 数据源集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param valueMapper map 集合中的 value 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> map 集合中的 value 类型
      * @return
      */
     public static <K, S, T> Map<K, T> toMapForSaveOld(List<S> source,
@@ -124,10 +124,10 @@ public class DataTool {
      * list 转 map 集合
      * map 的 value 为集合元素本身
      * 如果出现 key 重复，则取前一个元素
-     * @param source
-     * @param keyMapper
-     * @param <K>
-     * @param <S>
+     * @param source 数据源集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
      * @return
      */
     public static <K, S> Map<K, S> toMapForSaveNew(List<S> source,
@@ -138,12 +138,12 @@ public class DataTool {
     /**
      * list 转 map 集合
      * 如果出现 key 重复，则取前一个元素
-     * @param source
-     * @param keyMapper
-     * @param valueMapper
-     * @param <K>
-     * @param <S>
-     * @param <T>
+     * @param source 数据源集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param valueMapper map 集合中的 value 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> map 集合中的 value 类型
      * @return
      */
     public static <K, S, T> Map<K, T> toMapForSaveNew(List<S> source,
@@ -154,10 +154,10 @@ public class DataTool {
 
     /**
      * 将 list 集合分组
-     * @param source
-     * @param classifier
-     * @param <K>
-     * @param <S>
+     * @param source 数据源集合
+     * @param classifier 分组规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> map 集合中的 value 类型
      * @return
      */
     public static <K, S> Map<K, List<S>> groupingBy(List<S> source,
@@ -171,29 +171,30 @@ public class DataTool {
 
     /**
      * 对集合数据进行去重器
-     * @param source
-     * @param deduplicatedInterface
-     * @param <K>
-     * @param <T>
+     * 非线程安全
+     * @param source 数据源集合
+     * @param deduplicateInterface 去重器接口
+     * @param <K> 去重属性的类型
+     * @param <T> 数据源集合中元素的类型
      * @return
      */
     public static <K, T> DeduplicateResult<T> deduplicate(List<T> source,
-                                                          DeduplicatedInterface<K, T> deduplicatedInterface) {
+                                                          DeduplicateInterface<K, T> deduplicateInterface) {
         if(null == source || source.size() == 0) {
             return new DeduplicateResult<T>(source, emptyList(), emptyList(), emptyList());
         }
 
-        Map<K, T> container =  new LinkedHashMap();
+        Map<K, T> container =  new LinkedHashMap<>();
         // 无效的数据集合
         List<T> invalidList = new LinkedList<>();
         // 重复的数据集合
         List<T> repetitiveList = new LinkedList<>();
 
         for (T data : source) {
-            if (!deduplicatedInterface.isValid(data)) {
+            if (!deduplicateInterface.isValid(data)) {
                 invalidList.add(data);
             } else {
-                K deduplicatedKey = deduplicatedInterface.getDeduplicatedKey(data);
+                K deduplicatedKey = deduplicateInterface.getDeduplicatedKey(data);
                 T putData = container.put(deduplicatedKey, data);
                 if(Objects.nonNull(putData)) {
                     repetitiveList.add(putData);
@@ -202,9 +203,61 @@ public class DataTool {
         }
 
         // 已去重的数据集合
-        List<T> deduplicatedList = new ArrayList(container.values());
+        List<T> deduplicatedList = new ArrayList<>(container.values());
 
         return new DeduplicateResult<T>(source, invalidList, deduplicatedList, repetitiveList);
+    }
+
+    /**
+     * 枚举转 map 集合
+     * @param sourceEnumClass 数据源枚举 Class类
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <T> map 集合中的 value 类型
+     * @return
+     */
+    public static <K, T extends Enum<T>> Map<K, T> enumMap(Class<T> sourceEnumClass,
+                                                         Function<? super T, ? extends K> keyMapper) {
+        EnumSet<T> enumSet = EnumSet.allOf(sourceEnumClass);
+        return enumSet.stream().collect(Collectors.toMap(keyMapper, Function.identity()));
+    }
+
+    /**
+     * 判断 key 是否存在于枚举转 map 的集合中
+     * @param key 要判断的 key
+     * @param sourceEnumClass 数据源枚举 Class类
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <T> map 集合中的 value 类型
+     * @return
+     */
+    public static <K, T extends Enum<T>> boolean enumContainsKey(K key, Class<T> sourceEnumClass,
+                                                                 Function<? super T, ? extends K> keyMapper) {
+        if(Objects.isNull(key)) {
+            return false;
+        }
+
+        Map<? extends K, T> map = enumMap(sourceEnumClass, keyMapper);
+        return map.containsKey(key);
+    }
+
+    /**
+     * 根据 key 获取对应的枚举实例
+     * @param key 要获取枚举实例的 key
+     * @param sourceEnumClass 数据源枚举 Class类
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <T> map 集合中的 value 类型
+     * @return
+     */
+    public static <K, T extends Enum<T>> T enumGetValue(K key, Class<T> sourceEnumClass,
+                                                                 Function<? super T, ? extends K> keyMapper) {
+        if(Objects.isNull(key)) {
+            return null;
+        }
+
+        Map<? extends K, T> map = enumMap(sourceEnumClass, keyMapper);
+        return map.get(key);
     }
 
 }

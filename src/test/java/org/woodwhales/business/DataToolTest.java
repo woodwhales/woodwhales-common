@@ -3,14 +3,51 @@ package org.woodwhales.business;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class DataToolTest {
+
+    @Test
+    public void enumMap() {
+        Map<Integer, DemoEnum> map = DataTool.enumMap(DemoEnum.class, DemoEnum::getCode);
+        assertEquals(3, map.size());
+        printMap(map);
+
+        boolean containsKey = DataTool.enumContainsKey(1, DemoEnum.class, DemoEnum::getCode);
+        assertEquals(true, containsKey);
+
+        DemoEnum demoEnum = DataTool.enumGetValue(2, DemoEnum.class, DemoEnum::getCode);
+        assertEquals(DemoEnum.GREEN, demoEnum);
+
+        DemoEnum demoEnum2 = DataTool.enumGetValue(4, DemoEnum.class, DemoEnum::getCode);
+        assertNull(demoEnum2);
+    }
+
+    enum DemoEnum {
+        YELLOW(1, "黄色"),
+        GREEN(2, "绿色"),
+        BLUE(3, "蓝色"),
+        ;
+
+        private final Integer code;
+        private final String description;
+
+        DemoEnum(Integer code, String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
 
     @Test
     public void toMap2() {
@@ -88,7 +125,7 @@ class DataToolTest {
         list.add(new DemoData(3, "朱七", "描述-朱七"));
         list.add(new DemoData(4, "宋八", "描述-宋八"));
 
-        DeduplicateResult<DemoData> deduplicateResult = DataTool.deduplicate(list, new DeduplicatedInterface<Integer, DemoData>() {
+        DeduplicateResult<DemoData> deduplicateResult = DataTool.deduplicate(list, new DeduplicateInterface<Integer, DemoData>() {
             @Override
             public boolean isValid(DemoData data) {
                 return Objects.nonNull(data.getId());

@@ -12,9 +12,15 @@ import javax.validation.constraints.Min;
 @Data
 public class PageQueryParam implements PageQueryInterface {
 
+    /**
+     * 当前页码
+     */
     @Min(value = 1, message = "当前页码不允许小于第一页")
     private Integer page;
 
+    /**
+     * 每页显示总记录数
+     */
     @Min(value = 0, message = "当前页总记录数不允许为负数")
     private Integer limit;
 }

@@ -5,7 +5,7 @@ package org.woodwhales.business;
  * @author woodwhales
  * @create 2020-11-17 13:46
  */
-public interface DeduplicatedInterface<K, T> {
+public interface DeduplicateInterface<K, T> {
 
     /**
      * 数据是否有效

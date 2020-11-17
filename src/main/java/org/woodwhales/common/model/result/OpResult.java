@@ -6,7 +6,7 @@ import java.util.Objects;
  * @projectName: woodwhales-common
  * @author: woodwhales
  * @date: 20.9.18 22:05
- * @description:
+ * @description: 业务数据响应体
  */
 public class OpResult<T> {
 
@@ -17,6 +17,9 @@ public class OpResult<T> {
      */
     private boolean success;
 
+    /**
+     * 业务数据
+     */
     private T data;
 
     private OpResult() {

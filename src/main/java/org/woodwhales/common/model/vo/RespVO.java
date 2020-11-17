@@ -10,7 +10,7 @@ import java.util.Objects;
 
 /**
  * @author woodwhales on 2020-08-25
- * @description
+ * @description 通用响应视图
  */
 @Data
 @Builder

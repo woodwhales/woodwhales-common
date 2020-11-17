@@ -14,11 +14,14 @@ import java.util.stream.Collectors;
 
 /**
  * @author woodwhales on 2020-08-25
- * @description
+ * @description 分页查询响应视图
  */
 @Data
 public class PageRespVO<T> extends RespVO<List<T>> {
 
+    /**
+     * 总记录数
+     */
     private Long count;
 
     public static <T> PageRespVO<T> buildPageRespVO(IPage<T> page) {
