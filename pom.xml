@@ -5,11 +5,18 @@
 
     <groupId>org.woodwhales.common</groupId>
     <artifactId>woodwhales-common</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>common</name>
     <description>woodwhales-common</description>
 
     <properties>
+
+        <junit-jupiter.version>5.7.0</junit-jupiter.version>
+        <mybatis-plus.version>3.2.0</mybatis-plus.version>
+        <lombok.version>1.18.12</lombok.version>
+        <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
+        <apache-commons-collections4.version>4.4</apache-commons-collections4.version>
+
         <java.version>1.8</java.version>
         <!-- 文件拷贝时的编码 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,28 +27,51 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-extension</artifactId>
-            <version>3.2.0</version>
+            <version>${mybatis-plus.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
+            <version>${apache-commons-collections4.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>6.1.5.Final</version>
+            <version>${hibernate-validator.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <!-- 是否开启发布版构件下载 -->
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <!-- 是否开启快照版构件下载 -->
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
