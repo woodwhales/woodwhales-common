@@ -5,6 +5,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**
+ * 校验枚举值的校验注解
  * @author woodwhales
  */
 @Documented

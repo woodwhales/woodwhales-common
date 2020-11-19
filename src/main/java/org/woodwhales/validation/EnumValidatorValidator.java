@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * 校验枚举值的处理器
  * @author woodwhales
  */
 public class EnumValidatorValidator implements ConstraintValidator<EnumValidator, Object> {
