@@ -11,7 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class DataToolTest {
 
     @Test
-    public void enumMap() {
+    public void enumMap2() {
+        Map<String, DemoEnum> map = DataTool.enumMap(DemoEnum.class);
+        assertEquals(3, map.size());
+        printMap(map);
+    }
+
+    @Test
+    public void enumMap1() {
         Map<Integer, DemoEnum> map = DataTool.enumMap(DemoEnum.class, DemoEnum::getCode);
         assertEquals(3, map.size());
         printMap(map);
@@ -46,6 +53,14 @@ class DataToolTest {
 
         public String getDescription() {
             return description;
+        }
+
+        @Override
+        public String toString() {
+            return "DemoEnum{" +
+                    "code=" + code +
+                    ", description='" + description + '\'' +
+                    '}';
         }
     }
 

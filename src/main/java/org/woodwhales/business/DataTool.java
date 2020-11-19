@@ -223,6 +223,18 @@ public class DataTool {
     }
 
     /**
+     * 枚举转 map 集合
+     * map 集合中的 key 为 Enum 的 name() 方法返回值
+     * @param sourceEnumClass 数据源枚举 Class类
+     * @param <T> map 集合中的 value 类型
+     * @return
+     */
+    public static <T extends Enum<T>> Map<String, T> enumMap(Class<T> sourceEnumClass) {
+        EnumSet<T> enumSet = EnumSet.allOf(sourceEnumClass);
+        return enumSet.stream().collect(Collectors.toMap(Enum::name, Function.identity()));
+    }
+
+    /**
      * 判断 key 是否存在于枚举转 map 的集合中
      * @param key 要判断的 key
      * @param sourceEnumClass 数据源枚举 Class类
