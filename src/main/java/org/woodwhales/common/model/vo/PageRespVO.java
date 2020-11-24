@@ -12,6 +12,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+
 /**
  * @author woodwhales on 2020-08-25
  * @description 分页查询响应视图
@@ -34,7 +36,7 @@ public class PageRespVO<T> extends RespVO<List<T>> {
 
     public <R> PageRespVO<R> mapToPageResult(Function<? super T, ? extends R> mapper, Comparator<? super R> comparator) {
         Objects.requireNonNull(mapper);
-        if(com.baomidou.mybatisplus.core.toolkit.CollectionUtils.isEmpty(this.getData())) {
+        if(CollectionUtils.isEmpty(this.getData())) {
             return empty();
         }
 
@@ -62,6 +64,23 @@ public class PageRespVO<T> extends RespVO<List<T>> {
 
     public static <T> PageRespVO<T> empty() {
         return buildPageRespVO(RespCodeEnum.SUCCESS, 0L, null);
+    }
+
+    /**
+     * IPage<T> 数据按照 mapper 规则转成 PageRespVO<<R>
+     * @param page
+     * @param mapper
+     * @param <T>
+     * @param <R>
+     * @return
+     */
+    public static <T, R> PageRespVO<R> buildPageRespVO(IPage<T> page, Function<? super T, ? extends R> mapper) {
+        if(CollectionUtils.isEmpty(page.getRecords())) {
+            return buildPageRespVO(RespCodeEnum.SUCCESS, page.getTotal(), emptyList());
+        }
+
+        return buildPageRespVO(RespCodeEnum.SUCCESS, page.getTotal(),
+                page.getRecords().stream().map(mapper).collect(Collectors.toList()));
     }
 
     public static <T> PageRespVO<T> buildPageRespVO(RespCodeEnum respCodeEnum, Long count, List<T> data) {

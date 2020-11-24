@@ -89,6 +89,27 @@ public class DataTool {
     }
 
     /**
+     * 将原始的 list 按照 mapper 规则转成新的 list
+     * 再按照新的 list 按照 keyMapper 为生成 key 规则转成 map 集合
+     * @param source
+     * @param mapper
+     * @param keyMapper
+     * @param <S>
+     * @param <T>
+     * @param <K>
+     * @return
+     */
+    public static <S, T, K> Map<K, T> toMapFromList(List<S> source,
+                                            Function<? super S, ? extends T> mapper,
+                                            Function<? super T, ? extends K> keyMapper) {
+        if (null == source || source.size() == 0) {
+            return Collections.emptyMap();
+        }
+
+        return toMap(source.stream().map(mapper).collect(Collectors.toList()), keyMapper);
+    }
+
+    /**
      * list 转 map 集合
      * map 的 value 为集合元素本身
      * 如果出现 key 重复，则取前一个元素
@@ -150,6 +171,22 @@ public class DataTool {
                                                       Function<? super S, ? extends K> keyMapper,
                                                       Function<? super S, ? extends T> valueMapper) {
         return toMap(source, keyMapper, valueMapper, (o1, o2) -> o2);
+    }
+
+    /**
+     * 将原始的 list 按照 mapper 规则转成新的 list
+     * @param source
+     * @param mapper
+     * @param <S>
+     * @param <T>
+     * @return
+     */
+    public static <S, T> List<T> toList(List<S> source, Function<? super S, ? extends T> mapper) {
+        if (null == source || source.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return source.stream().map(mapper).collect(Collectors.toList());
     }
 
     /**
