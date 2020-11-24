@@ -104,6 +104,18 @@ class DataToolTest {
         printMap(integerDemoDataMap);
     }
 
+    @Test
+    public void toList() {
+        List<DemoData> list = new ArrayList<>();
+        list.add(new DemoData(1, "张三", "描述-张三"));
+        list.add(new DemoData(2, "李四", "描述-李四"));
+        list.add(new DemoData(3, "王五", "描述-王五"));
+        list.add(new DemoData(4, "宋八", "描述-宋八"));
+        List<String> resultList = DataTool.toList(list, DemoData::getName);
+        assertEquals(list.get(0).getName(), resultList.get(0));
+        assertEquals(list.get(2).getName(), resultList.get(2));
+    }
+
     private void printMap(Map map) {
         Map<Object, Object> map1 = (Map<Object, Object>) map;
         map1.entrySet().forEach(entry -> {
