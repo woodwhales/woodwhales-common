@@ -22,6 +22,6 @@ public interface BaseRespResult {
      * 获取响应状态码
      * @return
      */
-    int getCode();
+    Integer getCode();
 
 }
