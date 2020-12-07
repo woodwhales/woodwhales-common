@@ -3,6 +3,7 @@ package org.woodwhales.business;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -34,6 +35,23 @@ public class DataTool {
         }
 
         return source.stream().collect(Collectors.toMap(keyMapper, valueMapper));
+    }
+
+    /**
+     * list 转 set 集合
+     * @param source 数据源集合
+     * @param mapper 按照源数据的 mapper 规则生成 set 元素
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> set 集合中元素的类型
+     * @return
+     */
+    public static <S, T> Set<T> toSet(List<S> source,
+                                      Function<? super S, ? extends T> mapper) {
+        if(null == source || source.size() == 0) {
+            return Collections.emptySet();
+        }
+
+        return source.stream().map(mapper).collect(Collectors.toSet());
     }
 
     /**
@@ -307,6 +325,43 @@ public class DataTool {
 
         Map<? extends K, T> map = enumMap(sourceEnumClass, keyMapper);
         return map.get(key);
+    }
+
+
+    /**
+     * 将原始的 list 先按照 filter 过滤再按照 mapper 规则转成新的 list
+     * @param source
+     * @param mapper
+     * @param <S>
+     * @param <T>
+     * @return
+     */
+    public static <S, T> List<T> toSortedList(List<S> source, Predicate<? super S> filter, Function<? super S, ? extends T> mapper) {
+        if (null == source || source.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return source.stream()
+                .filter(filter)
+                .map(mapper)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 将原始的 list 按照 filter 过滤
+     * @param source
+     * @param filter
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> filter(List<T> source, Predicate<? super T> filter) {
+        if (null == source || source.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return source.stream()
+                .filter(filter)
+                .collect(Collectors.toList());
     }
 
 }

@@ -17,6 +17,7 @@
         <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
         <apache-commons-collections4.version>4.4</apache-commons-collections4.version>
         <slf4j-api.version>2.0.0-alpha1</slf4j-api.version>
+        <guava.version>30.0-jre</guava.version>
 
         <java.version>1.8</java.version>
         <!-- 文件拷贝时的编码 -->
@@ -59,6 +60,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
