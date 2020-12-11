@@ -45,7 +45,7 @@ public enum RespCodeEnum implements BaseRespResult {
     }
 
     @Override
-    public int getCode() {
+    public Integer getCode() {
         return this.code;
     }
 
