@@ -1,12 +1,15 @@
 package org.woodwhales.business.tree;
 
+import java.util.function.Function;
+
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author woodwhales on 2020-12-11
  * @description
  */
-public class TreeNodeAttributeMapper {
+public class TreeNodeAttributeMapper<T> {
 
     /**
      * 当前节点 id 的别名
@@ -38,103 +41,151 @@ public class TreeNodeAttributeMapper {
      */
     private String sortName = "sort";
 
+    /**
+     * 扩展变量的别名
+     */
+    private String extraName = "extra";
+
+    /**
+     * 扩展变量取值接口
+     */
+    private Function<T, Object> extraFunction;
+
     private TreeNodeAttributeMapper() {
     }
 
-    public static TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder builder() {
-        return new TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder();
+    public static <T> TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> builder() {
+        return new TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T>();
     }
 
-    public static class TreeNodeAttributeMapperBuilder {
+    public static class TreeNodeAttributeMapperBuilder<T> {
         private String nodeId;
         private String nodeName;
         private String parentId;
         private String childrenName;
         private String dataName;
         private String sortName;
+        private String extraName;
+        private Function<T, Object> extraFunction;
 
         TreeNodeAttributeMapperBuilder() {}
 
-        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder nodeId(String nodeId) {
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> nodeId(String nodeId) {
             this.nodeId = nodeId;
             return this;
         }
 
-        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder nodeName(String nodeName) {
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> nodeName(String nodeName) {
             this.nodeName = nodeName;
             return this;
         }
 
-        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder parentId(String parentId) {
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> parentId(String parentId) {
             this.parentId = parentId;
             return this;
         }
 
-        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder childrenName(String childrenName) {
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> childrenName(String childrenName) {
             this.childrenName = childrenName;
             return this;
         }
 
-        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder dataName(String dataName) {
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> dataName(String dataName) {
             this.dataName = dataName;
             return this;
         }
 
-        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder sortName(String sortName) {
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> sortName(String sortName) {
             this.sortName = sortName;
             return this;
         }
 
-        public TreeNodeAttributeMapper build() {
-            TreeNodeAttributeMapper treeNodeAttributeMapper = new TreeNodeAttributeMapper();
-            treeNodeAttributeMapper.setNodeId(this.nodeId);
-            treeNodeAttributeMapper.setNodeName(this.nodeName);
-            treeNodeAttributeMapper.setParentId(this.parentId);
-            treeNodeAttributeMapper.setChildrenName(this.childrenName);
-            treeNodeAttributeMapper.setDataName(this.dataName);
-            treeNodeAttributeMapper.setSortName(this.sortName);
-            return treeNodeAttributeMapper;
+        /**
+         * 设置字段变量的别名
+         * 扩展字段的别名会覆盖掉已有的数据字段数据
+         * @param extraName 扩展字段变量的别名
+         * @return
+         */
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> extraName(String extraName) {
+            this.extraName = extraName;
+            return this;
+        }
+
+        /**
+         * 设置扩展变量取值接口
+         * @param extraFunction
+         * @return
+         */
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> extraFunction(Function<T, Object> extraFunction) {
+            this.extraFunction = extraFunction;
+            return this;
+        }
+
+        public TreeNodeAttributeMapper<T> build() {
+            return new TreeNodeAttributeMapper<T>()
+                        .setNodeId(this.nodeId)
+                        .setNodeName(this.nodeName)
+                        .setParentId(this.parentId)
+                        .setChildrenName(this.childrenName)
+                        .setDataName(this.dataName)
+                        .setSortName(this.sortName)
+                        .setExtraName(this.extraName)
+                        .setExtraFunction(this.extraFunction);
         }
     }
 
-    public TreeNodeAttributeMapper setNodeId(String nodeId) {
+    public TreeNodeAttributeMapper<T> setNodeId(String nodeId) {
         if(isNotBlank(nodeId)) {
             this.nodeId = nodeId;
         }
         return this;
     }
 
-    public TreeNodeAttributeMapper setNodeName(String nodeName) {
+    public TreeNodeAttributeMapper<T> setNodeName(String nodeName) {
         if(isNotBlank(nodeName)) {
             this.nodeName = nodeName;
         }
         return this;
     }
 
-    public TreeNodeAttributeMapper setParentId(String parentId) {
+    public TreeNodeAttributeMapper<T> setParentId(String parentId) {
         if(isNotBlank(parentId)) {
             this.parentId = parentId;
         }
         return this;
     }
 
-    public TreeNodeAttributeMapper setChildrenName(String childrenName) {
+    public TreeNodeAttributeMapper<T> setChildrenName(String childrenName) {
         if(isNotBlank(childrenName)) {
             this.childrenName = childrenName;
         }
         return this;
     }
 
-    public TreeNodeAttributeMapper setDataName(String dataName) {
+    public TreeNodeAttributeMapper<T> setDataName(String dataName) {
         if(isNotBlank(dataName)) {
             this.dataName = dataName;
         }
         return this;
     }
 
-    public TreeNodeAttributeMapper setSortName(String sortName) {
+    public TreeNodeAttributeMapper<T> setSortName(String sortName) {
         if(isNotBlank(sortName)) {
             this.sortName = sortName;
+        }
+        return this;
+    }
+
+    public TreeNodeAttributeMapper<T> setExtraName(String extraName) {
+        if(isNotBlank(extraName)) {
+            this.extraName = extraName;
+        }
+        return this;
+    }
+
+    public TreeNodeAttributeMapper<T> setExtraFunction(Function<T, Object> extraFunction) {
+        if(nonNull(extraFunction)) {
+            this.extraFunction = extraFunction;
         }
         return this;
     }
@@ -161,5 +212,13 @@ public class TreeNodeAttributeMapper {
 
     public String getSortName() {
         return sortName;
+    }
+
+    public String getExtraName() {
+        return extraName;
+    }
+
+    public Function<T, Object> getExtraFunction() {
+        return extraFunction;
     }
 }

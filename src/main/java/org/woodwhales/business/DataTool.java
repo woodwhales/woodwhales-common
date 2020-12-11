@@ -336,7 +336,7 @@ public class DataTool {
      * @param <T>
      * @return
      */
-    public static <S, T> List<T> toSortedList(List<S> source, Predicate<? super S> filter, Function<? super S, ? extends T> mapper) {
+    public static <S, T> List<T> toFilteredList(List<S> source, Predicate<? super S> filter, Function<? super S, ? extends T> mapper) {
         if (null == source || source.size() == 0) {
             return Collections.emptyList();
         }

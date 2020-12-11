@@ -3,9 +3,9 @@ package org.woodwhales.business.tree;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 /**
@@ -42,7 +42,7 @@ public class TreeNode<K, T> {
     /**
      * 排序值
      */
-    private Integer sort;
+    private int sort;
 
     private TreeNode() {
     }
@@ -68,8 +68,10 @@ public class TreeNode<K, T> {
      * @param <T>
      * @return
      */
-    public static <K, T> TreeNode<K, T> build(T data, TreeNodeGenerator<K, T> treeNodeGenerator, boolean withData) {
-        TreeNode<K, T> treeNode = new TreeNode();
+    public static <K, T> TreeNode<K, T> build(T data,
+                                              TreeNodeGenerator<K, T> treeNodeGenerator,
+                                              boolean withData) {
+        TreeNode<K, T> treeNode = new TreeNode<>();
         treeNode.setId(treeNodeGenerator.getId(data));
 
         if(withData) {
@@ -78,12 +80,14 @@ public class TreeNode<K, T> {
 
         treeNode.setName(treeNodeGenerator.getName(data));
         treeNode.setParentId(treeNodeGenerator.getParentId(data));
-        treeNode.setSort(Objects.isNull(treeNodeGenerator.getSort(data)) ? 0 : treeNodeGenerator.getSort(data));
+        treeNode.setSort(treeNodeGenerator.getSort(data));
         return treeNode;
     }
 
-    public static <K, T> Map<String, Object> toMap(TreeNode<K, T> treeNode, TreeNodeAttributeMapper treeAttributeMapper, boolean withData) {
-        Map<String, Object> map = new HashMap<>(6);
+    public static <K, T> Map<String, Object> toMap(TreeNode<K, T> treeNode,
+                                                   TreeNodeAttributeMapper<T> treeAttributeMapper,
+                                                   boolean withData) {
+        Map<String, Object> map = new HashMap<>(7);
         map.put(treeAttributeMapper.getNodeId(), treeNode.getId());
         map.put(treeAttributeMapper.getNodeName(), treeNode.getName());
         map.put(treeAttributeMapper.getParentId(), treeNode.getParentId());
@@ -101,6 +105,14 @@ public class TreeNode<K, T> {
             map.put(treeAttributeMapper.getDataName(), treeNode.getData());
         } else {
             map.put(treeAttributeMapper.getDataName(), null);
+        }
+
+        if(nonNull(treeAttributeMapper.getExtraFunction())) {
+            map.put(treeAttributeMapper.getExtraName(),
+                    treeAttributeMapper.getExtraFunction()
+                            .apply(treeNode.getData()));
+        } else {
+            map.put(treeAttributeMapper.getExtraName(), null);
         }
 
         return map;
@@ -142,7 +154,7 @@ public class TreeNode<K, T> {
         this.data = data;
     }
 
-    public void setSort(Integer sort) {
+    public void setSort(int sort) {
         this.sort = sort;
     }
 

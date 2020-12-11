@@ -41,7 +41,7 @@ public class TreeTool {
      */
     public static <K, T> List<Map<String, Object>> tree(List<T> sourceList,
                                                         final TreeNodeGenerator<K, T> treeNodeGenerator,
-                                                        final TreeNodeAttributeMapper treeNodeAttributeMapper,
+                                                        final TreeNodeAttributeMapper<T> treeNodeAttributeMapper,
                                                         final boolean withData) {
         if(isEmpty(sourceList)) {
             return emptyList();
@@ -84,7 +84,7 @@ public class TreeTool {
         }
 
         List<TreeNode<K, T>> rootNodeList = sourceList.stream()
-                                                .filter(source -> treeNodeGenerator.isRootNode(source))
+                                                .filter(treeNodeGenerator::isRootNode)
                                                 .map(source -> TreeNode.build(source, treeNodeGenerator, withData))
                                                 .sorted(Comparator.comparing(TreeNode::getSort))
                                                 .collect(Collectors.toList());
