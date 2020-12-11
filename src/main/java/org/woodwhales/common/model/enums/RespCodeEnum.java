@@ -1,13 +1,11 @@
 package org.woodwhales.common.model.enums;
 
-import lombok.Getter;
 import org.woodwhales.common.model.result.BaseRespResult;
 
 /**
  * @author woodwhales on 2020-08-25
  * @description 通用响应枚举
  */
-@Getter
 public enum RespCodeEnum implements BaseRespResult {
 
     /**
@@ -40,4 +38,16 @@ public enum RespCodeEnum implements BaseRespResult {
     public boolean isSucceed() {
         return this.code == 0;
     }
+
+    @Override
+    public String getMessage() {
+        return this.message;
+    }
+
+    @Override
+    public int getCode() {
+        return this.code;
+    }
+
+
 }
