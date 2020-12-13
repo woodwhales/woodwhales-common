@@ -180,6 +180,46 @@ class DataToolTest {
         assertEquals(demoData3, repetitiveList.get(0));
     }
 
+    @Test
+    public void getDataFromList() {
+        DemoDataDTO demoDataDTO = new DemoDataDTO(3, "上海");
+
+        List<DemoData> list = new ArrayList<>();
+        list.add(new DemoData(1, "北京", "北京"));
+        list.add(new DemoData(2, "南京", "南京"));
+        list.add(new DemoData(3, "上海", "上海"));
+
+        DemoData result = DataTool.getDataFromList(demoDataDTO, DemoDataDTO::getId, list, DemoData::getId);
+        System.out.println("result = " + result);
+        assertEquals(list.get(2), result);
+    }
+
+    class DemoDataDTO {
+        private Integer id;
+        private String nameForVO;
+
+        public DemoDataDTO(Integer id, String nameForVO) {
+            this.id = id;
+            this.nameForVO = nameForVO;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public String getNameForVO() {
+            return nameForVO;
+        }
+
+        @Override
+        public String toString() {
+            return "DemoDataDTO{" +
+                    "id=" + id +
+                    ", nameForVO='" + nameForVO + '\'' +
+                    '}';
+        }
+    }
+
     class DemoData {
 
         private Integer id;

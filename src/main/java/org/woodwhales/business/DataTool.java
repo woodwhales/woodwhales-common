@@ -1,5 +1,7 @@
 package org.woodwhales.business;
 
+import com.google.common.base.Preconditions;
+
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -8,6 +10,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * 业务处理工具类
@@ -30,7 +33,7 @@ public class DataTool {
     public static <K, S, T> Map<K,T> toMap(List<S> source,
                                            Function<? super S, ? extends K> keyMapper,
                                            Function<? super S, ? extends T> valueMapper) {
-        if(null == source || source.size() == 0) {
+        if(isEmpty(source)) {
             return Collections.emptyMap();
         }
 
@@ -47,7 +50,7 @@ public class DataTool {
      */
     public static <S, T> Set<T> toSet(List<S> source,
                                       Function<? super S, ? extends T> mapper) {
-        if(null == source || source.size() == 0) {
+        if(isEmpty(source)) {
             return Collections.emptySet();
         }
 
@@ -69,7 +72,7 @@ public class DataTool {
                                            Function<? super S, ? extends K> keyMapper,
                                            Function<? super S, ? extends T> valueMapper,
                                            BinaryOperator<T> mergeFunction) {
-        if(null == source || source.size() == 0) {
+        if(isEmpty(source)) {
             return Collections.emptyMap();
         }
 
@@ -120,7 +123,7 @@ public class DataTool {
     public static <S, T, K> Map<K, T> toMapFromList(List<S> source,
                                             Function<? super S, ? extends T> mapper,
                                             Function<? super T, ? extends K> keyMapper) {
-        if (null == source || source.size() == 0) {
+        if (isEmpty(source)) {
             return Collections.emptyMap();
         }
 
@@ -200,7 +203,7 @@ public class DataTool {
      * @return
      */
     public static <S, T> List<T> toList(List<S> source, Function<? super S, ? extends T> mapper) {
-        if (null == source || source.size() == 0) {
+        if (isEmpty(source)) {
             return Collections.emptyList();
         }
 
@@ -217,7 +220,7 @@ public class DataTool {
      */
     public static <K, S> Map<K, List<S>> groupingBy(List<S> source,
                                                     Function<? super S, ? extends K> classifier) {
-        if(null == source || source.size() == 0) {
+        if(isEmpty(source)) {
             return Collections.emptyMap();
         }
 
@@ -235,7 +238,7 @@ public class DataTool {
      */
     public static <K, T> DeduplicateResult<T> deduplicate(List<T> source,
                                                           DeduplicateInterface<K, T> deduplicateInterface) {
-        if(null == source || source.size() == 0) {
+        if(isEmpty(source)) {
             return new DeduplicateResult<T>(source, emptyList(), emptyList(), emptyList());
         }
 
@@ -337,7 +340,7 @@ public class DataTool {
      * @return
      */
     public static <S, T> List<T> toFilteredList(List<S> source, Predicate<? super S> filter, Function<? super S, ? extends T> mapper) {
-        if (null == source || source.size() == 0) {
+        if (isEmpty(source)) {
             return Collections.emptyList();
         }
 
@@ -355,13 +358,36 @@ public class DataTool {
      * @return
      */
     public static <T> List<T> filter(List<T> source, Predicate<? super T> filter) {
-        if (null == source || source.size() == 0) {
+        if (isEmpty(source)) {
             return Collections.emptyList();
         }
 
         return source.stream()
                 .filter(filter)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 根据 searchData 按照 searchFunction 规则从 sourceList 集合中搜索数据
+     * @param searchData 要搜索的源数据
+     * @param searchFunction 搜索的key
+     * @param sourceList 被搜索的数据源
+     * @param keyFunction 被搜索的数据源索引生成规则
+     * @param <M> 要搜索的源数据类型
+     * @param <K> 搜索的 key 类型
+     * @param <T> 被搜索的数据源类型
+     * @return
+     */
+    public static <M, K, T> T getDataFromList(M searchData,
+                                              Function<M, K> searchFunction,
+                                              List<T> sourceList,
+                                              Function<T, K> keyFunction) {
+        Preconditions.checkNotNull(searchFunction, "function不允许为空");
+        if(isEmpty(sourceList)) {
+            return null;
+        }
+
+        return toMapForSaveNew(sourceList, keyFunction).get(searchFunction.apply(searchData));
     }
 
 }
