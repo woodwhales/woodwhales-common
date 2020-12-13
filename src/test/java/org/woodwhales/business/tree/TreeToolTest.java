@@ -20,15 +20,15 @@ public class TreeToolTest {
     public static void init() {
         List<Menu> list = Lists.newArrayListWithCapacity(6);
 
-        list.add(new Menu(9, null, "上海", 3));
+        list.add(new Menu(9, null, "上海", 30));
 
-        list.add(new Menu(1, null, "北京", 1));
+        list.add(new Menu(1, null, "北京", 10));
         list.add(new Menu(2, 1, "海淀", 1));
         list.add(new Menu(4, 1, "西城", 3));
         list.add(new Menu(3, 1, "朝阳", 2));
         list.add(new Menu(9, 1, "东城", 0));
 
-        list.add(new Menu(5, null, "安徽", 2));
+        list.add(new Menu(5, null, "安徽", 20));
         list.add(new Menu(6, 5, "合肥", 1));
         list.add(new Menu(7, 5, "安庆", 2));
         list.add(new Menu(8, 5, "黄山", 3));
@@ -78,8 +78,8 @@ public class TreeToolTest {
     public void test5() {
         List<Map<String, Object>> tree5 = TreeTool.tree(this.testList, new MyTreeNodeGenerator(),
                 TreeNodeAttributeMapper.<Menu>builder()
-                        .extraName("id")
-                        .extraFunction(Menu::getCityName)
+                        .nodeId("key")
+                        .overNodeId(Menu::getCityName)
                         .build(), true);
         print(tree5);
     }

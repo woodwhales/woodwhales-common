@@ -3,9 +3,10 @@ package org.woodwhales.business.tree;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 /**
@@ -85,34 +86,53 @@ public class TreeNode<K, T> {
     }
 
     public static <K, T> Map<String, Object> toMap(TreeNode<K, T> treeNode,
-                                                   TreeNodeAttributeMapper<T> treeAttributeMapper,
-                                                   boolean withData) {
+                                                   final TreeNodeAttributeMapper<T> treeAttributeMapper,
+                                                   final Function<T, Object> extraFunction,
+                                                   final boolean withData,
+                                                   final boolean needDropData) {
         Map<String, Object> map = new HashMap<>(7);
-        map.put(treeAttributeMapper.getNodeId(), treeNode.getId());
-        map.put(treeAttributeMapper.getNodeName(), treeNode.getName());
-        map.put(treeAttributeMapper.getParentId(), treeNode.getParentId());
-        map.put(treeAttributeMapper.getSortName(), treeNode.getSort());
 
+        Function<T, Object> overNodeIdFunction = treeAttributeMapper.getOverNodeIdFunction();
+        T data = treeNode.getData();
+
+        // 设置当前节点id
+        if(nonNull(overNodeIdFunction) && nonNull(data)) {
+            map.put(treeAttributeMapper.getNodeId(), overNodeIdFunction.apply(data));
+        } else {
+            map.put(treeAttributeMapper.getNodeId(), treeNode.getId());
+        }
+
+        // 设置当前节点的名称
+        map.put(treeAttributeMapper.getNodeName(), treeNode.getName());
+        // 设置当前节点的父节点
+        map.put(treeAttributeMapper.getParentId(), treeNode.getParentId());
+        // 设置当前节点的排序值
+        map.put(treeAttributeMapper.getSortName(), treeNode.getSort());
+        // 设置当前节点的子节点
         if(isNotEmpty(treeNode.getChildren())) {
             map.put(treeAttributeMapper.getChildrenName(), treeNode.getChildren().stream()
-                    .map(node -> TreeNode.toMap(node, treeAttributeMapper, withData))
-                    .collect(Collectors.toList()));
+                    .map(node -> TreeNode.toMap(node, treeAttributeMapper, extraFunction, withData, needDropData))
+                    .collect(toList()));
         } else {
             map.put(treeAttributeMapper.getChildrenName(), null);
         }
 
+        // 设置当前节点是否携带源数据
         if(withData) {
-            map.put(treeAttributeMapper.getDataName(), treeNode.getData());
+            map.put(treeAttributeMapper.getDataName(), data);
         } else {
             map.put(treeAttributeMapper.getDataName(), null);
         }
 
-        if(nonNull(treeAttributeMapper.getExtraFunction())) {
-            map.put(treeAttributeMapper.getExtraName(),
-                    treeAttributeMapper.getExtraFunction()
-                            .apply(treeNode.getData()));
+        // 设置当前节点的扩展数据
+        if(nonNull(extraFunction) && nonNull(data)) {
+            map.put(treeAttributeMapper.getExtraName(), extraFunction.apply(data));
         } else {
             map.put(treeAttributeMapper.getExtraName(), null);
+        }
+
+        if(needDropData) {
+            map.remove(treeAttributeMapper.getDataName());
         }
 
         return map;

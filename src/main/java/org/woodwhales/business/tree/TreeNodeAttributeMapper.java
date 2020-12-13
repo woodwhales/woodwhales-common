@@ -17,6 +17,11 @@ public class TreeNodeAttributeMapper<T> {
     private String nodeId = "id";
 
     /**
+     * 覆盖节点 id 对应数值的接口
+     */
+    private Function<T, Object> overNodeIdFunction;
+
+    /**
      * 当前节点名称变量的别名
      */
     private String nodeName = "name";
@@ -46,11 +51,6 @@ public class TreeNodeAttributeMapper<T> {
      */
     private String extraName = "extra";
 
-    /**
-     * 扩展变量取值接口
-     */
-    private Function<T, Object> extraFunction;
-
     private TreeNodeAttributeMapper() {
     }
 
@@ -60,18 +60,29 @@ public class TreeNodeAttributeMapper<T> {
 
     public static class TreeNodeAttributeMapperBuilder<T> {
         private String nodeId;
+        private Function<T, Object> overNodeIdFunction;
         private String nodeName;
         private String parentId;
         private String childrenName;
         private String dataName;
         private String sortName;
         private String extraName;
-        private Function<T, Object> extraFunction;
 
         TreeNodeAttributeMapperBuilder() {}
 
         public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> nodeId(String nodeId) {
             this.nodeId = nodeId;
+            return this;
+        }
+
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> overNodeId(Function<T, Object> overNodeIdFunction) {
+            this.overNodeIdFunction = overNodeIdFunction;
+            return this;
+        }
+
+        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> overNodeId(String nodeId, Function<T, Object> overNodeIdFunction) {
+            this.nodeId = nodeId;
+            this.overNodeIdFunction = overNodeIdFunction;
             return this;
         }
 
@@ -111,32 +122,29 @@ public class TreeNodeAttributeMapper<T> {
             return this;
         }
 
-        /**
-         * 设置扩展变量取值接口
-         * @param extraFunction
-         * @return
-         */
-        public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> extraFunction(Function<T, Object> extraFunction) {
-            this.extraFunction = extraFunction;
-            return this;
-        }
-
         public TreeNodeAttributeMapper<T> build() {
             return new TreeNodeAttributeMapper<T>()
                         .setNodeId(this.nodeId)
+                        .setOverNodeIdFunction(overNodeIdFunction)
                         .setNodeName(this.nodeName)
                         .setParentId(this.parentId)
                         .setChildrenName(this.childrenName)
                         .setDataName(this.dataName)
                         .setSortName(this.sortName)
-                        .setExtraName(this.extraName)
-                        .setExtraFunction(this.extraFunction);
+                        .setExtraName(this.extraName);
         }
     }
 
     public TreeNodeAttributeMapper<T> setNodeId(String nodeId) {
         if(isNotBlank(nodeId)) {
             this.nodeId = nodeId;
+        }
+        return this;
+    }
+
+    public TreeNodeAttributeMapper<T> setOverNodeIdFunction(Function<T, Object> overNodeIdFunction) {
+        if(nonNull(overNodeIdFunction)) {
+            this.overNodeIdFunction = overNodeIdFunction;
         }
         return this;
     }
@@ -183,15 +191,12 @@ public class TreeNodeAttributeMapper<T> {
         return this;
     }
 
-    public TreeNodeAttributeMapper<T> setExtraFunction(Function<T, Object> extraFunction) {
-        if(nonNull(extraFunction)) {
-            this.extraFunction = extraFunction;
-        }
-        return this;
-    }
-
     public String getNodeId() {
         return nodeId;
+    }
+
+    public Function<T, Object> getOverNodeIdFunction() {
+        return overNodeIdFunction;
     }
 
     public String getNodeName() {
@@ -218,7 +223,4 @@ public class TreeNodeAttributeMapper<T> {
         return extraName;
     }
 
-    public Function<T, Object> getExtraFunction() {
-        return extraFunction;
-    }
 }
