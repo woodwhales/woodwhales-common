@@ -2,6 +2,7 @@ package org.woodwhales.business.collection;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.checkerframework.checker.units.qual.K;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -31,11 +32,11 @@ class CollectionToolTest {
         list2.add(new DemoData2("DD", "DD"));
         list2.add(new DemoData2("D", "D"));
 
-        CollectionMathResult<String> result = CollectionTool.mathCollection(list1, DemoData1::getDataNo, list2, DemoData2::getId);
+        CollectionMathResult<String, DemoData1, DemoData2> result = CollectionTool.compute(list1, DemoData1::getDataNo, list2, DemoData2::getId);
 
         // 交集
         Set<String> intersectionKeySet = result.getIntersectionKeySet();
-        Set<CollectionContainer<String>> intersectionSet = result.getIntersectionSet();
+        Set<CollectionFieldComparable<String>> intersectionSet = result.getIntersectionSet();
         print("intersectionKeySet", intersectionKeySet);
         print("intersectionSet", intersectionSet);
 

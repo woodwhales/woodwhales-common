@@ -7,28 +7,28 @@ import java.util.function.Function;
  * @author woodwhales on 2020-12-13 16:32
  * @description
  */
-public class CollectionContainer<K> {
+public class CollectionContainer<K, T> implements CollectionFieldComparable<K> {
 
-    private Object data;
+    private T data;
 
     private K dataKey;
 
-    public CollectionContainer(Object data, K dataKey) {
+    public CollectionContainer(T data, K dataKey) {
         this.data = data;
         this.dataKey = dataKey;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
+    @Override
     public K getDataKey() {
         return dataKey;
     }
 
-    public static <K, T> CollectionContainer<K> build(T data, Function<T, K> keyFunction) {
-        CollectionContainer<K> collectionContainer = new CollectionContainer<K>(data, keyFunction.apply(data));
-        return collectionContainer;
+    public static <K, T> CollectionContainer<K, T> build(T data, Function<T, K> keyFunction) {
+        return new CollectionContainer(data, keyFunction.apply(data));
     }
 
     @Override
@@ -37,11 +37,12 @@ public class CollectionContainer<K> {
             return true;
         }
 
-        if (!(o instanceof CollectionContainer)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CollectionContainer<?> that = (CollectionContainer<?>) o;
-        return getDataKey().equals(that.getDataKey());
+
+        CollectionContainer<K, T> that = (CollectionContainer<K, T>) o;
+        return dataKey.equals(that.dataKey);
     }
 
     @Override
