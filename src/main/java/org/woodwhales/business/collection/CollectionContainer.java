@@ -36,13 +36,11 @@ public class CollectionContainer<K, T> implements CollectionFieldComparable<K> {
         if (this == o) {
             return true;
         }
-
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof CollectionContainer)) {
             return false;
         }
-
-        CollectionContainer<K, T> that = (CollectionContainer<K, T>) o;
-        return dataKey.equals(that.dataKey);
+        CollectionContainer<?, ?> that = (CollectionContainer<?, ?>) o;
+        return getDataKey().equals(that.getDataKey());
     }
 
     @Override
@@ -50,4 +48,11 @@ public class CollectionContainer<K, T> implements CollectionFieldComparable<K> {
         return Objects.hash(getDataKey());
     }
 
+    @Override
+    public String toString() {
+        return "CollectionContainer{" +
+                "data=" + data +
+                ", dataKey=" + dataKey +
+                '}';
+    }
 }

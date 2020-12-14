@@ -2,7 +2,6 @@ package org.woodwhales.business.collection;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.checkerframework.checker.units.qual.K;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,10 +12,10 @@ import java.util.Set;
  * @author woodwhales on 2020-12-13 17:35
  * @description
  */
-class CollectionToolTest {
+class CollectionMathResultTest {
 
     @Test
-    void mathCollection() {
+    void compute() {
 
         List<DemoData1> list1 = new ArrayList<>();
         list1.add(new DemoData1("AA", "DemoData1 --> AA"));
@@ -32,7 +31,8 @@ class CollectionToolTest {
         list2.add(new DemoData2("DD", "DD"));
         list2.add(new DemoData2("D", "D"));
 
-        CollectionMathResult<String, DemoData1, DemoData2> result = CollectionTool.compute(list1, DemoData1::getDataNo, list2, DemoData2::getId);
+        CollectionMathResult<String, DemoData1, DemoData2> result = CollectionMathResult.compute(list1, DemoData1::getDataNo,
+                                                                                                list2, DemoData2::getId, false);
 
         // 交集
         Set<String> intersectionKeySet = result.getIntersectionKeySet();
@@ -41,22 +41,27 @@ class CollectionToolTest {
         print("intersectionSet", intersectionSet);
 
         // 并集
-        Set<CollectionContainer<String>> unionSet = result.getUnionSet();
+        Set<CollectionFieldComparable<String>> unionSet = result.getUnionSet();
         Set<String> unionKeySet = result.getUnionKeySet();
         print("unionKeySet", unionKeySet);
         print("unionSet", unionSet);
 
         // 反差集
-        Set<CollectionContainer<String>> negativeDifferenceSet = result.getNegativeDifferenceSet();
+        Set<CollectionFieldComparable<String>> negativeDifferenceSet = result.getNegativeDifferenceSet();
         Set<String> negativeDifferenceKeySet = result.getNegativeDifferenceKeySet();
         print("negativeDifferenceKeySet", negativeDifferenceKeySet);
         print("negativeDifferenceSet", negativeDifferenceSet);
 
+        list1.add(new DemoData1("EEE", "DemoData1 --> EEE"));
+
         // 正差集
-        Set<CollectionContainer<String>> positiveDifferenceSet = result.getPositiveDifferenceSet();
+        Set<CollectionFieldComparable<String>> positiveDifferenceSet = result.getPositiveDifferenceSet();
         Set<String> positiveDifferenceKeySet = result.getPositiveDifferenceKeySet();
         print("positiveDifferenceKeySet", positiveDifferenceKeySet);
         print("positiveDifferenceSet", positiveDifferenceSet);
+
+        print("unionKeySet", result.getUnionKeySet());
+        print("unionSet", result.getUnionSet());
 
     }
 
