@@ -1,11 +1,10 @@
 package org.woodwhales.business;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -196,10 +195,10 @@ public class DataTool {
 
     /**
      * 将原始的 list 按照 mapper 规则转成新的 list
-     * @param source
-     * @param mapper
-     * @param <S>
-     * @param <T>
+     * @param source 源数据集合
+     * @param mapper 生成新的 list 接口规则
+     * @param <S> 源数据类型
+     * @param <T> 目标数据类型
      * @return
      */
     public static <S, T> List<T> toList(List<S> source, Function<? super S, ? extends T> mapper) {
@@ -208,6 +207,70 @@ public class DataTool {
         }
 
         return source.stream().map(mapper).collect(Collectors.toList());
+    }
+
+    /**
+     * 将原始的 list 按照 filter 过滤之后，按照 mapper 规则转成新的 list
+     * @param source 源数据集合
+     * @param filter 源数据集合过滤规则
+     * @param mapper 生成新的 list 接口规则
+     * @param <S> 源数据类型
+     * @param <T> 目标数据类型
+     * @return
+     */
+    public static <S, T> List<T> toList(List<S> source, Predicate<S> filter, Function<? super S, ? extends T> mapper) {
+        if (isEmpty(source)) {
+            return Collections.emptyList();
+        }
+
+        return source.stream()
+                    .filter(filter::test)
+                    .map(mapper)
+                    .collect(Collectors.toList());
+    }
+
+    /**
+     *
+     * 从 map 中遍历生成 list
+     * @param map 源数据 map 集合
+     * @param function 生成 list 规则
+     * @param <K> map 集合的 key 类型
+     * @param <T> map 集合的数据类型
+     * @param <R> 目标数据类型
+     * @return
+     */
+    public static <K, T, R> List<R> toListByMap(Map<K, T> map,
+                                                BiFunction<K, T, R> function) {
+        if(MapUtils.isEmpty(map)) {
+            return emptyList();
+        }
+
+        return map.entrySet().stream()
+                .map(entry -> function.apply(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 从过滤的 map 中遍历生成 list
+     * @param map 源数据 map 集合
+     * @param filterMapMapper 过滤 map 的接口规则
+     * @param function 生成 list 规则
+     * @param <K> map 集合的 key 类型
+     * @param <T> map 集合的数据类型
+     * @param <R> 目标数据类型
+     * @return
+     */
+    public static <K, T, R> List<R> toListByMap(Map<K, T> map,
+                                                BiPredicate<K, T> filterMapMapper,
+                                                BiFunction<K, T, R> function) {
+        if(MapUtils.isEmpty(map)) {
+            return emptyList();
+        }
+
+        return map.entrySet().stream()
+                .filter(entry -> filterMapMapper.test(entry.getKey(), entry.getValue()))
+                .map(entry -> function.apply(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -225,6 +288,27 @@ public class DataTool {
         }
 
         return source.stream().collect(Collectors.groupingBy(classifier));
+    }
+
+    /**
+     * 将过滤的 list 集合分组
+     * @param source 数据源集合
+     * @param filter 过滤源数据集合的接口规则
+     * @param classifier 分组规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> map 集合中的 value 类型
+     * @return
+     */
+    public static <K, S> Map<K, List<S>> groupingBy(List<S> source,
+                                                    Predicate<S> filter,
+                                                    Function<? super S, ? extends K> classifier) {
+        if(isEmpty(source)) {
+            return Collections.emptyMap();
+        }
+
+        return source.stream()
+                    .filter(filter::test)
+                    .collect(Collectors.groupingBy(classifier));
     }
 
     /**
@@ -328,26 +412,6 @@ public class DataTool {
 
         Map<? extends K, T> map = enumMap(sourceEnumClass, keyMapper);
         return map.get(key);
-    }
-
-
-    /**
-     * 将原始的 list 先按照 filter 过滤再按照 mapper 规则转成新的 list
-     * @param source
-     * @param mapper
-     * @param <S>
-     * @param <T>
-     * @return
-     */
-    public static <S, T> List<T> toFilteredList(List<S> source, Predicate<? super S> filter, Function<? super S, ? extends T> mapper) {
-        if (isEmpty(source)) {
-            return Collections.emptyList();
-        }
-
-        return source.stream()
-                .filter(filter)
-                .map(mapper)
-                .collect(Collectors.toList());
     }
 
     /**
