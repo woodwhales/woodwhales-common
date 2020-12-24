@@ -22,6 +22,7 @@
         <gson.version>2.8.6</gson.version>
         <commons-lang3.version>3.11</commons-lang3.version>
         <icu4j.version>68.1</icu4j.version>
+        <spring-boot.version>2.4.0</spring-boot.version>
 
         <java.version>1.8</java.version>
         <!-- 文件拷贝时的编码 -->
@@ -95,6 +96,22 @@
             <artifactId>icu4j</artifactId>
             <version>${icu4j.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>${spring-boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-expression</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
