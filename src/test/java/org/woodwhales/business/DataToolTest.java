@@ -1,6 +1,7 @@
 package org.woodwhales.business;
 
 
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -192,6 +193,31 @@ class DataToolTest {
         DemoData result = DataTool.getDataFromList(demoDataDTO, DemoDataDTO::getId, list, DemoData::getId);
         System.out.println("result = " + result);
         assertEquals(list.get(2), result);
+    }
+
+    @Test
+    public void handleMap() {
+        Map<Integer, HandleMapDTO> map = new HashMap<>();
+        map.put(1, new HandleMapDTO(1, new DemoDataDTO(1, "AA")));
+        map.put(2, new HandleMapDTO(2, new DemoDataDTO(2, "BB")));
+        map.put(2, new HandleMapDTO(3, new DemoDataDTO(3, "CC")));
+        System.out.println("new Gson().toJson(map) = " + new Gson().toJson(map));
+        DataTool.handleMap(map, (k, v) -> {
+            if("AA".equals(k)) {
+                new DemoDataDTO(4, "DD");
+            };
+        });
+        System.out.println("new Gson().toJson(map) = " + new Gson().toJson(map));
+    }
+
+    class HandleMapDTO {
+        private Integer id;
+        private DemoDataDTO demoDataDTO;
+
+        public HandleMapDTO(Integer id, DemoDataDTO demoDataDTO) {
+            this.id = id;
+            this.demoDataDTO = demoDataDTO;
+        }
     }
 
     class DemoDataDTO {

@@ -8,6 +8,7 @@ import java.util.function.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
@@ -18,6 +19,22 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
  */
 public class DataTool {
 
+    /**
+     * list 转 set 集合
+     * @param source 数据源集合
+     * @param mapper 按照源数据的 mapper 规则生成 set 元素
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> set 集合中元素的类型
+     * @return
+     */
+    public static <S, T> Set<T> toSet(List<S> source,
+                                      Function<? super S, ? extends T> mapper) {
+        if(isEmpty(source)) {
+            return Collections.emptySet();
+        }
+
+        return source.stream().map(mapper).collect(Collectors.toSet());
+    }
 
     /**
      * list 转 map 集合
@@ -37,23 +54,6 @@ public class DataTool {
         }
 
         return source.stream().collect(Collectors.toMap(keyMapper, valueMapper));
-    }
-
-    /**
-     * list 转 set 集合
-     * @param source 数据源集合
-     * @param mapper 按照源数据的 mapper 规则生成 set 元素
-     * @param <S> 数据源集合中元素的类型
-     * @param <T> set 集合中元素的类型
-     * @return
-     */
-    public static <S, T> Set<T> toSet(List<S> source,
-                                      Function<? super S, ? extends T> mapper) {
-        if(isEmpty(source)) {
-            return Collections.emptySet();
-        }
-
-        return source.stream().map(mapper).collect(Collectors.toSet());
     }
 
     /**
@@ -452,6 +452,28 @@ public class DataTool {
         }
 
         return toMapForSaveNew(sourceList, keyFunction).get(searchFunction.apply(searchData));
+    }
+
+    /**
+     * 对原始 map 进行数据操作
+     * @param map 源 map 集合
+     * @param handlerMapper 集合元素处理接口规则
+     * @param <K> map 集合的 key 数据类型
+     * @param <T> map 集合的 value 数据类型
+     * @return 返回原始 map 集合
+     */
+    public static <K, T> Map<K, T> handleMap(Map<K, T> map, BiConsumer<K, T> handlerMapper) {
+        if(MapUtils.isEmpty(map)) {
+            return emptyMap();
+        }
+
+        for (Map.Entry<K, T> entry : map.entrySet()) {
+            K key = entry.getKey();
+            T value = entry.getValue();
+            handlerMapper.accept(key, value);
+        }
+        
+        return map;
     }
 
 }
