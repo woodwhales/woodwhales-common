@@ -202,8 +202,25 @@ public class DataTool {
      * @return
      */
     public static <S, T> List<T> toList(List<S> source, Function<? super S, ? extends T> mapper) {
+        return toList(source, mapper, false);
+    }
+
+    /**
+     * 将原始的 list 按照 mapper 规则转成新的 list
+     * @param source 源数据集合
+     * @param mapper 生成新的 list 接口规则
+     * @param distinct 是否去重
+     * @param <S> 源数据类型
+     * @param <T> 目标数据类型
+     * @return
+     */
+    public static <S, T> List<T> toList(List<S> source, Function<? super S, ? extends T> mapper, boolean distinct) {
         if (isEmpty(source)) {
             return Collections.emptyList();
+        }
+
+        if(distinct) {
+            return source.stream().map(mapper).distinct().collect(Collectors.toList());
         }
 
         return source.stream().map(mapper).collect(Collectors.toList());
@@ -476,4 +493,14 @@ public class DataTool {
         return map;
     }
 
+    /**
+     * 去除 list 集合中的 null 元素进行
+     * @param oldList
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> removeNull(List<? extends T> oldList) {
+        oldList.removeAll(Collections.singleton(null));
+        return (List<T>) oldList;
+    }
 }
