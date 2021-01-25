@@ -1,5 +1,7 @@
 package org.woodwhales.common.model.result;
 
+import org.woodwhales.common.model.enums.RespCodeEnum;
+
 import java.util.Objects;
 
 /**
@@ -10,36 +12,31 @@ import java.util.Objects;
  */
 public class OpResult<T> {
 
-    /**
-     * 响应成功标识
-     * true 标识响应成功
-     * false 标识响应失败
-     */
-    private boolean success;
+    private BaseRespResult baseRespResult;
 
     /**
      * 业务数据
      */
     private T data;
 
-    private OpResult() {
+    public static <T> OpResult<T> success(T data) {
+        return new OpResult<T>(RespCodeEnum.SUCCESS, data);
     }
 
-    private OpResult(boolean success, T data) {
-        this.success = success;
-        this.data = data;
+    public static <T> OpResult<T> success() {
+        return new OpResult<T>(RespCodeEnum.SUCCESS, null);
     }
 
-    public static <T> OpResult success(T data) {
-        return new OpResult(true, data);
+    public static <T> OpResult<T> failure() {
+        return new OpResult<T>(RespCodeEnum.ERROR, null);
     }
 
-    public static <T> OpResult fail() {
-        return new OpResult(false, null);
+    public static <T> OpResult<T> failure(BaseRespResult baseRespResult) {
+        return new OpResult<T>(baseRespResult, null);
     }
 
-    public static <T> OpResult fail(T data) {
-        return new OpResult(false, data);
+    public static <T> OpResult<T> failure(BaseRespResult baseRespResult, T data) {
+        return new OpResult<T>(baseRespResult, data);
     }
 
     /**
@@ -48,6 +45,14 @@ public class OpResult<T> {
      */
     public T getData() {
         return data;
+    }
+
+    /**
+     * 获取响应状态码对象
+     * @return
+     */
+    public BaseRespResult getBaseRespResult() {
+        return baseRespResult;
     }
 
     /**
@@ -71,14 +76,22 @@ public class OpResult<T> {
      * @return
      */
     public boolean isSuccessful() {
-        return success;
+        return Objects.equals(baseRespResult.getCode(), RespCodeEnum.SUCCESS.getCode());
     }
 
     /**
      * 是否响应失败
      * @return
      */
-    public boolean isFailed() {
-        return !success;
+    public boolean isFailure() {
+        return !isSuccessful();
+    }
+
+    private OpResult() {
+    }
+
+    private OpResult(BaseRespResult baseRespResult, T data) {
+        this.baseRespResult = baseRespResult;
+        this.data = data;
     }
 }

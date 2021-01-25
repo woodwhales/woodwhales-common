@@ -7,12 +7,6 @@ package org.woodwhales.common.model.result;
 public interface BaseRespResult {
 
     /**
-     * 是否成功
-     * @return
-     */
-    boolean isSucceed();
-
-    /**
      * 获取响应描述
      * @return
      */

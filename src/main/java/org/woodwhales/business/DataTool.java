@@ -329,6 +329,23 @@ public class DataTool {
     }
 
     /**
+     * 对list集合进行排序
+     * @param source 数据源集合
+     * @param comparator 排序器
+     * @param <T> 集合的数据类型
+     * @return
+     */
+    public static <T> List<T> sort(List<T> source, Comparator<T> comparator) {
+        if(isEmpty(source)) {
+            return source;
+        }
+
+        return source.stream()
+                     .sorted(comparator)
+                     .collect(Collectors.toList());
+    }
+
+    /**
      * 对集合数据进行去重器
      * 非线程安全
      * @param source 数据源集合

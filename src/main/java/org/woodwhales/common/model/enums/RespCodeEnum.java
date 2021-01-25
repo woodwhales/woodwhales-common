@@ -35,11 +35,6 @@ public enum RespCodeEnum implements BaseRespResult {
     }
 
     @Override
-    public boolean isSucceed() {
-        return this.code == 0;
-    }
-
-    @Override
     public String getMessage() {
         return this.message;
     }
