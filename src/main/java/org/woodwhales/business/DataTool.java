@@ -520,4 +520,5 @@ public class DataTool {
         oldList.removeAll(Collections.singleton(null));
         return (List<T>) oldList;
     }
+
 }

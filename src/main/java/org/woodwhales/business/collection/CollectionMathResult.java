@@ -207,11 +207,6 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
         return getSet(positiveDifferenceSet, (set1, set2) -> CollectionTool.difference(set1, set2));
     }
 
-    public CollectionMathResult<K, M, N> setPositiveDifferenceSet(Set<CollectionFieldComparable<K>> positiveDifferenceSet) {
-        this.positiveDifferenceSet = positiveDifferenceSet;
-        return this;
-    }
-
     /**
      * 负差集 B - A
      * @return
@@ -237,11 +232,6 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
     @Override
     public Set<CollectionFieldComparable<K>> getNegativeDifferenceSet() {
         return getSet(negativeDifferenceSet, (set1, set2) -> CollectionTool.difference(set2, set1));
-    }
-
-    public CollectionMathResult<K, M, N> setNegativeDifferenceSet(Set<CollectionFieldComparable<K>> negativeDifferenceSet) {
-        this.negativeDifferenceSet = negativeDifferenceSet;
-        return this;
     }
 
     private static <K, M, N> CollectionMathResult<K, M, N> empty() {
@@ -294,6 +284,21 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
         if(isEmpty(list)) {
             return emptyList();
         }
-        return DataTool.filter(list, source -> set.contains(keyFunction.apply(source)));
+
+        Set<K> keySet = set.stream()
+                            .map(CollectionFieldComparable::getDataKey)
+                            .collect(Collectors.toSet());
+
+        return DataTool.filter(list, source -> keySet.contains(keyFunction.apply(source)));
+    }
+
+    public CollectionMathResult<K, M, N> setPositiveDifferenceSet(Set<CollectionFieldComparable<K>> positiveDifferenceSet) {
+        this.positiveDifferenceSet = positiveDifferenceSet;
+        return this;
+    }
+
+    public CollectionMathResult<K, M, N> setNegativeDifferenceSet(Set<CollectionFieldComparable<K>> negativeDifferenceSet) {
+        this.negativeDifferenceSet = negativeDifferenceSet;
+        return this;
     }
 }
