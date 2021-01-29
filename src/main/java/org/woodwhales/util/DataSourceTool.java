@@ -1,4 +1,4 @@
-package org.woodwhales.business;
+package org.woodwhales.util;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -66,5 +66,6 @@ public class DataSourceTool {
         }
     }
 
-
+    private DataSourceTool() {
+    }
 }
