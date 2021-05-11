@@ -1,5 +1,6 @@
 package org.woodwhales.business;
 
+import com.baomidou.mybatisplus.extension.api.R;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections4.MapUtils;
 
@@ -519,6 +520,66 @@ public class DataTool {
     public static <T> List<T> removeNull(List<? extends T> oldList) {
         oldList.removeAll(Collections.singleton(null));
         return (List<T>) oldList;
+    }
+
+    /**
+     * 从 map 中获取 value 集合并根据 function 转成 R 集合
+     * @param map 原始数据源集合
+     * @param function 映射接口
+     * @param <K> key 类型
+     * @param <V> value 类型
+     * @return
+     */
+    public static <K, V> List<R> mapValueToList(Map<K, V> map, Function<V, R> function) {
+        if (MapUtils.isEmpty(map)) {
+            return emptyList();
+        }
+        return map.values()
+                  .stream()
+                  .map(function)
+                  .collect(Collectors.toList());
+    }
+
+    /**
+     * 遍历 map 元素并按照 function 转成 R 集合
+     * @param map 原始数据源集合
+     * @param function 映射接口
+     * @param <K> key 类型
+     * @param <V> key 类型
+     * @param <R> 结果集类型
+     * @return
+     */
+    public static <K, V, R> List<R> mapToList(Map<K, V> map, BiFunction<K, V, R> function) {
+        if (MapUtils.isEmpty(map)) {
+            return emptyList();
+        }
+
+        return map.entrySet()
+                  .stream()
+                  .map(entry -> function.apply(entry.getKey(), entry.getValue()))
+                  .collect(Collectors.toList());
+    }
+
+    /**
+     * 遍历 map 元素，先按照 predicate 过滤再按照 function 转成 R 集合
+     * @param map 原始数据源集合
+     * @param predicate 过滤接口
+     * @param function 映射接口
+     * @param <K> key 类型
+     * @param <V> key 类型
+     * @param <R> 结果集类型
+     * @return
+     */
+    public static <K, V, R> List<R> mapToList(Map<K, V> map, BiPredicate<K, V> predicate ,BiFunction<K, V, R> function) {
+        if (MapUtils.isEmpty(map)) {
+            return emptyList();
+        }
+
+        return map.entrySet()
+                  .stream()
+                  .filter(entry -> predicate.test(entry.getKey(), entry.getValue()))
+                  .map(entry -> function.apply(entry.getKey(), entry.getValue()))
+                  .collect(Collectors.toList());
     }
 
 }
