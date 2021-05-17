@@ -1,6 +1,5 @@
 package org.woodwhales.business;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections4.MapUtils;
 
@@ -530,7 +529,7 @@ public class DataTool {
      * @param <V> value 类型
      * @return
      */
-    public static <K, V> List<R> mapValueToList(Map<K, V> map, Function<V, R> function) {
+    public static <K, V, R> List<R> mapValueToList(Map<K, V> map, Function<V, R> function) {
         if (MapUtils.isEmpty(map)) {
             return emptyList();
         }

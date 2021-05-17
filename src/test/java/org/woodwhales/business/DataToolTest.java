@@ -280,5 +280,22 @@ class DataToolTest {
         }
     }
 
+    @Test
+    public void testMapToList() {
+        Map<String, DemoDataDTO> map = new HashMap<>();
+        map.put("A", new DemoDataDTO(1, "AA"));
+        map.put("B", new DemoDataDTO(2, "BB"));
+        map.put("C", new DemoDataDTO(3, "CC"));
+        List<String> keyList = DataTool.mapToList(map, (key, value) -> key);
+        List<String> valueList = DataTool.mapToList(map, (key, value) -> value.toString());
+        System.out.println("keyList = " + keyList);
+        System.out.println("valueList = " + valueList);
+
+        List<String> filteredList = DataTool.mapToList(map, (key, value) -> key.equals("A"), (key, value) -> value.toString());
+        System.out.println("filteredList = " + filteredList);
+
+        List<String> valueList2 = DataTool.mapValueToList(map, DemoDataDTO::getNameForVO);
+        System.out.println("valueList2 = " + valueList2);
+    }
 
 }
