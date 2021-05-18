@@ -1,14 +1,21 @@
 package org.woodwhales.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.woodwhales.business.DataTool;
+import org.woodwhales.common.model.field.PageQueryInterface;
+import org.woodwhales.common.model.vo.PageRespVO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.Objects.isNull;
@@ -16,7 +23,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * @author woodwhales on 2021-01-05 14:02
- * @description
+ * @description mybatisPlus sql 执行器
  */
 public class MybatisPlusExecutor {
 
@@ -115,6 +122,50 @@ public class MybatisPlusExecutor {
         }
 
         return entity;
+    }
+
+    /**
+     * 分页查询数据
+     * @param mapper
+     * @param queryParam
+     * @param consumer
+     * @param mapping
+     * @param <Entity>
+     * @param <DTO>
+     * @param <Mapper>
+     * @return
+     */
+    public static <Entity, DTO, Mapper extends BaseMapper<Entity>> PageRespVO<DTO> executeQueryPage(Mapper mapper,
+                                                                                        PageQueryInterface queryParam,
+                                                                                        Consumer<Wrapper<Entity>> consumer,
+                                                                                        Function<Entity, DTO> mapping) {
+        IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, consumer);
+        return PageRespVO.buildPageRespVO(pageResult, mapping);
+    }
+
+    /**
+     * 分页查询数据
+     * @param mapper
+     * @param queryParam
+     * @param consumer
+     * @param <Entity>
+     * @param <Mapper>
+     * @return
+     */
+    public static <Entity, Mapper extends BaseMapper<Entity>> PageRespVO<Entity> executeQueryPage(Mapper mapper,
+                                                                                                  PageQueryInterface queryParam,
+                                                                                                  Consumer<Wrapper<Entity>> consumer) {
+        IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, consumer);
+        return PageRespVO.buildPageRespVO(pageResult);
+    }
+
+    private static <Entity, Mapper extends BaseMapper<Entity>> IPage<Entity> executeSelectPage(Mapper mapper,
+                                                                                               PageQueryInterface queryParam,
+                                                                                               Consumer<Wrapper<Entity>> consumer) {
+        Page<Entity> page = new Page<>(queryParam.getPage(), queryParam.getLimit());
+        LambdaQueryWrapper<Entity> wrapper = Wrappers.lambdaQuery();
+        consumer.accept(wrapper);
+        return mapper.selectPage(page, wrapper);
     }
 
     /**
