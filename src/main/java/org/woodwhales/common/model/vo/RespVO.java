@@ -50,6 +50,15 @@ public class RespVO<T> {
         return buildWithBaseRespResult(baseRespResult, null);
     }
 
+    public static <T> RespVO<T> errorWithErrorMsg(String errorMsg) {
+        return errorWithErrorMsg(RespCodeEnum.ERROR, errorMsg);
+    }
+
+    public static <T> RespVO<T> errorWithErrorMsg(BaseRespResult baseRespResult, String errorMsg) {
+        Objects.requireNonNull(baseRespResult);
+        return build(baseRespResult.getCode(), errorMsg, null);
+    }
+
     public static <T> RespVO<T> buildWithBaseRespResult(BaseRespResult baseRespResult, T data) {
         Objects.requireNonNull(baseRespResult);
         return build(baseRespResult.getCode(), baseRespResult.getMessage(), data);
