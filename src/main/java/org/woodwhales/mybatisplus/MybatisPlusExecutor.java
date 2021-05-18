@@ -137,7 +137,7 @@ public class MybatisPlusExecutor {
      */
     public static <Entity, DTO, Mapper extends BaseMapper<Entity>> PageRespVO<DTO> executeQueryPage(Mapper mapper,
                                                                                         PageQueryInterface queryParam,
-                                                                                        Consumer<Wrapper<Entity>> consumer,
+                                                                                        Consumer<LambdaQueryWrapper<Entity>> consumer,
                                                                                         Function<Entity, DTO> mapping) {
         IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, consumer);
         return PageRespVO.buildPageRespVO(pageResult, mapping);
@@ -154,14 +154,14 @@ public class MybatisPlusExecutor {
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> PageRespVO<Entity> executeQueryPage(Mapper mapper,
                                                                                                   PageQueryInterface queryParam,
-                                                                                                  Consumer<Wrapper<Entity>> consumer) {
+                                                                                                  Consumer<LambdaQueryWrapper<Entity>> consumer) {
         IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, consumer);
         return PageRespVO.buildPageRespVO(pageResult);
     }
 
     private static <Entity, Mapper extends BaseMapper<Entity>> IPage<Entity> executeSelectPage(Mapper mapper,
                                                                                                PageQueryInterface queryParam,
-                                                                                               Consumer<Wrapper<Entity>> consumer) {
+                                                                                               Consumer<LambdaQueryWrapper<Entity>> consumer) {
         Page<Entity> page = new Page<>(queryParam.getPage(), queryParam.getLimit());
         LambdaQueryWrapper<Entity> wrapper = Wrappers.lambdaQuery();
         consumer.accept(wrapper);
