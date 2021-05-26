@@ -40,6 +40,20 @@ public class ExcelTool {
 
     /**
      * 解析 excel 中的内容为 list 集合数据
+     * 默认解析：
+     *  第一个 sheet
+     *  跳过第一行数据
+     * @param inputStream
+     * @param function
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> parseData(InputStream inputStream, BiFunction<Integer, Row, T> function) {
+        return parseData(buildWorkbook(inputStream), 0, 1, function);
+    }
+
+    /**
+     * 解析 excel 中的内容为 list 集合数据
      * @param filePath
      * @param sheetIndex
      * @param skipLineNumbers 跳过第几行（物理行数）
@@ -50,7 +64,22 @@ public class ExcelTool {
                                         int sheetIndex,
                                         int skipLineNumbers,
                                         BiFunction<Integer, Row, T> function) {
+        File file = new File(filePath);
+        if(!file.exists()) {
+            throw new RuntimeException(filePath + " 文件不存在");
+        }
+
+        Workbook workbook = buildWorkbook(file);
+        return parseData(workbook, sheetIndex, skipLineNumbers, function);
+
+    }
+
+    private static <T> List<T> parseData(Workbook workbook,
+                                        int sheetIndex,
+                                        int skipLineNumbers,
+                                        BiFunction<Integer, Row, T> function) {
         Objects.requireNonNull(function, "function不允许为空");
+
         if(isNull(sheetIndex)) {
             sheetIndex = 0;
         }
@@ -59,12 +88,6 @@ public class ExcelTool {
             skipLineNumbers = 0;
         }
 
-        File file = new File(filePath);
-        if(!file.exists()) {
-            throw new RuntimeException(filePath + " 文件不存在");
-        }
-
-        Workbook workbook = buildWorkbook(file);
         Sheet sheet = workbook.getSheetAt(sheetIndex);
 
         if(isNull(sheet)) {
@@ -152,6 +175,7 @@ public class ExcelTool {
     }
 
     private static Workbook buildWorkbook(InputStream inputStream) {
+        Objects.requireNonNull(inputStream, "inputStream不允许为空");
         Workbook workbook = null;
         try {
             workbook = WorkbookFactory.create(inputStream);
