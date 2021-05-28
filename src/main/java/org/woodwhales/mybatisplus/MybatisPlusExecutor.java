@@ -52,18 +52,50 @@ public class MybatisPlusExecutor {
     /**
      * 查询数据集合
      * @param mapper
+     * @param lambdaQueryWrapperConsumer
+     * @param mapping
+     * @param <Entity>
+     * @param <Mapper>
+     * @param <DTO>
+     * @return
+     */
+    public static <Entity, Mapper extends BaseMapper<Entity>, DTO> List<DTO> executeQueryList(Mapper mapper,
+                                                                                              Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
+                                                                                              Function<? super Entity, ? extends DTO> mapping) {
+        LambdaQueryWrapper<Entity> wrapper = Wrappers.<Entity>lambdaQuery();
+        return executeQueryList(mapper, wrapper, mapping);
+    }
+
+    /**
+     * 查询数据集合
+     * @param mapper
      * @param wrapper
      * @param <Entity>
      * @param <Mapper>
      * @return
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> List<Entity> executeQueryList(Mapper mapper,
-                                                                                              Wrapper<Entity> wrapper) {
+                                                                                            Wrapper<Entity> wrapper) {
         List<Entity> entityList = mapper.selectList(wrapper);
         if (isEmpty(entityList)) {
             return new ArrayList<>();
         }
         return entityList;
+    }
+
+    /**
+     * 查询数据集合
+     * @param mapper
+     * @param lambdaQueryWrapperConsumer
+     * @param <Entity>
+     * @param <Mapper>
+     * @return
+     */
+    public static <Entity, Mapper extends BaseMapper<Entity>> List<Entity> executeQueryList(Mapper mapper,
+                                                                                            Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer) {
+        LambdaQueryWrapper<Entity> wrapper = Wrappers.<Entity>lambdaQuery();
+        lambdaQueryWrapperConsumer.accept(wrapper);
+        return executeQueryList(mapper, wrapper);
     }
 
     /**
@@ -82,6 +114,27 @@ public class MybatisPlusExecutor {
                                                                                                           Wrapper<Entity> wrapper,
                                                                                                           Function<? super Entity, ? extends DTO> mapping,
                                                                                                           Function<? super DTO, ? extends Key> keyMapping) {
+        return DataTool.toMap(executeQueryList(mapper, wrapper, mapping), keyMapping);
+    }
+
+    /**
+     * 查询数据并按照 keyMapping 规则转成 map 集合
+     * @param mapper
+     * @param lambdaQueryWrapperConsumer
+     * @param mapping
+     * @param keyMapping
+     * @param <Entity>
+     * @param <Mapper>
+     * @param <DTO>
+     * @param <Key>
+     * @return
+     */
+    public static <Entity, Mapper extends BaseMapper<Entity>, DTO, Key> Map<Key, DTO> executeQueryListMap(Mapper mapper,
+                                                                                                          Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
+                                                                                                          Function<? super Entity, ? extends DTO> mapping,
+                                                                                                          Function<? super DTO, ? extends Key> keyMapping) {
+        LambdaQueryWrapper<Entity> wrapper = Wrappers.<Entity>lambdaQuery();
+        lambdaQueryWrapperConsumer.accept(wrapper);
         return DataTool.toMap(executeQueryList(mapper, wrapper, mapping), keyMapping);
     }
 
@@ -109,13 +162,31 @@ public class MybatisPlusExecutor {
     /**
      * 查询单条数据
      * @param mapper
+     * @param lambdaQueryWrapperConsumer
+     * @param mapping
+     * @param <Entity>
+     * @param <Mapper>
+     * @param <DTO>
+     * @return
+     */
+    public static <Entity, Mapper extends BaseMapper<Entity>, DTO> DTO executeQueryOne(Mapper mapper,
+                                                                                       Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
+                                                                                       Function<? super Entity, ? extends DTO> mapping) {
+        LambdaQueryWrapper<Entity> wrapper = Wrappers.<Entity>lambdaQuery();
+        lambdaQueryWrapperConsumer.accept(wrapper);
+        return executeQueryOne(mapper, lambdaQueryWrapperConsumer, mapping);
+    }
+
+    /**
+     * 查询单条数据
+     * @param mapper
      * @param wrapper
      * @param <Entity>
      * @param <Mapper>
      * @return
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> Entity executeQueryOne(Mapper mapper,
-                                                                               Wrapper<Entity> wrapper) {
+                                                                                     Wrapper<Entity> wrapper) {
         Entity entity = mapper.selectOne(wrapper);
         if (isNull(entity)) {
             return null;
@@ -128,7 +199,7 @@ public class MybatisPlusExecutor {
      * 分页查询数据
      * @param mapper
      * @param queryParam
-     * @param consumer
+     * @param lambdaQueryWrapperConsumer
      * @param mapping
      * @param <Entity>
      * @param <DTO>
@@ -137,9 +208,9 @@ public class MybatisPlusExecutor {
      */
     public static <Entity, DTO, Mapper extends BaseMapper<Entity>> PageRespVO<DTO> executeQueryPage(Mapper mapper,
                                                                                         PageQueryInterface queryParam,
-                                                                                        Consumer<LambdaQueryWrapper<Entity>> consumer,
+                                                                                        Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
                                                                                         Function<Entity, DTO> mapping) {
-        IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, consumer);
+        IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, lambdaQueryWrapperConsumer);
         return PageRespVO.buildPageRespVO(pageResult, mapping);
     }
 
@@ -147,24 +218,50 @@ public class MybatisPlusExecutor {
      * 分页查询数据
      * @param mapper
      * @param queryParam
-     * @param consumer
+     * @param lambdaQueryWrapperConsumer
      * @param <Entity>
      * @param <Mapper>
      * @return
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> PageRespVO<Entity> executeQueryPage(Mapper mapper,
                                                                                                   PageQueryInterface queryParam,
-                                                                                                  Consumer<LambdaQueryWrapper<Entity>> consumer) {
-        IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, consumer);
+                                                                                                  Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer) {
+        IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, lambdaQueryWrapperConsumer);
         return PageRespVO.buildPageRespVO(pageResult);
     }
 
+    /**
+     * 分页查询数据
+     * @param mapper
+     * @param queryParam
+     * @param wrapper
+     * @param <Entity>
+     * @param <Mapper>
+     * @return
+     */
+    public static <Entity, Mapper extends BaseMapper<Entity>> PageRespVO<Entity> executeQueryPage(Mapper mapper,
+                                                                                                  PageQueryInterface queryParam,
+                                                                                                  Wrapper<Entity> wrapper) {
+        Page<Entity> page = new Page<>(queryParam.getPage(), queryParam.getLimit());
+        IPage<Entity> pageResult = mapper.selectPage(page, wrapper);
+        return PageRespVO.buildPageRespVO(pageResult);
+    }
+
+    /**
+     * 分页查询数据
+     * @param mapper
+     * @param queryParam
+     * @param lambdaQueryWrapperConsumer
+     * @param <Entity>
+     * @param <Mapper>
+     * @return
+     */
     private static <Entity, Mapper extends BaseMapper<Entity>> IPage<Entity> executeSelectPage(Mapper mapper,
                                                                                                PageQueryInterface queryParam,
-                                                                                               Consumer<LambdaQueryWrapper<Entity>> consumer) {
+                                                                                               Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer) {
         Page<Entity> page = new Page<>(queryParam.getPage(), queryParam.getLimit());
-        LambdaQueryWrapper<Entity> wrapper = Wrappers.lambdaQuery();
-        consumer.accept(wrapper);
+        LambdaQueryWrapper<Entity> wrapper = Wrappers.<Entity>lambdaQuery();
+        lambdaQueryWrapperConsumer.accept(wrapper);
         return mapper.selectPage(page, wrapper);
     }
 
@@ -194,8 +291,8 @@ public class MybatisPlusExecutor {
      * @return
      */
     public static <Mapper extends BaseMapper<Entity>, Entity, DTO> boolean batchInsert(ServiceImpl<Mapper, Entity> batchMapper,
-                                                                                    Function<List<DTO>, List<Entity>> mapping,
-                                                                                    List<DTO> dtoList) {
+                                                                                       Function<List<DTO>, List<Entity>> mapping,
+                                                                                       List<DTO> dtoList) {
         return batchMapper.saveBatch(mapping.apply(dtoList));
     }
 
