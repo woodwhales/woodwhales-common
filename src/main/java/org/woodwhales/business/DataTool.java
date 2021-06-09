@@ -411,6 +411,20 @@ public class DataTool {
     }
 
     /**
+     * 枚举转 list 集合
+     * 按照 function 将枚举转成 list 集合
+     * @param sourceEnumClass 数据源枚举 Class类
+     * @param function
+     * @param <T> 枚举类型
+     * @param <R> 结果集类型
+     * @return
+     */
+    public static <T extends Enum<T>, R> List<R> enumList(Class<T> sourceEnumClass, Function<T, R> function) {
+        EnumSet<T> enumSet = EnumSet.allOf(sourceEnumClass);
+        return enumSet.stream().map(function).collect(Collectors.toList());
+    }
+
+    /**
      * 判断 key 是否存在于枚举转 map 的集合中
      * @param key 要判断的 key
      * @param sourceEnumClass 数据源枚举 Class类
