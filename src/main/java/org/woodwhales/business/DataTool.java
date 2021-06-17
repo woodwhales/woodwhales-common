@@ -6,6 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -227,6 +228,121 @@ public class DataTool {
     }
 
     /**
+     * list 遍历并匹配 map 中的元素，根据 discard 决定元素未匹配到 map 是否丢弃
+     * @param source 源数据集合
+     * @param map mpa 集合
+     * @param keyFunction 生成 key 的接口
+     * @param mapContainKeyFunction 生成 list 的接口
+     * @param discard 决定元素未匹配到 map 是否丢弃：true 丢弃，false 不丢弃
+     * @param <S> 源数据集合元素类型
+     * @param <T> 目标数据集合元素类型
+     * @param <K> map 集合的 key 类型
+     * @param <V> map 集合的 value 类型
+     * @return
+     */
+    private static <S, T, K, V> List<T> toListWithMap(List<S> source, Map<K, V> map,
+                                                     Function<S, K> keyFunction,
+                                                     BiFunction<S, V, T> mapContainKeyFunction,
+                                                     boolean discard,
+                                                     Function<S, T> function) {
+        Preconditions.checkNotNull(keyFunction, "keyFunction不允许为空");
+        Preconditions.checkNotNull(mapContainKeyFunction, "mapContainKeyFunction不允许为空");
+        if(!discard) {
+            Preconditions.checkNotNull(function, "list元素不存在map集合中的处理接口function不允许为空");
+        }
+
+        if (isEmpty(source)) {
+            return Collections.emptyList();
+        }
+
+        if(MapUtils.isEmpty(map)) {
+            map = emptyMap();
+        }
+
+        List<T> result = new ArrayList<>();
+        for (S s : source) {
+            K key = keyFunction.apply(s);
+            if(map.containsKey(key)) {
+                V v = map.get(key);
+                T t = mapContainKeyFunction.apply(s, v);
+                result.add(t);
+            } else {
+                if(!discard) {
+                    T t = function.apply(s);
+                    result.add(t);
+                }
+            }
+        }
+        return result;
+
+    }
+
+    /**
+     * list 遍历并匹配 map 中的元素，没有匹配到则丢弃
+     * @param source 源数据集合
+     * @param map mpa 集合
+     * @param keyFunction 生成 key 的接口
+     * @param mapContainKeyFunction 生成 list 的接口
+     * @param <S> 源数据集合元素类型
+     * @param <T> 目标数据集合元素类型
+     * @param <K> map 集合的 key 类型
+     * @param <V> map 集合的 value 类型
+     * @return
+     */
+    public static <S, T, K, V> List<T> toListWithMap(List<S> source, Map<K, V> map,
+                                                     Function<S, K> keyFunction,
+                                                     BiFunction<S, V, T> mapContainKeyFunction) {
+        return toListWithMap(source, map, keyFunction, mapContainKeyFunction, true, null);
+    }
+
+    /**
+     * list 遍历并匹配 map 中的元素，没有匹配到不丢弃
+     * @param source 源数据集合
+     * @param map mpa 集合
+     * @param keyFunction 生成 key 的接口
+     * @param mapContainKeyFunction 生成 list 的接口
+     * @param function 生成 list 的接口
+     * @param <S> 源数据集合元素类型
+     * @param <T> 目标数据集合元素类型
+     * @param <K> map 集合的 key 类型
+     * @param <V> map 集合的 value 类型
+     * @return
+     */
+    public static <S, T, K, V> List<T> toListWithMap(List<S> source, Map<K, V> map,
+                                                     Function<S, K> keyFunction,
+                                                     BiFunction<S, V, T> mapContainKeyFunction,
+                                                     Function<S, T> function) {
+        Preconditions.checkNotNull(function, "function不允许为空");
+        return toListWithMap(source, map, keyFunction, mapContainKeyFunction, false, function);
+    }
+
+    /**
+     * 将原始的 list 按照 filter 过滤之后，按照 mapper 规则转成新的 list，如果
+     * @param source 源数据集合
+     * @param filter 源数据集合过滤规则
+     * @param mapper 生成新的 list 接口规则
+     * @param distinct 是否去重 distinct 为 true，表示过滤之后生成list之前进行去重操作
+     * @param <S> 源数据类型
+     * @param <T> 目标数据类型
+     * @return
+     */
+    public static <S, T> List<T> toList(List<S> source, Predicate<S> filter, Function<? super S, ? extends T> mapper, boolean distinct) {
+        if (isEmpty(source)) {
+            return Collections.emptyList();
+        }
+
+        Stream<? extends T> stream = source.stream()
+                                           .filter(filter::test)
+                                           .map(mapper);
+
+        if(distinct) {
+            stream = stream.distinct();
+        }
+
+        return stream.collect(Collectors.toList());
+    }
+
+    /**
      * 将原始的 list 按照 filter 过滤之后，按照 mapper 规则转成新的 list
      * @param source 源数据集合
      * @param filter 源数据集合过滤规则
@@ -236,14 +352,7 @@ public class DataTool {
      * @return
      */
     public static <S, T> List<T> toList(List<S> source, Predicate<S> filter, Function<? super S, ? extends T> mapper) {
-        if (isEmpty(source)) {
-            return Collections.emptyList();
-        }
-
-        return source.stream()
-                    .filter(filter::test)
-                    .map(mapper)
-                    .collect(Collectors.toList());
+        return toList(source, filter, mapper, false);
     }
 
     /**

@@ -2,6 +2,8 @@ package org.woodwhales.business;
 
 
 import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -32,6 +34,69 @@ class DataToolTest {
 
         DemoEnum demoEnum2 = DataTool.enumGetValue(4, DemoEnum.class, DemoEnum::getCode);
         assertNull(demoEnum2);
+    }
+
+    @Test
+    public void testToList() {
+        HashMap<Integer, MapDemo1> map = new HashMap<>();
+        map.put(1, new MapDemo1(1, new MapDemo2(1, "map1")));
+        map.put(2, new MapDemo1(2, new MapDemo2(2, "map2")));
+        map.put(3, new MapDemo1(3, new MapDemo2(3, "map3")));
+
+        List<ListDemo3> list = new ArrayList<>();
+        list.add(new ListDemo3(1, "A1"));
+        list.add(new ListDemo3(2, "A2"));
+        list.add(new ListDemo3(3, "A3"));
+        list.add(new ListDemo3(4, "A4"));
+
+        List<ListResult> listResults = DataTool.toListWithMap(list, map, ListDemo3::getKey, (listDemo3, mapDemo1) -> {
+            Integer key = listDemo3.getKey();
+            MapDemo2 mapDemo2 = mapDemo1.getMapDemo2();
+            return new ListResult(key, mapDemo2);
+        });
+
+        listResults.forEach(System.out::println);
+
+        System.out.println("=========");
+
+        List<ListResult> listResults2 = DataTool.toListWithMap(list, map, ListDemo3::getKey, (listDemo3, mapDemo1) -> {
+            Integer key = listDemo3.getKey();
+            MapDemo2 mapDemo2 = mapDemo1.getMapDemo2();
+            return new ListResult(key, mapDemo2);
+        }, listDemo3 -> {
+            Integer key = listDemo3.getKey();
+            return new ListResult(key, null);
+        });
+
+        listResults2.forEach(System.out::println);
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class ListResult {
+        private Integer listDemo3Key;
+        private MapDemo2 mapDemo2;
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class MapDemo1 {
+        private Integer key;
+        private MapDemo2 mapDemo2;
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class MapDemo2 {
+        private Integer key;
+        private String value;
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class ListDemo3 {
+        private Integer key;
+        private String value;
     }
 
     enum DemoEnum {
