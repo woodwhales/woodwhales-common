@@ -51,8 +51,8 @@ public class DataSourceTool {
         this.password = password;
 
         try {
-            Class.forName(driverClass);
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Class.forName(this.driverClass);
+            Connection connection = DriverManager.getConnection(this.url, this.username, this.password);
             this.connection = connection;
         } catch (Exception e) {
             Throwable cause = e.getCause();
