@@ -5,8 +5,8 @@
 
     <groupId>org.woodwhales.common</groupId>
     <artifactId>woodwhales-common</artifactId>
-    <version>2.8.0</version>
-    <name>common</name>
+    <version>2.9.0</version>
+    <name>woodwhales-common</name>
     <description>woodwhales-common, see to https://github.com/woodwhales/woodwhales-common</description>
 
     <properties>
@@ -27,6 +27,8 @@
         <persistence-api.verison>1.0</persistence-api.verison>
         <jackson.version>2.12.0</jackson.version>
         <mybatis-plus-annotation.version>3.4.3</mybatis-plus-annotation.version>
+        <ojdbc6.version>12.1.0.1-atlassian-hosted</ojdbc6.version>
+        <mysql.version>5.1.27</mysql.version>
 
         <java.version>1.8</java.version>
         <!-- 文件拷贝时的编码 -->
@@ -51,7 +53,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>${apache-commons-collections4.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -75,31 +76,26 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
-            <scope>provided</scope>
         </dependency>
 		<dependency>
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
             <version>${icu4j.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -150,11 +146,16 @@
             <version>${mybatis-plus-annotation.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>${ojdbc6.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.27</version>
+            <version>${mysql.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -164,7 +165,7 @@
         <repository>
             <id>central</id>
             <name>aliyun maven</name>
-            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <url>https://maven.aliyun.com/repository/public</url>
             <layout>default</layout>
             <!-- 是否开启发布版构件下载 -->
             <releases>
@@ -209,7 +210,7 @@
                     <!-- 生成git属性文件, 默认false -->
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
                     <dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
-                    <format>json</format>
+                    <!--<format>json</format>-->
                 </configuration>
             </plugin>
             <plugin>

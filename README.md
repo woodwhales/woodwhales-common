@@ -2,27 +2,30 @@
 
 ## 常用小工具
 
-org.woodwhales.business.DataTool
+org.woodwhales.common.business.DataTool
 
 > 旧集合转新集合操作
 
-org.woodwhales.business.collection.CollectionMath
+org.woodwhales.common.business.collection.CollectionMath
 
 > 集合元素交集、并集操作
 
-org.woodwhales.business.DeduplicateResult
+org.woodwhales.common.business.DataTool#deduplicate
 
 > 集合元素去重器
 
-org.woodwhales.business.chinese.ChineseDataTool
+org.woodwhales.common.business.chinese.ChineseDataTool
 
 > 中文字段排序操作
 
-org.woodwhales.mybatisplus.MybatisPlusExecutor
+org.woodwhales.common.mybatisplus.MybatisPlusExecutor
 
 > mybatisPlus sql 执行器
 
-org.woodwhales.util.ExcelTool
+org.woodwhales.common.util.ExcelTool
 
 > excel 文件读取操作
 
+org.woodwhales.common.util.datasource.DataSourceTool
+
+>   数据库执行器
