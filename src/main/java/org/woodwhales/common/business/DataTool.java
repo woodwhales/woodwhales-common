@@ -207,6 +207,18 @@ public class DataTool {
     }
 
     /**
+     * 将原始的 array 按照 mapper 规则转成新的 list
+     * @param array 源数据数组
+     * @param mapper 生成新的 list 接口规则
+     * @param <S> 源数据类型
+     * @param <T> 目标数据类型
+     * @return
+     */
+    public static <S, T> List<T> toList(S[] array, Function<? super S, ? extends T> mapper) {
+        return toList(Arrays.asList(array), mapper);
+    }
+
+    /**
      * 将原始的 list 按照 mapper 规则转成新的 list
      * @param source 源数据集合
      * @param mapper 生成新的 list 接口规则

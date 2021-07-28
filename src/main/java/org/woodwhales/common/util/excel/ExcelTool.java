@@ -1,19 +1,19 @@
-package org.woodwhales.common.util;
+package org.woodwhales.common.util.excel;
 
 import cn.hutool.core.date.DatePattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.woodwhales.common.business.DataTool;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import static java.util.Objects.isNull;
@@ -49,7 +49,37 @@ public class ExcelTool {
      * @return
      */
     public static <T> List<T> parseData(InputStream inputStream, BiFunction<Integer, Row, T> function) {
-        return parseData(buildWorkbook(inputStream), 0, 1, function);
+        return parseData(buildWorkbook(inputStream), 0, 1, function, null);
+    }
+
+    public static <T> List<T> parseDate(InputStream inputStream, Class<T> clazz) {
+        Field[] declaredFields = clazz.getDeclaredFields();
+        Map<String, ExcelFieldConfig> excelFieldConfigMap =
+            DataTool.toMapForSaveNew(DataTool.toList(declaredFields, ExcelFieldConfig::new), ExcelFieldConfig::getExcelFieldName);
+
+        return parseData(buildWorkbook(inputStream), 0, 1, (index, row) -> {
+            int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+            T target = null;
+            try {
+                target = clazz.newInstance();
+                for (int cellIndex = 0; cellIndex < physicalNumberOfCells; cellIndex++) {
+                    Cell cell = row.getCell(cellIndex);
+                    // TODO
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return target;
+        }, (cellIndex, row) -> {
+            Cell cell = row.getCell(cellIndex);
+            if(Objects.nonNull(cell)) {
+                String cellName = cell.getStringCellValue();
+                if (excelFieldConfigMap.containsKey(cellName)) {
+                    excelFieldConfigMap.get(cellName).cellIndex = cellIndex;
+                }
+            }
+        });
     }
 
     /**
@@ -70,14 +100,15 @@ public class ExcelTool {
         }
 
         Workbook workbook = buildWorkbook(file);
-        return parseData(workbook, sheetIndex, skipLineNumbers, function);
+        return parseData(workbook, sheetIndex, skipLineNumbers, function, null);
 
     }
 
     private static <T> List<T> parseData(Workbook workbook,
-                                        int sheetIndex,
-                                        int skipLineNumbers,
-                                        BiFunction<Integer, Row, T> function) {
+                                         int sheetIndex,
+                                         int skipLineNumbers,
+                                         BiFunction<Integer, Row, T> function,
+                                         BiConsumer<Integer, Row> skipConsumer) {
         Objects.requireNonNull(function, "function不允许为空");
 
         if(isNull(sheetIndex)) {
@@ -105,6 +136,9 @@ public class ExcelTool {
 
             // 跳过行数
             if (row.getRowNum() < skipLineNumbers) {
+                if(Objects.nonNull(skipConsumer)) {
+                    skipConsumer.accept(rowIndex, row);
+                }
                 rowIndex++;
                 continue;
             }
@@ -196,5 +230,41 @@ public class ExcelTool {
     }
 
     private ExcelTool() {
+    }
+
+    private static class ExcelFieldConfig {
+        ExcelFieldType excelFieldType;
+        Field field;
+        ExcelField excelField;
+        ExcelDateField excelDateField;
+        Integer cellIndex;
+
+        private ExcelFieldConfig() {}
+
+        ExcelFieldConfig(Field field) {
+            this.field = field;
+
+            ExcelField excelField = field.getAnnotation(ExcelField.class);
+            if(Objects.nonNull(excelField)) {
+                this.excelFieldType = ExcelFieldType.NORMAL;
+                this.excelField = excelField;
+            }
+
+            ExcelDateField excelDateField = field.getAnnotation(ExcelDateField.class);
+            if(Objects.nonNull(excelDateField)) {
+                this.excelFieldType = ExcelFieldType.DATE;
+                this.excelDateField = excelDateField;
+            }
+        }
+
+        public String getExcelFieldName() {
+            if(ExcelFieldType.DATE.equals(this.excelFieldType)) {
+                return this.excelDateField.value();
+            }
+            if(ExcelFieldType.NORMAL.equals(this.excelFieldType)) {
+                return this.excelField.value();
+            }
+            return null;
+        }
     }
 }
