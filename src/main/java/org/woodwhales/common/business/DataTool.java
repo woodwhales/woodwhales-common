@@ -68,7 +68,7 @@ public class DataTool {
      * @param <T> map 集合中的 value 类型
      * @return
      */
-    public static <K, S, T> Map<K,T> toMap(List<S> source,
+    public static <K, S, T> Map<K,T> toMap(Collection<S> source,
                                            Function<? super S, ? extends K> keyMapper,
                                            Function<? super S, ? extends T> valueMapper,
                                            BinaryOperator<T> mergeFunction) {
@@ -172,7 +172,7 @@ public class DataTool {
      * @param <S> 数据源集合中元素的类型
      * @return
      */
-    public static <K, S> Map<K, S> toMapForSaveNew(List<S> source,
+    public static <K, S> Map<K, S> toMapForSaveNew(Collection<S> source,
                                                    Function<? super S, ? extends K> keyMapper) {
         return toMap(source, keyMapper, identity(), (o1, o2) -> o2);
     }

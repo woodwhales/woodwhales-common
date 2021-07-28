@@ -17,6 +17,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import static java.util.Objects.isNull;
+import static org.woodwhales.common.business.DataTool.toMapForSaveNew;
 
 /**
  * @author woodwhales on 2021-01-29 15:32
@@ -55,8 +56,10 @@ public class ExcelTool {
     public static <T> List<T> parseDate(InputStream inputStream, Class<T> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
         Map<String, ExcelFieldConfig> excelFieldConfigMap =
-            DataTool.toMapForSaveNew(DataTool.toList(declaredFields, ExcelFieldConfig::new), ExcelFieldConfig::getExcelFieldName);
+            toMapForSaveNew(DataTool.toList(declaredFields, ExcelFieldConfig::new), ExcelFieldConfig::getExcelFieldName);
 
+        Map<Integer, ExcelFieldConfig> excelFieldConfigMap2 =
+                toMapForSaveNew(excelFieldConfigMap.values(), ExcelFieldConfig::getCellIndex);
         return parseData(buildWorkbook(inputStream), 0, 1, (index, row) -> {
             int physicalNumberOfCells = row.getPhysicalNumberOfCells();
             T target = null;
@@ -64,7 +67,8 @@ public class ExcelTool {
                 target = clazz.newInstance();
                 for (int cellIndex = 0; cellIndex < physicalNumberOfCells; cellIndex++) {
                     Cell cell = row.getCell(cellIndex);
-                    // TODO
+                    ExcelFieldConfig excelFieldConfig = excelFieldConfigMap2.get(cellIndex);
+                    fillFieldValue(target, row, cell, excelFieldConfig);
                 }
 
             } catch (Exception e) {
@@ -80,6 +84,23 @@ public class ExcelTool {
                 }
             }
         });
+    }
+
+    private static <T> void fillFieldValue(T target, Row row, Cell cell, ExcelFieldConfig excelFieldConfig) throws IllegalAccessException {
+        if(isNull(cell) || isNull(excelFieldConfig) || isNull(excelFieldConfig.excelField)) {
+            return;
+        }
+
+        if(ExcelFieldType.NORMAL.equals(excelFieldConfig.excelFieldType)) {
+            if(String.class.getName().equals(excelFieldConfig.excelField.type().getName())) {
+                excelFieldConfig.field.set(target, cell.getStringCellValue());
+            }
+        }
+
+        if(ExcelFieldType.DATE.equals(excelFieldConfig.excelFieldType)) {
+            excelFieldConfig.field.set(target, DateFormatUtils.format(getDateValue(row, excelFieldConfig.cellIndex),
+                    excelFieldConfig.excelDateField.pattern()));               ;
+        }
     }
 
     /**
@@ -233,11 +254,11 @@ public class ExcelTool {
     }
 
     private static class ExcelFieldConfig {
-        ExcelFieldType excelFieldType;
-        Field field;
-        ExcelField excelField;
-        ExcelDateField excelDateField;
-        Integer cellIndex;
+        public ExcelFieldType excelFieldType;
+        public Field field;
+        public ExcelField excelField;
+        public ExcelDateField excelDateField;
+        public Integer cellIndex;
 
         private ExcelFieldConfig() {}
 
@@ -265,6 +286,10 @@ public class ExcelTool {
                 return this.excelField.value();
             }
             return null;
+        }
+
+        public Integer getCellIndex() {
+            return this.cellIndex;
         }
     }
 }
