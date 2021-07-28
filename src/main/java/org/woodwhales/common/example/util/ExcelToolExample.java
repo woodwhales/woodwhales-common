@@ -1,6 +1,6 @@
 package org.woodwhales.common.example.util;
 
-import org.woodwhales.common.util.ExcelTool;
+import org.woodwhales.common.util.excel.ExcelTool;
 
 import java.io.InputStream;
 
