@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
@@ -53,13 +54,13 @@ public class ExcelTool {
         return parseData(buildWorkbook(inputStream), 0, 1, function, null);
     }
 
-    public static <T> List<T> parseDate(InputStream inputStream, Class<T> clazz) {
+    public static <T> List<T> parseData(InputStream inputStream, Class<T> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
         Map<String, ExcelFieldConfig> excelFieldConfigMap =
             toMapForSaveNew(DataTool.toList(declaredFields, ExcelFieldConfig::new), ExcelFieldConfig::getExcelFieldName);
 
-        Map<Integer, ExcelFieldConfig> excelFieldConfigMap2 =
-                toMapForSaveNew(excelFieldConfigMap.values(), ExcelFieldConfig::getCellIndex);
+        AtomicReference<Map<Integer, ExcelFieldConfig>> excelFieldConfigMap2 = new AtomicReference<>();
+
         return parseData(buildWorkbook(inputStream), 0, 1, (index, row) -> {
             int physicalNumberOfCells = row.getPhysicalNumberOfCells();
             T target = null;
@@ -67,7 +68,8 @@ public class ExcelTool {
                 target = clazz.newInstance();
                 for (int cellIndex = 0; cellIndex < physicalNumberOfCells; cellIndex++) {
                     Cell cell = row.getCell(cellIndex);
-                    ExcelFieldConfig excelFieldConfig = excelFieldConfigMap2.get(cellIndex);
+                    ExcelFieldConfig excelFieldConfig = excelFieldConfigMap2.get()
+                                                                            .get(cellIndex);
                     fillFieldValue(target, row, cell, excelFieldConfig);
                 }
 
@@ -82,25 +84,20 @@ public class ExcelTool {
                 if (excelFieldConfigMap.containsKey(cellName)) {
                     excelFieldConfigMap.get(cellName).cellIndex = cellIndex;
                 }
+
+                if(cellIndex.equals(row.getPhysicalNumberOfCells() - 1)) {
+                    excelFieldConfigMap2.set(toMapForSaveNew(excelFieldConfigMap.values(), ExcelFieldConfig::getCellIndex));
+                }
             }
         });
     }
 
     private static <T> void fillFieldValue(T target, Row row, Cell cell, ExcelFieldConfig excelFieldConfig) throws IllegalAccessException {
-        if(isNull(cell) || isNull(excelFieldConfig) || isNull(excelFieldConfig.excelField)) {
+        if(isNull(cell) || isNull(excelFieldConfig)) {
             return;
         }
 
-        if(ExcelFieldType.NORMAL.equals(excelFieldConfig.excelFieldType)) {
-            if(String.class.getName().equals(excelFieldConfig.excelField.type().getName())) {
-                excelFieldConfig.field.set(target, cell.getStringCellValue());
-            }
-        }
-
-        if(ExcelFieldType.DATE.equals(excelFieldConfig.excelFieldType)) {
-            excelFieldConfig.field.set(target, DateFormatUtils.format(getDateValue(row, excelFieldConfig.cellIndex),
-                    excelFieldConfig.excelDateField.pattern()));               ;
-        }
+        excelFieldConfig.fillField(target, row, cell);
     }
 
     /**
@@ -158,7 +155,10 @@ public class ExcelTool {
             // 跳过行数
             if (row.getRowNum() < skipLineNumbers) {
                 if(Objects.nonNull(skipConsumer)) {
-                    skipConsumer.accept(rowIndex, row);
+                    int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+                    for (int cellIndex = 0; cellIndex < physicalNumberOfCells; cellIndex++) {
+                        skipConsumer.accept(cellIndex, row);
+                    }
                 }
                 rowIndex++;
                 continue;
@@ -185,21 +185,51 @@ public class ExcelTool {
         return cell.getStringCellValue();
     }
 
+    public static Double getDoubleValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        if(isNull(cell)) {
+            return null;
+        }
+
+        if(Objects.equals(CellType.NUMERIC, cell.getCellTypeEnum())) {
+            Double numericCellValue = cell.getNumericCellValue();
+            if(isNull(numericCellValue)) {
+                return null;
+            }
+            return cell.getNumericCellValue();
+        } else if(Objects.equals(CellType.STRING, cell.getCellTypeEnum())) {
+            String stringCellValue = cell.getStringCellValue();
+            if(StringUtils.isBlank(stringCellValue)) {
+                return null;
+            }
+            return Double.parseDouble(stringCellValue);
+        }
+
+        throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
+
+    }
+
     public static Integer getIntegerValue(Row row, int cellIndex) {
         Cell cell = row.getCell(cellIndex);
         if(isNull(cell)) {
             return null;
         }
 
-        if(!Objects.equals(CellType.NUMERIC, cell.getCellTypeEnum())) {
-            throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
+        if(Objects.equals(CellType.NUMERIC, cell.getCellTypeEnum())) {
+            Double numericCellValue = cell.getNumericCellValue();
+            if(isNull(numericCellValue)) {
+                return null;
+            }
+            return numericCellValue.intValue();
+        } else if(Objects.equals(CellType.STRING, cell.getCellTypeEnum())) {
+            String stringCellValue = cell.getStringCellValue();
+            if(StringUtils.isBlank(stringCellValue)) {
+                return null;
+            }
+            return Integer.parseInt(stringCellValue);
         }
 
-        Double numericCellValue = cell.getNumericCellValue();
-        if(isNull(numericCellValue)) {
-            return null;
-        }
-        return numericCellValue.intValue();
+        throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
     }
 
     public static Date getDateValue(Row row, int cellIndex) {
@@ -290,6 +320,31 @@ public class ExcelTool {
 
         public Integer getCellIndex() {
             return this.cellIndex;
+        }
+
+        public void fillField(Object target, Row row, Cell cell) throws IllegalAccessException {
+            boolean accessible = this.field.isAccessible();
+            this.field.setAccessible(true);
+            if(ExcelFieldType.NORMAL.equals(this.excelFieldType)) {
+                String typeName = this.excelField.type()
+                                             .getName();
+                if(String.class.getName().equals(typeName)) {
+                    this.field.set(target, cell.getStringCellValue());
+                }
+
+                if(Integer.class.getName().equals(typeName)) {
+                    this.field.set(target, getIntegerValue(row, this.cellIndex));
+                }
+
+                if(Double.class.getName().equals(typeName)) {
+                    this.field.set(target, getDoubleValue(row, this.cellIndex));
+                }
+            }
+
+            if(ExcelFieldType.DATE.equals(this.excelFieldType)) {
+                this.field.set(target, DateFormatUtils.format(getDateValue(row, this.cellIndex), this.excelDateField.pattern()));               ;
+            }
+            this.field.setAccessible(accessible);
         }
     }
 }
