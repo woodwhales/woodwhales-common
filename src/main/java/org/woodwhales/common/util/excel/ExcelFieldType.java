@@ -14,6 +14,11 @@ public enum ExcelFieldType {
     /**
      * 日期格式
      */
-    DATE
+    DATE_STR,
+
+    /**
+     * 适用数据对象属性
+     */
+    DEFAULT,
     ;
 }

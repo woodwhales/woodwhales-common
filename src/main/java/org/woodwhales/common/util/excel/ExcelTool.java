@@ -64,16 +64,17 @@ public class ExcelTool {
         return parseData(buildWorkbook(inputStream), 0, 1, (index, row) -> {
             int physicalNumberOfCells = row.getPhysicalNumberOfCells();
             T target = null;
+            Cell cell = null;
             try {
                 target = clazz.newInstance();
                 for (int cellIndex = 0; cellIndex < physicalNumberOfCells; cellIndex++) {
-                    Cell cell = row.getCell(cellIndex);
+                    cell = row.getCell(cellIndex);
                     ExcelFieldConfig excelFieldConfig = excelFieldConfigMap2.get()
                                                                             .get(cellIndex);
                     fillFieldValue(target, row, cell, excelFieldConfig);
                 }
-
             } catch (Exception e) {
+                System.out.println("cell value = " + cell);
                 e.printStackTrace();
             }
             return target;
@@ -185,6 +186,29 @@ public class ExcelTool {
         return cell.getStringCellValue();
     }
 
+    public static Byte getByteValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        if(isNull(cell)) {
+            return null;
+        }
+
+        if(Objects.equals(CellType.NUMERIC, cell.getCellTypeEnum())) {
+            Double numericCellValue = cell.getNumericCellValue();
+            if(isNull(numericCellValue)) {
+                return null;
+            }
+            return numericCellValue.byteValue();
+        } else if(Objects.equals(CellType.STRING, cell.getCellTypeEnum())) {
+            String stringCellValue = cell.getStringCellValue();
+            if(StringUtils.isBlank(stringCellValue)) {
+                return null;
+            }
+            return Byte.parseByte(stringCellValue);
+        }
+
+        throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
+    }
+
     public static Double getDoubleValue(Row row, int cellIndex) {
         Cell cell = row.getCell(cellIndex);
         if(isNull(cell)) {
@@ -286,9 +310,11 @@ public class ExcelTool {
     private static class ExcelFieldConfig {
         public ExcelFieldType excelFieldType;
         public Field field;
-        public ExcelField excelField;
-        public ExcelDateField excelDateField;
+
         public Integer cellIndex;
+        public Class<?> clazz;
+        public String excelFieldName;
+        public String pattern;
 
         private ExcelFieldConfig() {}
 
@@ -298,24 +324,28 @@ public class ExcelTool {
             ExcelField excelField = field.getAnnotation(ExcelField.class);
             if(Objects.nonNull(excelField)) {
                 this.excelFieldType = ExcelFieldType.NORMAL;
-                this.excelField = excelField;
+                this.clazz = excelField.type();
+                this.excelFieldName = excelField.value();
             }
 
             ExcelDateField excelDateField = field.getAnnotation(ExcelDateField.class);
             if(Objects.nonNull(excelDateField)) {
-                this.excelFieldType = ExcelFieldType.DATE;
-                this.excelDateField = excelDateField;
+                this.excelFieldType = ExcelFieldType.DATE_STR;
+                this.clazz = String.class;
+                this.excelFieldName = excelDateField.value();
+                this.pattern = excelDateField.pattern();
             }
+
+            if(isNull(excelField) && isNull(excelDateField)) {
+                this.excelFieldType = ExcelFieldType.DEFAULT;
+                this.clazz = field.getType();
+                this.excelFieldName = field.getName();
+            }
+
         }
 
         public String getExcelFieldName() {
-            if(ExcelFieldType.DATE.equals(this.excelFieldType)) {
-                return this.excelDateField.value();
-            }
-            if(ExcelFieldType.NORMAL.equals(this.excelFieldType)) {
-                return this.excelField.value();
-            }
-            return null;
+            return this.excelFieldName;
         }
 
         public Integer getCellIndex() {
@@ -325,25 +355,23 @@ public class ExcelTool {
         public void fillField(Object target, Row row, Cell cell) throws IllegalAccessException {
             boolean accessible = this.field.isAccessible();
             this.field.setAccessible(true);
-            if(ExcelFieldType.NORMAL.equals(this.excelFieldType)) {
-                String typeName = this.excelField.type()
-                                             .getName();
-                if(String.class.getName().equals(typeName)) {
+            String typeName = this.clazz.getName();
+            if(String.class.getName().equals(typeName)) {
+                if(ExcelFieldType.DATE_STR.equals(this.excelFieldType)) {
+                    this.field.set(target, DateFormatUtils.format(getDateValue(row, this.cellIndex), this.pattern));
+                } else {
                     this.field.set(target, cell.getStringCellValue());
                 }
-
-                if(Integer.class.getName().equals(typeName)) {
-                    this.field.set(target, getIntegerValue(row, this.cellIndex));
-                }
-
-                if(Double.class.getName().equals(typeName)) {
-                    this.field.set(target, getDoubleValue(row, this.cellIndex));
-                }
+            } else if(Integer.class.getName().equals(typeName)) {
+                this.field.set(target, getIntegerValue(row, this.cellIndex));
+            } else if(Double.class.getName().equals(typeName)) {
+                this.field.set(target, getDoubleValue(row, this.cellIndex));
+            } else if(Date.class.getName().equals(typeName)) {
+                this.field.set(target, getDateValue(row, this.cellIndex));
+            } else if (Byte.class.getName().equals(typeName)) {
+                this.field.set(target, getByteValue(row, this.cellIndex));
             }
 
-            if(ExcelFieldType.DATE.equals(this.excelFieldType)) {
-                this.field.set(target, DateFormatUtils.format(getDateValue(row, this.cellIndex), this.excelDateField.pattern()));               ;
-            }
             this.field.setAccessible(accessible);
         }
     }

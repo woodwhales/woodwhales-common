@@ -51,6 +51,8 @@ class ExcelToolTest {
         @ExcelDateField(value = "创建时间")
         private String createTime;
 
+        private String memo;
+
     }
 
 }
