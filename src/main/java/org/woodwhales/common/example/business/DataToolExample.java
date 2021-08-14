@@ -2,7 +2,6 @@ package org.woodwhales.common.example.business;
 
 import com.google.gson.Gson;
 import org.woodwhales.common.business.DataTool;
-import org.woodwhales.common.business.DeduplicateInterface;
 import org.woodwhales.common.business.DeduplicateResult;
 import org.woodwhales.common.example.model.business.*;
 
@@ -16,16 +15,16 @@ public class DataToolExample {
 
     public static void main(String[] args) {
         deduplicate();
-        enumMap1();
-        enumMap2();
-        getDataFromList();
-        groupingBy();
-        handleMap();
-        testMapToList();
-        testToList();
-        toList();
-        toMap1();
-        toMap2();
+//        enumMap1();
+//        enumMap2();
+//        getDataFromList();
+//        groupingBy();
+//        handleMap();
+//        testMapToList();
+//        testToList();
+//        toList();
+//        toMap1();
+//        toMap2();
     }
 
     public static void enumMap1() {
@@ -148,41 +147,64 @@ public class DataToolExample {
 
     public static void deduplicate() {
         List<DataToolTempData> list = new ArrayList<>();
-        list.add(new DataToolTempData(1, "张三", "描述-张三"));
-        list.add(new DataToolTempData(2, "李四", "描述-李四"));
-        DataToolTempData demoData3 = new DataToolTempData(3, "王五", "描述-王五");
-        list.add(demoData3);
-        DataToolTempData demoData4 = new DataToolTempData(null, "赵六", "描述-赵六");
-        list.add(demoData4);
-        list.add(new DataToolTempData(3, "朱七", "描述-朱七"));
-        list.add(new DataToolTempData(4, "宋八", "描述-宋八"));
+        DataToolTempData data1 = new DataToolTempData(1, "张三", "描述-张三");
+        DataToolTempData data2 = new DataToolTempData(2, "李四", "描述-李四");
+        DataToolTempData data3 = new DataToolTempData(3, "王五", "描述-王五");
+        DataToolTempData data4 = new DataToolTempData(null, "赵六", "描述-赵六");
+        DataToolTempData data5 = new DataToolTempData(3, "朱七", "描述-朱七");
+        DataToolTempData data6 = new DataToolTempData(4, "宋八", "描述-宋八");
 
-        DeduplicateResult<DataToolTempData> deduplicateResult = DataTool.deduplicate(list, new DeduplicateInterface<Integer, DataToolTempData>() {
-            @Override
-            public boolean isValid(DataToolTempData data) {
-                return Objects.nonNull(data.getId());
-            }
+        list.add(data1);
+        list.add(data2);
+        list.add(data3);
+        list.add(data4);
+        list.add(data5);
+        list.add(data6);
 
-            @Override
-            public Integer getDeduplicatedKey(DataToolTempData data) {
-                return data.getId();
-            }
-        });
+        DeduplicateResult<Integer, DataToolTempData> deduplicateResult1 = DataTool.deduplicate(list,
+                data -> Objects.nonNull(data.getId()),
+                DataToolTempData::getId, true);
 
-        List<DataToolTempData> deduplicatedList = deduplicateResult.getDeduplicatedList();
-        List<DataToolTempData> repetitiveList = deduplicateResult.getRepetitiveList();
-        List<DataToolTempData> invalidList = deduplicateResult.getInvalidList();
+        List<DataToolTempData> deduplicatedList = deduplicateResult1.getDeduplicatedList();
+        List<DataToolTempData> repetitiveList = deduplicateResult1.getRepetitiveList();
+        List<DataToolTempData> invalidList = deduplicateResult1.getInvalidList();
+        List<Integer> deduplicatedKeyList = deduplicateResult1.getDeduplicatedKeyList();
+
+        System.out.println("deduplicatedList");
+        deduplicatedList.stream().forEach(System.out::println);
+
+        System.out.println("repetitiveList");
+        repetitiveList.stream().forEach(System.out::println);
+
+        System.out.println("invalidList");
+        invalidList.stream().forEach(System.out::println);
+
+        System.out.println("deduplicatedKeyList");
+        System.out.println(deduplicatedKeyList);
 
         // 无效数据
         assertEquals(1, invalidList.size());
-        assertEquals(demoData4, invalidList.get(0));
+        assertEquals(data4, invalidList.get(0));
 
         // 已去重数据
         assertEquals(4, deduplicatedList.size());
 
         // 重复数据
         assertEquals(1, repetitiveList.size());
-        assertEquals(demoData3, repetitiveList.get(0));
+        assertEquals(data5, repetitiveList.get(0));
+
+        DeduplicateResult<Integer, DataToolTempData> deduplicateResult2 = DataTool.deduplicate(list,
+                data -> Objects.nonNull(data.getId()),
+                DataToolTempData::getId, false);
+        List<DataToolTempData> deduplicatedList2 = deduplicateResult2.getDeduplicatedList();
+        List<DataToolTempData> repetitiveList2 = deduplicateResult2.getRepetitiveList();
+        // 重复数据
+        assertEquals(4, deduplicatedList2.size());
+        assertEquals(data3, repetitiveList2.get(0));
+
+        DeduplicateResult<Integer, DataToolTempData> deduplicateResult3 = DataTool.deduplicate(list, DataToolTempData::getId);
+        List<DataToolTempData> deduplicatedList1 = deduplicateResult3.getDeduplicatedList();
+        assertEquals(5, deduplicatedList1.size());
     }
 
     public static void getDataFromList() {
@@ -239,7 +261,10 @@ public class DataToolExample {
     }
 
     private static void assertEquals(Object expected, Object actual) {
-        objectsAreEqual(expected, actual);
+        boolean b = objectsAreEqual(expected, actual);
+        if(!b) {
+            throw new RuntimeException("\nexpected = " + expected + ", actual = " + actual);
+        }
     }
 
     private static boolean objectsAreEqual(Object obj1, Object obj2) {

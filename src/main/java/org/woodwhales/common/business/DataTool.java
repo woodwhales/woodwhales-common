@@ -467,18 +467,68 @@ public class DataTool {
     }
 
     /**
-     * 对集合数据进行去重器
+     * 对集合数据进行去重器, 默认保留最后出现的重复元素
      * 非线程安全
      * @param source 数据源集合
-     * @param deduplicateInterface 去重器接口
+     * @param isValidFunction 数据是否有效
+     * @param getDeduplicatedKeyFunction 获取去重的数据值
      * @param <K> 去重属性的类型
      * @param <T> 数据源集合中元素的类型
      * @return
      */
-    public static <K, T> DeduplicateResult<T> deduplicate(List<T> source,
-                                                          DeduplicateInterface<K, T> deduplicateInterface) {
+    public static <K, T> DeduplicateResult<K, T> deduplicate(List<T> source,
+                                                             Function<T, Boolean> isValidFunction,
+                                                             Function<T, K> getDeduplicatedKeyFunction) {
+        return deduplicate(source, isValidFunction, getDeduplicatedKeyFunction, false);
+    }
+
+    /**
+     * 对集合数据进行去重器, 默认保留最后出现的重复元素
+     * 非线程安全
+     * @param source 数据源集合
+     * @param getDeduplicatedKeyFunction 获取去重的数据值
+     * @param <K> 去重属性的类型
+     * @param <T> 数据源集合中元素的类型
+     * @return
+     */
+    public static <K, T> DeduplicateResult<K, T> deduplicate(List<T> source,
+                                                             Function<T, K> getDeduplicatedKeyFunction) {
+        return deduplicate(source, null, getDeduplicatedKeyFunction, false);
+    }
+
+    /**
+     * 对集合数据进行去重器
+     * 非线程安全
+     * @param source 数据源集合
+     * @param getDeduplicatedKeyFunction 获取去重的数据值
+     * @param remainFirst 是否保留第一次出现的重复值
+     * @param <K> 去重属性的类型
+     * @param <T> 数据源集合中元素的类型
+     * @return
+     */
+    public static <K, T> DeduplicateResult<K, T> deduplicate(List<T> source,
+                                                             Function<T, K> getDeduplicatedKeyFunction,
+                                                             boolean remainFirst) {
+        return deduplicate(source, null, getDeduplicatedKeyFunction, remainFirst);
+    }
+
+    /**
+     * 对集合数据进行去重器
+     * 非线程安全
+     * @param source 数据源集合
+     * @param isValidFunction 数据是否有效
+     * @param getDeduplicatedKeyFunction 获取去重的数据值
+     * @param remainFirst 是否保留第一次出现的重复值
+     * @param <K> 去重属性的类型
+     * @param <T> 数据源集合中元素的类型
+     * @return
+     */
+    public static <K, T> DeduplicateResult<K, T> deduplicate(List<T> source,
+                                                          Function<T, Boolean> isValidFunction,
+                                                          Function<T, K> getDeduplicatedKeyFunction,
+                                                          boolean remainFirst) {
         if(isEmpty(source)) {
-            return new DeduplicateResult<T>(source, emptyList(), emptyList(), emptyList());
+            return new DeduplicateResult<K, T>(source, emptyList(), emptyList(), emptyList(), emptyList());
         }
 
         Map<K, T> container =  new LinkedHashMap<>();
@@ -488,21 +538,32 @@ public class DataTool {
         List<T> repetitiveList = new LinkedList<>();
 
         for (T data : source) {
-            if (!deduplicateInterface.isValid(data)) {
+            if (Objects.nonNull(isValidFunction) && !Objects.equals(true, isValidFunction.apply(data))) {
                 invalidList.add(data);
             } else {
-                K deduplicatedKey = deduplicateInterface.getDeduplicatedKey(data);
-                T putData = container.put(deduplicatedKey, data);
-                if(Objects.nonNull(putData)) {
-                    repetitiveList.add(putData);
+                K deduplicatedKey = getDeduplicatedKeyFunction.apply(data);
+                if (container.containsKey(deduplicatedKey)) {
+                    T putData;
+                    if(remainFirst) {
+                        putData = data;
+                    } else {
+                        putData = container.put(deduplicatedKey, data);
+                    }
+                    if(Objects.nonNull(putData)) {
+                        repetitiveList.add(putData);
+                    }
+                } else {
+                    container.put(deduplicatedKey, data);
                 }
+
             }
         }
 
         // 已去重的数据集合
         List<T> deduplicatedList = new ArrayList<>(container.values());
+        List<K> deduplicatedKeyList = new ArrayList<>(container.keySet());
 
-        return new DeduplicateResult<T>(source, invalidList, deduplicatedList, repetitiveList);
+        return new DeduplicateResult<K, T>(source, invalidList, deduplicatedList, deduplicatedKeyList, repetitiveList);
     }
 
     /**

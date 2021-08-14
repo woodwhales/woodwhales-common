@@ -6,7 +6,7 @@ import java.util.List;
  * @author woodwhales
  * @create 2020-11-17 13:45
  */
-public class DeduplicateResult<T> {
+public class DeduplicateResult<K, T> {
 
     /**
      * 原始集合
@@ -24,6 +24,11 @@ public class DeduplicateResult<T> {
     private List<T> deduplicatedList;
 
     /**
+     * 已去重的key集合
+     */
+    private List<K> deduplicatedKeyList;
+
+    /**
      * 重复的集合
      */
     private List<T> repetitiveList;
@@ -31,10 +36,12 @@ public class DeduplicateResult<T> {
     public DeduplicateResult(List<T> source,
                              List<T> invalidList,
                              List<T> deduplicatedList,
+                             List<K> deduplicatedKeyList,
                              List<T> repetitiveList) {
         this.source = source;
         this.invalidList = invalidList;
         this.deduplicatedList = deduplicatedList;
+        this.deduplicatedKeyList = deduplicatedKeyList;
         this.repetitiveList = repetitiveList;
     }
 
@@ -52,5 +59,9 @@ public class DeduplicateResult<T> {
 
     public List<T> getInvalidList() {
         return invalidList;
+    }
+
+    public List<K> getDeduplicatedKeyList() {
+        return deduplicatedKeyList;
     }
 }

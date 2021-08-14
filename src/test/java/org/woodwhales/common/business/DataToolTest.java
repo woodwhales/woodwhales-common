@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
+import org.woodwhales.common.example.model.business.DataToolTempData;
 
 import java.util.*;
 
@@ -208,42 +209,65 @@ class DataToolTest {
 
     @Test
     public void deduplicate() {
-        List<DemoData> list = new ArrayList<>();
-        list.add(new DemoData(1, "张三", "描述-张三"));
-        list.add(new DemoData(2, "李四", "描述-李四"));
-        DemoData demoData3 = new DemoData(3, "王五", "描述-王五");
-        list.add(demoData3);
-        DemoData demoData4 = new DemoData(null, "赵六", "描述-赵六");
-        list.add(demoData4);
-        list.add(new DemoData(3, "朱七", "描述-朱七"));
-        list.add(new DemoData(4, "宋八", "描述-宋八"));
+        List<DataToolTempData> list = new ArrayList<>();
+        DataToolTempData data1 = new DataToolTempData(1, "张三", "描述-张三");
+        DataToolTempData data2 = new DataToolTempData(2, "李四", "描述-李四");
+        DataToolTempData data3 = new DataToolTempData(3, "王五", "描述-王五");
+        DataToolTempData data4 = new DataToolTempData(null, "赵六", "描述-赵六");
+        DataToolTempData data5 = new DataToolTempData(3, "朱七", "描述-朱七");
+        DataToolTempData data6 = new DataToolTempData(4, "宋八", "描述-宋八");
 
-        DeduplicateResult<DemoData> deduplicateResult = DataTool.deduplicate(list, new DeduplicateInterface<Integer, DemoData>() {
-            @Override
-            public boolean isValid(DemoData data) {
-                return Objects.nonNull(data.getId());
-            }
+        list.add(data1);
+        list.add(data2);
+        list.add(data3);
+        list.add(data4);
+        list.add(data5);
+        list.add(data6);
 
-            @Override
-            public Integer getDeduplicatedKey(DemoData data) {
-                return data.getId();
-            }
-        });
+        DeduplicateResult<Integer, DataToolTempData> deduplicateResult1 = DataTool.deduplicate(list,
+                data -> Objects.nonNull(data.getId()),
+                DataToolTempData::getId, true);
 
-        List<DemoData> deduplicatedList = deduplicateResult.getDeduplicatedList();
-        List<DemoData> repetitiveList = deduplicateResult.getRepetitiveList();
-        List<DemoData> invalidList = deduplicateResult.getInvalidList();
+        List<DataToolTempData> deduplicatedList = deduplicateResult1.getDeduplicatedList();
+        List<DataToolTempData> repetitiveList = deduplicateResult1.getRepetitiveList();
+        List<DataToolTempData> invalidList = deduplicateResult1.getInvalidList();
+        List<Integer> deduplicatedKeyList = deduplicateResult1.getDeduplicatedKeyList();
+
+        System.out.println("deduplicatedList");
+        deduplicatedList.stream().forEach(System.out::println);
+
+        System.out.println("repetitiveList");
+        repetitiveList.stream().forEach(System.out::println);
+
+        System.out.println("invalidList");
+        invalidList.stream().forEach(System.out::println);
+
+        System.out.println("deduplicatedKeyList");
+        System.out.println(deduplicatedKeyList);
 
         // 无效数据
         assertEquals(1, invalidList.size());
-        assertEquals(demoData4, invalidList.get(0));
+        assertEquals(data4, invalidList.get(0));
 
         // 已去重数据
         assertEquals(4, deduplicatedList.size());
 
         // 重复数据
         assertEquals(1, repetitiveList.size());
-        assertEquals(demoData3, repetitiveList.get(0));
+        assertEquals(data5, repetitiveList.get(0));
+
+        DeduplicateResult<Integer, DataToolTempData> deduplicateResult2 = DataTool.deduplicate(list,
+                data -> Objects.nonNull(data.getId()),
+                DataToolTempData::getId, false);
+        List<DataToolTempData> deduplicatedList2 = deduplicateResult2.getDeduplicatedList();
+        List<DataToolTempData> repetitiveList2 = deduplicateResult2.getRepetitiveList();
+        // 重复数据
+        assertEquals(4, deduplicatedList2.size());
+        assertEquals(data3, repetitiveList2.get(0));
+
+        DeduplicateResult<Integer, DataToolTempData> deduplicateResult3 = DataTool.deduplicate(list, DataToolTempData::getId);
+        List<DataToolTempData> deduplicatedList1 = deduplicateResult3.getDeduplicatedList();
+        assertEquals(5, deduplicatedList1.size());
     }
 
     @Test
