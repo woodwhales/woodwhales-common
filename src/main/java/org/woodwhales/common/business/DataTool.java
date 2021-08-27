@@ -1,6 +1,7 @@
 package org.woodwhales.common.business;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 
 import java.util.*;
@@ -801,6 +802,43 @@ public class DataTool {
                 S2 baseData = baseDataMap.get(sourceDataKey);
                 R result = function.apply(sourceData, baseData);
                 resultList.add(result);
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 从 sourceList 按照 resultFunction 生成结果集合
+     * 结果集合 List<R> 和 List<S2> 按照 resultDataKeyFunction 和 baseDataKeyFunction 匹配对应的数据
+     * 匹配到的 List<S2> 按照 consumer 规则供结果集使用
+     *
+     * @param sourceList 原始集合
+     * @param resultFunction 结果集生成规则
+     * @param resultDataKeyFunction 生成 key 规则
+     * @param baseList 基础集合数据类型
+     * @param baseDataKeyFunction 生成 key 规则
+     * @param consumer 匹配到的基础数据集合供结果数据使用
+     * @param <S1> 原始集合数据类型
+     * @param <S2> 基础集合数据类型
+     * @param <K> key 的数据类型
+     * @param <R> 结果集数据类型
+     * @return
+     */
+    public static <S1, S2, K, R> List<R> getListFromBaseList(List<S1> sourceList,
+                                                             Function<S1, R> resultFunction,
+                                                             Function<R, K> resultDataKeyFunction,
+                                                             List<S2> baseList,
+                                                             Function<S2, K> baseDataKeyFunction,
+                                                             BiConsumer<R, List<S2>> consumer) {
+        List<R> resultList = DataTool.toList(sourceList, resultFunction);
+        Map<K, List<S2>> listMap = DataTool.groupingBy(baseList, baseDataKeyFunction);
+        for (R result : resultList) {
+            K resultKey = resultDataKeyFunction.apply(result);
+            if (listMap.containsKey(resultKey)) {
+                List<S2> baseDataList = listMap.get(resultKey);
+                if(CollectionUtils.isNotEmpty(baseDataList)) {
+                    consumer.accept(result, baseDataList);
+                }
             }
         }
         return resultList;

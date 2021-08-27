@@ -2,7 +2,7 @@ package org.woodwhales.common.util.excel;
 
 /**
  * @author woodwhales on 2021-07-28 17:21
- * @description
+ * @description 属性对应excel单元格数据类型枚举
  */
 public enum ExcelFieldType {
 

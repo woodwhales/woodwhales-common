@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 import org.woodwhales.common.business.DataTool;
 import org.woodwhales.common.business.DeduplicateResult;
 import org.woodwhales.common.example.model.business.*;
-import org.woodwhales.common.example.model.business.example.UserDTO;
-import org.woodwhales.common.example.model.business.example.UserDetailDTO;
-import org.woodwhales.common.example.model.business.example.UserExtraInfoDTO;
+import org.woodwhales.common.example.model.business.example.*;
 
 import java.util.*;
 
@@ -28,7 +26,8 @@ public class DataToolExample {
 //        toList();
 //        toMap1();
 //        toMap2();
-        testGetListFromBaseList();
+//        testGetListFromBaseList();
+        testGetListFromBaseList2();
     }
 
     public static void enumMap1() {
@@ -256,24 +255,49 @@ public class DataToolExample {
     }
 
     public static void testGetListFromBaseList() {
-        List<UserDTO> userDTOList = new ArrayList<>();
-        userDTOList.add(new UserDTO(1, "张三"));
-        userDTOList.add(new UserDTO(2, "李四"));
-        userDTOList.add(new UserDTO(3, "王五"));
-        userDTOList.add(new UserDTO(4, "赵六"));
-        userDTOList.add(new UserDTO(5, "宋七"));
+        List<UserInfoDTO> userInfoDTOList = new ArrayList<>();
+        userInfoDTOList.add(new UserInfoDTO(1, "张三"));
+        userInfoDTOList.add(new UserInfoDTO(2, "李四"));
+        userInfoDTOList.add(new UserInfoDTO(3, "王五"));
+        userInfoDTOList.add(new UserInfoDTO(4, "赵六"));
+        userInfoDTOList.add(new UserInfoDTO(5, "宋七"));
 
         List<UserExtraInfoDTO> userExtraInfoDTOList = new ArrayList<>();
         userExtraInfoDTOList.add(new UserExtraInfoDTO(2, 30, "北京"));
         userExtraInfoDTOList.add(new UserExtraInfoDTO(4, 40, "上海"));
         userExtraInfoDTOList.add(new UserExtraInfoDTO(5, 50, "杭州"));
 
-        List<UserDetailDTO> result = DataTool.getListFromBaseList(userDTOList, UserDTO::getId,
-                                                                            userExtraInfoDTOList, UserExtraInfoDTO::getUserId,
-                                                                            (userDTO, userExtraInfoDTO) -> new UserDetailDTO(userDTO,
-                                                                                                                             userExtraInfoDTO));
+        List<UserDetailDTO> result = DataTool.getListFromBaseList(userInfoDTOList, UserInfoDTO::getId,
+                                                                  userExtraInfoDTOList, UserExtraInfoDTO::getUserId,
+                                                                  UserDetailDTO::new);
         result.stream().forEach(System.out::println);
     }
+
+    public static void testGetListFromBaseList2() {
+        List<UserInfoDTO> userInfoDTOList = new ArrayList<>();
+        userInfoDTOList.add(new UserInfoDTO(1, "张三"));
+        userInfoDTOList.add(new UserInfoDTO(2, "李四"));
+        userInfoDTOList.add(new UserInfoDTO(3, "王五"));
+        userInfoDTOList.add(new UserInfoDTO(4, "赵六"));
+        userInfoDTOList.add(new UserInfoDTO(5, "宋七"));
+
+        List<UserExtraInfoDTO2> userExtraInfoDTO2List = new ArrayList<>();
+        userExtraInfoDTO2List.add(new UserExtraInfoDTO2(1, "Java 开发手册", 40));
+        userExtraInfoDTO2List.add(new UserExtraInfoDTO2(1, "Python 开发手册", 8));
+        userExtraInfoDTO2List.add(new UserExtraInfoDTO2(2, "Java 开发手册", 26));
+        userExtraInfoDTO2List.add(new UserExtraInfoDTO2(2, "Python 开发手册", 24));
+        userExtraInfoDTO2List.add(new UserExtraInfoDTO2(3, "算法", 400));
+        userExtraInfoDTO2List.add(new UserExtraInfoDTO2(5, "设计模式", 2));
+
+        List<UserDetailDTO2> result = DataTool.getListFromBaseList(userInfoDTOList,
+                                                                   UserDetailDTO2::new,
+                                                                   UserDetailDTO2::getUserId,
+                                                                   userExtraInfoDTO2List,
+                                                                   UserExtraInfoDTO2::getUserId,
+                                                                   UserDetailDTO2::addReadBookInfo);
+        System.out.println("result  = " + new Gson().toJson(result));
+    }
+
 
     private static void printMap(Map map) {
         Map<Object, Object> map1 = (Map<Object, Object>) map;

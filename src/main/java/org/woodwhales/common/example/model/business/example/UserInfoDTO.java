@@ -7,12 +7,12 @@ import lombok.Data;
  * @description
  */
 @Data
-public class UserDTO {
+public class UserInfoDTO {
 
     private Integer id;
     private String userName;
 
-    public UserDTO(Integer id, String userName) {
+    public UserInfoDTO(Integer id, String userName) {
         this.id = id;
         this.userName = userName;
     }

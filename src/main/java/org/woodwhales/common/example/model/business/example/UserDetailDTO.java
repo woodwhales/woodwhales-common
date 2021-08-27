@@ -14,9 +14,9 @@ public class UserDetailDTO {
     private Integer readCount;
     private String address;
 
-    public UserDetailDTO(UserDTO userDTO, UserExtraInfoDTO userExtraInfoDTO) {
-        this.userId = userDTO.getId();
-        this.userName = userDTO.getUserName();
+    public UserDetailDTO(UserInfoDTO userInfoDTO, UserExtraInfoDTO userExtraInfoDTO) {
+        this.userId = userInfoDTO.getId();
+        this.userName = userInfoDTO.getUserName();
         this.readCount = userExtraInfoDTO.getReadCount();
         this.address = userExtraInfoDTO.getAddress();
     }
