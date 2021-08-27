@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
@@ -181,7 +182,7 @@ public class ExcelTool {
         }
 
         if(!Objects.equals(CellType.STRING, cell.getCellTypeEnum())) {
-            throw new RuntimeException("cellIndex=[" + cellIndex + "]不是字符串单元格");
+            cell.setCellType(CellType.STRING);
         }
         return cell.getStringCellValue();
     }
@@ -220,7 +221,7 @@ public class ExcelTool {
             if(isNull(numericCellValue)) {
                 return null;
             }
-            return cell.getNumericCellValue();
+            return Double.parseDouble(formatNumeric(numericCellValue));
         } else if(Objects.equals(CellType.STRING, cell.getCellTypeEnum())) {
             String stringCellValue = cell.getStringCellValue();
             if(StringUtils.isBlank(stringCellValue)) {
@@ -231,6 +232,14 @@ public class ExcelTool {
 
         throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
 
+    }
+
+    private static String formatNumeric(Double numericCellValue) {
+        DecimalFormat decimalFormat = new DecimalFormat("0");
+        if(Objects.isNull(numericCellValue)) {
+            return null;
+        }
+        return decimalFormat.format(numericCellValue);
     }
 
     public static Integer getIntegerValue(Row row, int cellIndex) {
@@ -244,7 +253,7 @@ public class ExcelTool {
             if(isNull(numericCellValue)) {
                 return null;
             }
-            return numericCellValue.intValue();
+            return Integer.parseInt(formatNumeric(numericCellValue));
         } else if(Objects.equals(CellType.STRING, cell.getCellTypeEnum())) {
             String stringCellValue = cell.getStringCellValue();
             if(StringUtils.isBlank(stringCellValue)) {
