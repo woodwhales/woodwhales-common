@@ -210,6 +210,28 @@ public class ExcelTool {
         throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
     }
 
+    public static Long getLongValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        if(isNull(cell)) {
+            return null;
+        }
+
+        if(Objects.equals(CellType.NUMERIC, cell.getCellTypeEnum())) {
+            Double numericCellValue = cell.getNumericCellValue();
+            if(isNull(numericCellValue)) {
+                return null;
+            }
+            return Long.parseLong(formatNumeric(numericCellValue));
+        } else if(Objects.equals(CellType.STRING, cell.getCellTypeEnum())) {
+            String stringCellValue = cell.getStringCellValue();
+            if(StringUtils.isBlank(stringCellValue)) {
+                return null;
+            }
+            return Long.parseLong(stringCellValue);
+        }
+        throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
+    }
+
     public static Double getDoubleValue(Row row, int cellIndex) {
         Cell cell = row.getCell(cellIndex);
         if(isNull(cell)) {
@@ -231,7 +253,6 @@ public class ExcelTool {
         }
 
         throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
-
     }
 
     private static String formatNumeric(Double numericCellValue) {
