@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import org.woodwhales.common.business.DataTool;
 import org.woodwhales.common.business.DeduplicateResult;
 import org.woodwhales.common.example.model.business.*;
+import org.woodwhales.common.example.model.business.example.UserDTO;
+import org.woodwhales.common.example.model.business.example.UserDetailDTO;
+import org.woodwhales.common.example.model.business.example.UserExtraInfoDTO;
 
 import java.util.*;
 
@@ -14,7 +17,7 @@ import java.util.*;
 public class DataToolExample {
 
     public static void main(String[] args) {
-        deduplicate();
+//        deduplicate();
 //        enumMap1();
 //        enumMap2();
 //        getDataFromList();
@@ -25,6 +28,7 @@ public class DataToolExample {
 //        toList();
 //        toMap1();
 //        toMap2();
+        testGetListFromBaseList();
     }
 
     public static void enumMap1() {
@@ -249,6 +253,26 @@ public class DataToolExample {
 
         List<String> valueList2 = DataTool.mapValueToList(map, DataToolTempDataDTO::getNameForVO);
         System.out.println("valueList2 = " + valueList2);
+    }
+
+    public static void testGetListFromBaseList() {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        userDTOList.add(new UserDTO(1, "张三"));
+        userDTOList.add(new UserDTO(2, "李四"));
+        userDTOList.add(new UserDTO(3, "王五"));
+        userDTOList.add(new UserDTO(4, "赵六"));
+        userDTOList.add(new UserDTO(5, "宋七"));
+
+        List<UserExtraInfoDTO> userExtraInfoDTOList = new ArrayList<>();
+        userExtraInfoDTOList.add(new UserExtraInfoDTO(2, 30, "北京"));
+        userExtraInfoDTOList.add(new UserExtraInfoDTO(4, 40, "上海"));
+        userExtraInfoDTOList.add(new UserExtraInfoDTO(5, 50, "杭州"));
+
+        List<UserDetailDTO> result = DataTool.getListFromBaseList(userDTOList, UserDTO::getId,
+                                                                            userExtraInfoDTOList, UserExtraInfoDTO::getUserId,
+                                                                            (userDTO, userExtraInfoDTO) -> new UserDetailDTO(userDTO,
+                                                                                                                             userExtraInfoDTO));
+        result.stream().forEach(System.out::println);
     }
 
     private static void printMap(Map map) {

@@ -776,4 +776,34 @@ public class DataTool {
                   .collect(Collectors.toList());
     }
 
+    /**
+     * 从 sourceList 和 baseList 集合中按照 sourceDataKeyFunction 和 baseDataKeyFunction 匹配对应的数据
+     * 按照 function 生成结果集合
+     * @param sourceList 原始集合
+     * @param sourceDataKeyFunction 生成 key 规则
+     * @param baseList 基础集合
+     * @param baseDataKeyFunction 生成 key 规则
+     * @param function 生成结果规则
+     * @param <S1> 原始集合数据类型
+     * @param <S2> 基础集合数据类型
+     * @param <K> key 的数据类型
+     * @param <R> 结果集数据类型
+     * @return
+     */
+    public static <S1, S2, K, R> List<R> getListFromBaseList(List<S1> sourceList, Function<S1, K> sourceDataKeyFunction,
+                                                         List<S2> baseList, Function<S2, K> baseDataKeyFunction,
+                                                         BiFunction<S1, S2, R> function) {
+        List<R> resultList = new ArrayList<>();
+        Map<K, S2> baseDataMap = DataTool.toMap(baseList, baseDataKeyFunction);
+        for (S1 sourceData : sourceList) {
+            K sourceDataKey = sourceDataKeyFunction.apply(sourceData);
+            if (baseDataMap.containsKey(sourceDataKey)) {
+                S2 baseData = baseDataMap.get(sourceDataKey);
+                R result = function.apply(sourceData, baseData);
+                resultList.add(result);
+            }
+        }
+        return resultList;
+    }
+
 }
