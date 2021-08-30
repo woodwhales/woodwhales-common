@@ -5,7 +5,7 @@
 
     <groupId>org.woodwhales.common</groupId>
     <artifactId>woodwhales-common</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
     <name>woodwhales-common</name>
     <description>woodwhales-common, see to https://github.com/woodwhales/woodwhales-common</description>
 
