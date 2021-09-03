@@ -9,7 +9,7 @@ import org.woodwhales.common.util.excel.ExcelField;
  * @description
  */
 @Data
-public class ExcelTempData {
+public class ExcelTempData extends BaseExcelTempData {
 
     @ExcelField("姓名")
     private String name;
@@ -22,9 +22,6 @@ public class ExcelTempData {
 
     @ExcelDateField(value = "出生日期", pattern = "yyyy-MM-dd")
     private String birthday;
-
-    @ExcelDateField(value = "创建时间")
-    private String createTime;
 
     private String memo;
 }

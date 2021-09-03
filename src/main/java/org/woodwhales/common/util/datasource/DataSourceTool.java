@@ -3,6 +3,7 @@ package org.woodwhales.common.util.datasource;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -165,7 +166,7 @@ public class DataSourceTool {
         public TargetInfo(Class<T> clazz, Class<A> annotationClass, Function<A, String> function) {
             this.clazz = clazz;
             this.targetFieldInfoList = new ArrayList<>();
-            Field[] declaredFields = clazz.getDeclaredFields();
+            Field[] declaredFields = FieldUtils.getAllFields(clazz);
             for (Field declaredField : declaredFields) {
                 this.addTargetFieldInfo(declaredField, annotationClass, function);
             }
