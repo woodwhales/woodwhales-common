@@ -203,7 +203,8 @@ public class DataTool {
      * @param <T> 目标数据类型
      * @return
      */
-    public static <S, T> List<T> toList(List<S> source, Function<? super S, ? extends T> mapper) {
+    public static <S, T> List<T> toList(List<S> source,
+                                        Function<? super S, ? extends T> mapper) {
         return toList(source, mapper, false);
     }
 
@@ -215,7 +216,8 @@ public class DataTool {
      * @param <T> 目标数据类型
      * @return
      */
-    public static <S, T> List<T> toList(S[] array, Function<? super S, ? extends T> mapper) {
+    public static <S, T> List<T> toList(S[] array,
+                                        Function<? super S, ? extends T> mapper) {
         return toList(Arrays.asList(array), mapper);
     }
 
@@ -228,7 +230,9 @@ public class DataTool {
      * @param <T> 目标数据类型
      * @return
      */
-    public static <S, T> List<T> toList(List<S> source, Function<? super S, ? extends T> mapper, boolean distinct) {
+    public static <S, T> List<T> toList(List<S> source,
+                                        Function<? super S, ? extends T> mapper,
+                                        boolean distinct) {
         if (isEmpty(source)) {
             return Collections.emptyList();
         }
@@ -339,7 +343,9 @@ public class DataTool {
      * @param <T> 目标数据类型
      * @return
      */
-    public static <S, T> List<T> toList(List<S> source, Predicate<S> filter, Function<? super S, ? extends T> mapper, boolean distinct) {
+    public static <S, T> List<T> toList(List<S> source, Predicate<S> filter,
+                                        Function<? super S, ? extends T> mapper,
+                                        boolean distinct) {
         if (isEmpty(source)) {
             return Collections.emptyList();
         }
@@ -364,7 +370,9 @@ public class DataTool {
      * @param <T> 目标数据类型
      * @return
      */
-    public static <S, T> List<T> toList(List<S> source, Predicate<S> filter, Function<? super S, ? extends T> mapper) {
+    public static <S, T> List<T> toList(List<S> source,
+                                        Predicate<S> filter,
+                                        Function<? super S, ? extends T> mapper) {
         return toList(source, filter, mapper, false);
     }
 
@@ -457,7 +465,8 @@ public class DataTool {
      * @param <T> 集合的数据类型
      * @return
      */
-    public static <T> List<T> sort(List<T> source, Comparator<T> comparator) {
+    public static <T> List<T> sort(List<T> source,
+                                   Comparator<T> comparator) {
         if(isEmpty(source)) {
             return source;
         }
@@ -602,7 +611,8 @@ public class DataTool {
      * @param <R> 结果集类型
      * @return
      */
-    public static <T extends Enum<T>, R> List<R> enumList(Class<T> sourceEnumClass, Function<T, R> function) {
+    public static <T extends Enum<T>, R> List<R> enumList(Class<T> sourceEnumClass,
+                                                          Function<T, R> function) {
         EnumSet<T> enumSet = EnumSet.allOf(sourceEnumClass);
         return enumSet.stream().map(function).collect(Collectors.toList());
     }
@@ -635,7 +645,8 @@ public class DataTool {
      * @param <T> map 集合中的 value 类型
      * @return
      */
-    public static <K, T extends Enum<T>> T enumGetValue(K key, Class<T> sourceEnumClass, Function<T, K> keyMapper) {
+    public static <K, T extends Enum<T>> T enumGetValue(K key, Class<T> sourceEnumClass,
+                                                        Function<T, K> keyMapper) {
         if(Objects.isNull(key)) {
             return null;
         }
@@ -651,7 +662,8 @@ public class DataTool {
      * @param <T>
      * @return
      */
-    public static <T> List<T> filter(List<T> source, Predicate<? super T> filter) {
+    public static <T> List<T> filter(List<T> source,
+                                     Predicate<? super T> filter) {
         if (isEmpty(source)) {
             return Collections.emptyList();
         }
@@ -692,7 +704,8 @@ public class DataTool {
      * @param <T> map 集合的 value 数据类型
      * @return 返回原始 map 集合
      */
-    public static <K, T> Map<K, T> handleMap(Map<K, T> map, BiConsumer<K, T> handlerMapper) {
+    public static <K, T> Map<K, T> handleMap(Map<K, T> map,
+                                             BiConsumer<K, T> handlerMapper) {
         if(MapUtils.isEmpty(map)) {
             return emptyMap();
         }
@@ -725,7 +738,8 @@ public class DataTool {
      * @param <V> value 类型
      * @return
      */
-    public static <K, V, R> List<R> mapValueToList(Map<K, V> map, Function<V, R> function) {
+    public static <K, V, R> List<R> mapValueToList(Map<K, V> map,
+                                                   Function<V, R> function) {
         if (MapUtils.isEmpty(map)) {
             return emptyList();
         }
@@ -744,7 +758,8 @@ public class DataTool {
      * @param <R> 结果集类型
      * @return
      */
-    public static <K, V, R> List<R> mapToList(Map<K, V> map, BiFunction<K, V, R> function) {
+    public static <K, V, R> List<R> mapToList(Map<K, V> map,
+                                              BiFunction<K, V, R> function) {
         if (MapUtils.isEmpty(map)) {
             return emptyList();
         }
@@ -765,7 +780,9 @@ public class DataTool {
      * @param <R> 结果集类型
      * @return
      */
-    public static <K, V, R> List<R> mapToList(Map<K, V> map, BiPredicate<K, V> predicate ,BiFunction<K, V, R> function) {
+    public static <K, V, R> List<R> mapToList(Map<K, V> map,
+                                              BiPredicate<K, V> predicate,
+                                              BiFunction<K, V, R> function) {
         if (MapUtils.isEmpty(map)) {
             return emptyList();
         }
@@ -791,9 +808,10 @@ public class DataTool {
      * @param <R> 结果集数据类型
      * @return
      */
-    public static <S1, S2, K, R> List<R> getListFromBaseList(List<S1> sourceList, Function<S1, K> sourceDataKeyFunction,
-                                                         List<S2> baseList, Function<S2, K> baseDataKeyFunction,
-                                                         BiFunction<S1, S2, R> function) {
+    public static <S1, S2, K, R> List<R> getListFromBaseList(List<S1> sourceList,
+                                                             Function<S1, K> sourceDataKeyFunction,
+                                                             List<S2> baseList, Function<S2, K> baseDataKeyFunction,
+                                                             BiFunction<S1, S2, R> function) {
         List<R> resultList = new ArrayList<>();
         Map<K, S2> baseDataMap = DataTool.toMap(baseList, baseDataKeyFunction);
         for (S1 sourceData : sourceList) {
