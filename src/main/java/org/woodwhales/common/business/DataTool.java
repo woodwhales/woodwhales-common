@@ -465,15 +465,33 @@ public class DataTool {
      * @param <T> 集合的数据类型
      * @return
      */
+    public static <T> List<T> sort(List<T> source, Comparator<T> comparator) {
+        return sort(source, comparator, true);
+    }
+
+    /**
+     * 对list集合进行排序
+     * @param source 数据源集合
+     * @param comparator 排序器
+     * @param reverse 是否逆序
+     * @param <T> 集合的数据类型
+     * @return
+     */
     public static <T> List<T> sort(List<T> source,
-                                   Comparator<T> comparator) {
+                                   Comparator<T> comparator,
+                                   boolean reverse) {
         if(isEmpty(source)) {
             return source;
         }
 
-        return source.stream()
-                     .sorted(comparator)
-                     .collect(Collectors.toList());
+        Stream<T> stream = source.stream();
+        Stream<T> sorted;
+        if(reverse) {
+            sorted = stream.sorted(comparator.reversed());
+        } else {
+            sorted = stream.sorted(comparator);
+        }
+        return sorted.collect(Collectors.toList());
     }
 
     /**
