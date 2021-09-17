@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author woodwhales on 2021-07-25 13:28
- * @Description DataSourceTool 使用示例
+ * DataSourceTool 使用示例
  */
 public class DataSourceToolExample {
 

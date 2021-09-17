@@ -4,7 +4,6 @@ import lombok.Data;
 
 /**
  * @author woodwhales on 2021-08-27 15:03
- * @description
  */
 @Data
 public class UserDetailDTO {

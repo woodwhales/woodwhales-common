@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * @author woodwhales on 2021-07-25 12:12
- * @Description CollectionMathResult 使用示例
+ * CollectionMathResult 使用示例
  */
 public class CollectionMathResultExample {
 

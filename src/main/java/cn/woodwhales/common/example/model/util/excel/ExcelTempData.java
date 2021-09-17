@@ -6,7 +6,6 @@ import cn.woodwhales.common.util.excel.ExcelField;
 
 /**
  * @author woodwhales on 2021-07-29 9:57
- * @description
  */
 @Data
 public class ExcelTempData extends BaseExcelTempData {

@@ -17,7 +17,6 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 /**
  * @author woodwhales on 2020-12-13 16:32
- * @description
  */
 public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
@@ -77,7 +76,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
      * @param <K> 要比较的数据类型
      * @param <M> 集合 A 的数据类型
      * @param <N> 集合 B 的数据类型
-     * @return
+     * @return CollectionMathResult
      */
     public static <K, M, N> CollectionMathResult<K, M, N> compute(List<M> sourceList1,
                                                                   Function<M, K> keyFunction1,
@@ -96,7 +95,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
      * @param <K> 要比较的数据类型
      * @param <M> 集合 A 的数据类型
      * @param <N> 集合 B 的数据类型
-     * @return
+     * @return CollectionMathResult
      */
     public static <K, M, N> CollectionMathResult<K, M, N> compute(List<M> sourceList1,
                                                                   Function<M, K> keyFunction1,
@@ -182,7 +181,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 正差集 A - B
-     * @return
+     * @return 正差集 A - B
      */
     @Override
     public Set<K> getPositiveDifferenceKeySet() {
@@ -191,7 +190,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 正差集 A - B
-     * @return
+     * @return 正差集 A - B
      */
     @Override
     public List<M> getPositiveDifferenceList() {
@@ -200,7 +199,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 正差集 A - B
-     * @return
+     * @return 正差集 A - B
      */
     @Override
     public Set<CollectionFieldComparable<K>> getPositiveDifferenceSet() {
@@ -209,7 +208,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 负差集 B - A
-     * @return
+     * @return 负差集 B - A
      */
     @Override
     public Set<K> getNegativeDifferenceKeySet() {
@@ -218,7 +217,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 负差集 B - A
-     * @return
+     * @return 负差集 B - A
      */
     @Override
     public List<N> getNegativeDifferenceList() {
@@ -227,7 +226,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 负差集 B - A
-     * @return
+     * @return 负差集 B - A
      */
     @Override
     public Set<CollectionFieldComparable<K>> getNegativeDifferenceSet() {

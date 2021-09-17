@@ -5,10 +5,9 @@ import cn.woodwhales.common.model.enums.RespCodeEnum;
 import java.util.Objects;
 
 /**
- * @projectName: woodwhales-common
  * @author: woodwhales
- * @date: 20.9.18 22:05
- * @description: 业务数据响应体
+ * 2020.9.18 22:05
+ * 业务数据响应体
  */
 public class OpResult<T> {
 
@@ -41,7 +40,7 @@ public class OpResult<T> {
 
     /**
      * 获取数据对象
-     * @return
+     * @return 数据对象
      */
     public T getData() {
         return data;
@@ -49,7 +48,7 @@ public class OpResult<T> {
 
     /**
      * 获取响应状态码对象
-     * @return
+     * @return 响应状态码对象
      */
     public BaseRespResult getBaseRespResult() {
         return baseRespResult;
@@ -57,7 +56,7 @@ public class OpResult<T> {
 
     /**
      * 数据是否为空
-     * @return
+     * @return 数据是否为空
      */
     public boolean dataIsNull() {
         return Objects.isNull(data);
@@ -65,7 +64,7 @@ public class OpResult<T> {
 
     /**
      * 数据是否不为空
-     * @return
+     * @return 数据是否不为空
      */
     public boolean dataIsNonNull() {
         return Objects.nonNull(data);
@@ -73,7 +72,7 @@ public class OpResult<T> {
 
     /**
      * 是否响应成功
-     * @return
+     * @return 是否响应成功
      */
     public boolean isSuccessful() {
         return Objects.equals(baseRespResult.getCode(), RespCodeEnum.SUCCESS.getCode());
@@ -81,7 +80,7 @@ public class OpResult<T> {
 
     /**
      * 是否响应失败
-     * @return
+     * @return 是否响应失败
      */
     public boolean isFailure() {
         return !isSuccessful();

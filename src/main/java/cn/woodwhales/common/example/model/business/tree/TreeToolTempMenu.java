@@ -2,7 +2,6 @@ package cn.woodwhales.common.example.model.business.tree;
 
 /**
  * @author woodwhales on 2021-07-25 12:26
- * @Description
  */
 public class TreeToolTempMenu {
     private Integer id;

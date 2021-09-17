@@ -17,7 +17,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 /**
  * 业务处理工具类
  * @author woodwhales
- * @create 2020-11-17 13:44
+ * 2020-11-17 13:44
  */
 public class DataTool {
 
@@ -27,7 +27,7 @@ public class DataTool {
      * @param mapper 按照源数据的 mapper 规则生成 set 元素
      * @param <S> 数据源集合中元素的类型
      * @param <T> set 集合中元素的类型
-     * @return
+     * @return set 集合
      */
     public static <S, T> Set<T> toSet(List<S> source,
                                       Function<? super S, ? extends T> mapper) {
@@ -46,7 +46,7 @@ public class DataTool {
      * @param <K> map 集合中的 key 类型
      * @param <S> 数据源集合中元素的类型
      * @param <T> map 集合中的 value 类型
-     * @return
+     * @return map 集合
      */
     public static <K, S, T> Map<K,T> toMap(List<S> source,
                                            Function<? super S, ? extends K> keyMapper,
@@ -67,7 +67,7 @@ public class DataTool {
      * @param <K> map 集合中的 key 类型
      * @param <S> 数据源集合中元素的类型
      * @param <T> map 集合中的 value 类型
-     * @return
+     * @return map 集合
      */
     public static <K, S, T> Map<K,T> toMap(Collection<S> source,
                                            Function<? super S, ? extends K> keyMapper,
@@ -87,7 +87,7 @@ public class DataTool {
      * @param keyMapper map 集合中的 key 获取规则
      * @param <K> map 集合中的 key 类型
      * @param <S> 数据源集合中元素的类型
-     * @return
+     * @return map 集合
      */
     public static <K, S> Map<K, S> toMap(List<S> source,
                                          Function<? super S, ? extends K> keyMapper) {
@@ -102,7 +102,7 @@ public class DataTool {
      * @param mergeFunction 存在相同 key 时取 value 的规则
      * @param <K> map 集合中的 key 类型
      * @param <S> 数据源集合中元素的类型
-     * @return
+     * @return map 集合
      */
     public static <K, S> Map<K, S> toMap(List<S> source,
                                          Function<? super S, ? extends K> keyMapper,
@@ -113,13 +113,13 @@ public class DataTool {
     /**
      * 将原始的 list 按照 mapper 规则转成新的 list
      * 再按照新的 list 按照 keyMapper 为生成 key 规则转成 map 集合
-     * @param source
-     * @param mapper
-     * @param keyMapper
-     * @param <S>
-     * @param <T>
-     * @param <K>
-     * @return
+     * @param source 数据源集合
+     * @param mapper list 转 map 的规则
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> 目标数据的类型
+     * @param <K> map 集合中的 key 类型
+     * @return list
      */
     public static <S, T, K> Map<K, T> toMapFromList(List<S> source,
                                             Function<? super S, ? extends T> mapper,
@@ -139,7 +139,7 @@ public class DataTool {
      * @param keyMapper map 集合中的 key 获取规则
      * @param <K> map 集合中的 key 类型
      * @param <S> 数据源集合中元素的类型
-     * @return
+     * @return map 集合
      */
     public static <K, S> Map<K, S> toMapForSaveOld(List<S> source,
                                                    Function<? super S, ? extends K> keyMapper) {
@@ -155,7 +155,7 @@ public class DataTool {
      * @param <K> map 集合中的 key 类型
      * @param <S> 数据源集合中元素的类型
      * @param <T> map 集合中的 value 类型
-     * @return
+     * @return map 集合
      */
     public static <K, S, T> Map<K, T> toMapForSaveOld(List<S> source,
                                                       Function<? super S, ? extends K> keyMapper,
@@ -171,7 +171,7 @@ public class DataTool {
      * @param keyMapper map 集合中的 key 获取规则
      * @param <K> map 集合中的 key 类型
      * @param <S> 数据源集合中元素的类型
-     * @return
+     * @return map 集合
      */
     public static <K, S> Map<K, S> toMapForSaveNew(Collection<S> source,
                                                    Function<? super S, ? extends K> keyMapper) {
@@ -187,7 +187,7 @@ public class DataTool {
      * @param <K> map 集合中的 key 类型
      * @param <S> 数据源集合中元素的类型
      * @param <T> map 集合中的 value 类型
-     * @return
+     * @return map 集合
      */
     public static <K, S, T> Map<K, T> toMapForSaveNew(List<S> source,
                                                       Function<? super S, ? extends K> keyMapper,
@@ -201,7 +201,7 @@ public class DataTool {
      * @param mapper 生成新的 list 接口规则
      * @param <S> 源数据类型
      * @param <T> 目标数据类型
-     * @return
+     * @return list
      */
     public static <S, T> List<T> toList(List<S> source,
                                         Function<? super S, ? extends T> mapper) {
@@ -214,7 +214,7 @@ public class DataTool {
      * @param mapper 生成新的 list 接口规则
      * @param <S> 源数据类型
      * @param <T> 目标数据类型
-     * @return
+     * @return list
      */
     public static <S, T> List<T> toList(S[] array,
                                         Function<? super S, ? extends T> mapper) {
@@ -228,7 +228,7 @@ public class DataTool {
      * @param distinct 是否去重
      * @param <S> 源数据类型
      * @param <T> 目标数据类型
-     * @return
+     * @return list
      */
     public static <S, T> List<T> toList(List<S> source,
                                         Function<? super S, ? extends T> mapper,
@@ -255,7 +255,7 @@ public class DataTool {
      * @param <T> 目标数据集合元素类型
      * @param <K> map 集合的 key 类型
      * @param <V> map 集合的 value 类型
-     * @return
+     * @return list
      */
     private static <S, T, K, V> List<T> toListWithMap(List<S> source, Map<K, V> map,
                                                      Function<S, K> keyFunction,
@@ -304,7 +304,7 @@ public class DataTool {
      * @param <T> 目标数据集合元素类型
      * @param <K> map 集合的 key 类型
      * @param <V> map 集合的 value 类型
-     * @return
+     * @return list
      */
     public static <S, T, K, V> List<T> toListWithMap(List<S> source, Map<K, V> map,
                                                      Function<S, K> keyFunction,
@@ -323,7 +323,7 @@ public class DataTool {
      * @param <T> 目标数据集合元素类型
      * @param <K> map 集合的 key 类型
      * @param <V> map 集合的 value 类型
-     * @return
+     * @return list
      */
     public static <S, T, K, V> List<T> toListWithMap(List<S> source, Map<K, V> map,
                                                      Function<S, K> keyFunction,
@@ -341,7 +341,7 @@ public class DataTool {
      * @param distinct 是否去重 distinct 为 true，表示过滤之后生成list之前进行去重操作
      * @param <S> 源数据类型
      * @param <T> 目标数据类型
-     * @return
+     * @return list
      */
     public static <S, T> List<T> toList(List<S> source, Predicate<S> filter,
                                         Function<? super S, ? extends T> mapper,
@@ -368,7 +368,7 @@ public class DataTool {
      * @param mapper 生成新的 list 接口规则
      * @param <S> 源数据类型
      * @param <T> 目标数据类型
-     * @return
+     * @return list
      */
     public static <S, T> List<T> toList(List<S> source,
                                         Predicate<S> filter,
@@ -384,7 +384,7 @@ public class DataTool {
      * @param <K> map 集合的 key 类型
      * @param <T> map 集合的数据类型
      * @param <R> 目标数据类型
-     * @return
+     * @return list
      */
     public static <K, T, R> List<R> toListByMap(Map<K, T> map,
                                                 BiFunction<K, T, R> function) {
@@ -405,7 +405,7 @@ public class DataTool {
      * @param <K> map 集合的 key 类型
      * @param <T> map 集合的数据类型
      * @param <R> 目标数据类型
-     * @return
+     * @return list
      */
     public static <K, T, R> List<R> toListByMap(Map<K, T> map,
                                                 BiPredicate<K, T> filterMapMapper,
@@ -426,7 +426,7 @@ public class DataTool {
      * @param classifier 分组规则
      * @param <K> map 集合中的 key 类型
      * @param <S> map 集合中的 value 类型
-     * @return
+     * @return list
      */
     public static <K, S> Map<K, List<S>> groupingBy(List<S> source,
                                                     Function<? super S, ? extends K> classifier) {
@@ -444,7 +444,7 @@ public class DataTool {
      * @param classifier 分组规则
      * @param <K> map 集合中的 key 类型
      * @param <S> map 集合中的 value 类型
-     * @return
+     * @return list
      */
     public static <K, S> Map<K, List<S>> groupingBy(List<S> source,
                                                     Predicate<S> filter,
@@ -459,23 +459,23 @@ public class DataTool {
     }
 
     /**
-     * 对list集合进行排序
+     * 对 list 集合进行排序
      * @param source 数据源集合
      * @param comparator 排序器
      * @param <T> 集合的数据类型
-     * @return
+     * @return list
      */
     public static <T> List<T> sort(List<T> source, Comparator<T> comparator) {
         return sort(source, comparator, true);
     }
 
     /**
-     * 对list集合进行排序
+     * 对 list 集合进行排序
      * @param source 数据源集合
      * @param comparator 排序器
      * @param reverse 是否逆序
      * @param <T> 集合的数据类型
-     * @return
+     * @return list
      */
     public static <T> List<T> sort(List<T> source,
                                    Comparator<T> comparator,
@@ -502,7 +502,7 @@ public class DataTool {
      * @param getDeduplicatedKeyFunction 获取去重的数据值
      * @param <K> 去重属性的类型
      * @param <T> 数据源集合中元素的类型
-     * @return
+     * @return DeduplicateResult
      */
     public static <K, T> DeduplicateResult<K, T> deduplicate(List<T> source,
                                                              Function<T, Boolean> isValidFunction,
@@ -517,7 +517,7 @@ public class DataTool {
      * @param getDeduplicatedKeyFunction 获取去重的数据值
      * @param <K> 去重属性的类型
      * @param <T> 数据源集合中元素的类型
-     * @return
+     * @return DeduplicateResult
      */
     public static <K, T> DeduplicateResult<K, T> deduplicate(List<T> source,
                                                              Function<T, K> getDeduplicatedKeyFunction) {
@@ -532,7 +532,7 @@ public class DataTool {
      * @param remainFirst 是否保留第一次出现的重复值
      * @param <K> 去重属性的类型
      * @param <T> 数据源集合中元素的类型
-     * @return
+     * @return DeduplicateResult
      */
     public static <K, T> DeduplicateResult<K, T> deduplicate(List<T> source,
                                                              Function<T, K> getDeduplicatedKeyFunction,
@@ -549,7 +549,7 @@ public class DataTool {
      * @param remainFirst 是否保留第一次出现的重复值
      * @param <K> 去重属性的类型
      * @param <T> 数据源集合中元素的类型
-     * @return
+     * @return DeduplicateResult
      */
     public static <K, T> DeduplicateResult<K, T> deduplicate(List<T> source,
                                                           Function<T, Boolean> isValidFunction,
@@ -600,7 +600,7 @@ public class DataTool {
      * @param keyMapper map 集合中的 key 获取规则
      * @param <K> map 集合中的 key 类型
      * @param <T> map 集合中的 value 类型
-     * @return
+     * @return map 集合
      */
     public static <K, T extends Enum<T>> Map<K, T> enumMap(Class<T> sourceEnumClass,
                                                            Function<T, K> keyMapper) {
@@ -613,7 +613,7 @@ public class DataTool {
      * map 集合中的 key 为 Enum 的 name() 方法返回值
      * @param sourceEnumClass 数据源枚举 Class类
      * @param <T> map 集合中的 value 类型
-     * @return
+     * @return map 集合
      */
     public static <T extends Enum<T>> Map<String, T> enumMap(Class<T> sourceEnumClass) {
         EnumSet<T> enumSet = EnumSet.allOf(sourceEnumClass);
@@ -624,10 +624,10 @@ public class DataTool {
      * 枚举转 list 集合
      * 按照 function 将枚举转成 list 集合
      * @param sourceEnumClass 数据源枚举 Class类
-     * @param function
+     * @param function 生成接口
      * @param <T> 枚举类型
      * @param <R> 结果集类型
-     * @return
+     * @return list
      */
     public static <T extends Enum<T>, R> List<R> enumList(Class<T> sourceEnumClass,
                                                           Function<T, R> function) {
@@ -642,7 +642,7 @@ public class DataTool {
      * @param keyMapper map 集合中的 key 获取规则
      * @param <K> map 集合中的 key 类型
      * @param <T> map 集合中的 value 类型
-     * @return
+     * @return map
      */
     public static <K, T extends Enum<T>> boolean enumContainsKey(K key, Class<T> sourceEnumClass,
                                                                  Function<T, K> keyMapper) {
@@ -661,7 +661,7 @@ public class DataTool {
      * @param keyMapper map 集合中的 key 获取规则
      * @param <K> map 集合中的 key 类型
      * @param <T> map 集合中的 value 类型
-     * @return
+     * @return 枚举实例
      */
     public static <K, T extends Enum<T>> T enumGetValue(K key, Class<T> sourceEnumClass,
                                                         Function<T, K> keyMapper) {
@@ -675,10 +675,10 @@ public class DataTool {
 
     /**
      * 将原始的 list 按照 filter 过滤
-     * @param source
-     * @param filter
-     * @param <T>
-     * @return
+     * @param source 数据原始集合
+     * @param filter 过滤规则
+     * @param <T> 数据类型
+     * @return list
      */
     public static <T> List<T> filter(List<T> source,
                                      Predicate<? super T> filter) {
@@ -700,7 +700,7 @@ public class DataTool {
      * @param <M> 要搜索的源数据类型
      * @param <K> 搜索的 key 类型
      * @param <T> 被搜索的数据源类型
-     * @return
+     * @return 被搜索的数据源
      */
     public static <M, K, T> T getDataFromList(M searchData,
                                               Function<M, K> searchFunction,
@@ -739,14 +739,17 @@ public class DataTool {
 
     /**
      * 去除 list 集合中的 null 元素进行
-     * @param oldList
-     * @param <T>
-     * @return
+     * @param oldList 原始数据集合
+     * @param <T> 原始数据类型
+     * @return list
      */
     public static <T> List<T> removeNull(List<? extends T> oldList) {
         oldList.removeAll(Collections.singleton(null));
         return (List<T>) oldList;
     }
+
+
+
 
     /**
      * 从 map 中获取 value 集合并根据 function 转成 R 集合
@@ -754,7 +757,8 @@ public class DataTool {
      * @param function 映射接口
      * @param <K> key 类型
      * @param <V> value 类型
-     * @return
+     * @param <R> 目标数据类型
+     * @return list
      */
     public static <K, V, R> List<R> mapValueToList(Map<K, V> map,
                                                    Function<V, R> function) {
@@ -774,7 +778,7 @@ public class DataTool {
      * @param <K> key 类型
      * @param <V> key 类型
      * @param <R> 结果集类型
-     * @return
+     * @return list
      */
     public static <K, V, R> List<R> mapToList(Map<K, V> map,
                                               BiFunction<K, V, R> function) {
@@ -796,7 +800,7 @@ public class DataTool {
      * @param <K> key 类型
      * @param <V> key 类型
      * @param <R> 结果集类型
-     * @return
+     * @return list
      */
     public static <K, V, R> List<R> mapToList(Map<K, V> map,
                                               BiPredicate<K, V> predicate,
@@ -824,7 +828,7 @@ public class DataTool {
      * @param <S2> 基础集合数据类型
      * @param <K> key 的数据类型
      * @param <R> 结果集数据类型
-     * @return
+     * @return list
      */
     public static <S1, S2, K, R> List<R> getListFromBaseList(List<S1> sourceList,
                                                              Function<S1, K> sourceDataKeyFunction,
@@ -845,8 +849,8 @@ public class DataTool {
 
     /**
      * 从 sourceList 按照 resultFunction 生成结果集合
-     * 结果集合 List<R> 和 List<S2> 按照 resultDataKeyFunction 和 baseDataKeyFunction 匹配对应的数据
-     * 匹配到的 List<S2> 按照 consumer 规则供结果集使用
+     * 结果集合 List1 和 List2 按照 resultDataKeyFunction 和 baseDataKeyFunction 匹配对应的数据
+     * 匹配到的 List 按照 consumer 规则供结果集使用
      *
      * @param sourceList 原始集合
      * @param resultFunction 结果集生成规则
@@ -858,7 +862,7 @@ public class DataTool {
      * @param <S2> 基础集合数据类型
      * @param <K> key 的数据类型
      * @param <R> 结果集数据类型
-     * @return
+     * @return list
      */
     public static <S1, S2, K, R> List<R> getListFromBaseList(List<S1> sourceList,
                                                              Function<S1, R> resultFunction,

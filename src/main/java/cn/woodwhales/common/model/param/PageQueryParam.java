@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author woodwhales on 2020-08-25
- * @description
  */
 @Data
 public class PageQueryParam implements PageQueryInterface {

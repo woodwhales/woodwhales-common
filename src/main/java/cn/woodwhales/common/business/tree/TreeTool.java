@@ -14,7 +14,6 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * @author woodwhales on 2020-12-10
- * @description
  */
 public class TreeTool {
 
@@ -25,7 +24,7 @@ public class TreeTool {
      * @param treeNodeAttributeMapper 属性名映射器
      * @param <K> 节点 id 类型
      * @param <T> 数据源类型
-     * @return
+     * @return list
      */
     public static <K, T> List<Map<String, Object>> tree(List<T> sourceList,
                                                         final TreeNodeGenerator<K, T> treeNodeGenerator,
@@ -41,7 +40,7 @@ public class TreeTool {
      * @param extraFunction 添加扩展属性数据接口
      * @param <K> 节点 id 类型
      * @param <T> 数据源类型
-     * @return
+     * @return list
      */
     public static <K, T> List<Map<String, Object>> tree(List<T> sourceList,
                                                         final TreeNodeGenerator<K, T> treeNodeGenerator,
@@ -56,9 +55,10 @@ public class TreeTool {
      * @param treeNodeGenerator TreeNode 生成器
      * @param treeNodeAttributeMapper 属性名映射器
      * @param extraFunction 添加扩展属性数据接口
+     * @param withData 是否携带数据
      * @param <K> 节点 id 类型
      * @param <T> 数据源类型
-     * @return
+     * @return list
      */
     public static <K, T> List<Map<String, Object>> tree(List<T> sourceList,
                                                         final TreeNodeGenerator<K, T> treeNodeGenerator,
@@ -94,7 +94,7 @@ public class TreeTool {
      * @param withData 是否携带源数据
      * @param <K> 节点 id 类型
      * @param <T> 数据源类型
-     * @return
+     * @return list
      */
     public static <K, T> List<Map<String, Object>> tree(List<T> sourceList,
                                                         final TreeNodeGenerator<K, T> treeNodeGenerator,
@@ -109,7 +109,7 @@ public class TreeTool {
      * @param treeNodeGenerator TreeNode 生成器
      * @param <K> 节点 id 类型
      * @param <T> 数据源类型
-     * @return
+     * @return list
      */
     public static <K, T> List<TreeNode<K, T>> tree(List<T> sourceList,
                                                    final TreeNodeGenerator<K, T> treeNodeGenerator) {
@@ -123,7 +123,7 @@ public class TreeTool {
      * @param <K> 节点 id 类型
      * @param <T> 数据源类型
      * @param withData 是否携带源数据
-     * @return
+     * @return list
      */
     public static <K, T> List<TreeNode<K, T>> tree(List<T> sourceList,
                                                    final TreeNodeGenerator<K, T> treeNodeGenerator,
@@ -162,7 +162,7 @@ public class TreeTool {
      * @param unRootNodeContainer 所有非根节点的 map 集合（key 为父节点）
      * @param <K> 节点 id 类型
      * @param <T> 数据源类型
-     * @return
+     * @return list
      */
     private static <K, T> List<TreeNode<K, T>> buildChildren(final K currentNodeId,
                                                              Map<K, List<TreeNode<K, T>>> unRootNodeContainer) {

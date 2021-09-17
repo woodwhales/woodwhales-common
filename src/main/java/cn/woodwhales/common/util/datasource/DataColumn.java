@@ -17,7 +17,7 @@ public @interface DataColumn {
 
     /**
      * The name of the column
-     * @return
+     * @return The name of the column
      */
     String value() default "";
 

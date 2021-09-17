@@ -10,7 +10,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * @author woodwhales
- * @create 2020-12-07 22:19
+ * 2020-12-07 22:19
  */
 public class ChineseDataTool {
 
@@ -18,10 +18,10 @@ public class ChineseDataTool {
 
     /**
      * 根据 dataList 进行中文字段排序
-     * @param dataList
-     * @param chineseInterface
-     * @param <T>
-     * @return
+     * @param dataList 原始数据
+     * @param chineseInterface 中文排序接口
+     * @param <T> 数据集合泛型
+     * @return 已排序的结果集
      */
     public static <T> List<T> sortedList(List<T> dataList, ChineseInterface<T> chineseInterface) {
         if(isEmpty(dataList)) {

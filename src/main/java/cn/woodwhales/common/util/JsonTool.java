@@ -14,7 +14,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * @author woodwhales
- * @date 2020-12-26 00:21
+ * 2020-12-26 00:21
  */
 public class JsonTool {
 
@@ -28,7 +28,7 @@ public class JsonTool {
      * @param typeReference 对象类型
      * @param replaceMap 字符替换集合
      * @param <T> 对象类型
-     * @return
+     * @return 解析后的实例
      */
     public static <T> T parse(String jsonStr, TypeReference<T> typeReference, Map<String, String> replaceMap) {
         if(isBlank(jsonStr)) {
@@ -63,7 +63,7 @@ public class JsonTool {
      * @param jsonStr json字符串
      * @param typeReference TypeReference对象
      * @param <T> 对象类型
-     * @return
+     * @return 解析后的实例
      */
     public static <T> T parse(String jsonStr, TypeReference<T> typeReference) {
         return parse(jsonStr, typeReference, null);

@@ -1,18 +1,16 @@
 package cn.woodwhales.common.example.business;
 
+import cn.woodwhales.common.business.DataTool;
+import cn.woodwhales.common.business.DeduplicateResult;
 import cn.woodwhales.common.example.model.business.*;
 import cn.woodwhales.common.example.model.business.example.*;
 import com.google.gson.Gson;
-import cn.woodwhales.common.business.DataTool;
-import cn.woodwhales.common.business.DeduplicateResult;
-import org.woodwhales.common.example.model.business.*;
-import org.woodwhales.common.example.model.business.example.*;
 
 import java.util.*;
 
 /**
  * @author woodwhales on 2021-07-25 12:34
- * @Description DataTool 使用示例
+ * DataTool 使用示例
  */
 public class DataToolExample {
 

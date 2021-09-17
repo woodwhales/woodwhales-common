@@ -17,7 +17,7 @@ public @interface DataTable {
 
     /**
      * The name of the table
-     * @return
+     * @return The name of the table
      */
     String value() default "";
 

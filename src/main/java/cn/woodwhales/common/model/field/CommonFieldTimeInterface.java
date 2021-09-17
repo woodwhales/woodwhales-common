@@ -3,34 +3,34 @@ package cn.woodwhales.common.model.field;
 import java.util.Date;
 
 /**
- * @projectName: common
+ * common
  * @author: woodwhales
- * @date: 20.9.18 21:30
- * @description:
+ * 20.9.18 21:30
+ *
  */
 public interface CommonFieldTimeInterface {
 
     /**
      * 设置创建时间
-     * @param createTime
+     * @param createTime 创建时间
      */
     void setCreateTime(Date createTime);
 
     /**
      * 获取创建时间
-     * @return
+     * @return 创建时间
      */
     Date getCreateTime();
 
     /**
      * 设置更新时间
-     * @param updateTime
+     * @param updateTime 更新时间
      */
     void setUpdateTime(Date updateTime);
 
     /**
      * 获取更新时间
-     * @return
+     * @return 更新时间
      */
     Date getUpdateTime();
 

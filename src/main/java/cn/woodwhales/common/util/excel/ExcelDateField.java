@@ -8,7 +8,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * @author woodwhales on 2021-07-28 16:58
- * @description 日期属性excel注解
+ * 日期属性excel注解
  */
 @Target({FIELD})
 @Retention(RUNTIME)

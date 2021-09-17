@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author woodwhales on 2021-07-25 12:07
- * @Description ChineseDataTool 使用示例
+ * ChineseDataTool 使用示例
  */
 public class ChineseDataToolExample {
 

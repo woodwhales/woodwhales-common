@@ -5,7 +5,6 @@ import lombok.Getter;
 
 /**
  * @author woodwhales on 2021-07-25 12:41
- * @Description
  */
 @Getter
 @AllArgsConstructor

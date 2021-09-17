@@ -11,7 +11,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 /**
  * @author woodwhales on 2020-12-11
- * @description 通用节点容器对象
+ * 通用节点容器对象
  */
 public class TreeNode<K, T> {
 
@@ -54,7 +54,7 @@ public class TreeNode<K, T> {
      * @param treeNodeGenerator TreeNode 生成器
      * @param <K> 节点 id 类型
      * @param <T> 源数据类型
-     * @return
+     * @return TreeNode
      */
     public static <K, T> TreeNode<K, T> build(T data, TreeNodeGenerator<K, T> treeNodeGenerator) {
         return build(data, treeNodeGenerator, false);
@@ -62,12 +62,12 @@ public class TreeNode<K, T> {
 
     /**
      * 构建 TreeNode 对象
-     * @param data
-     * @param treeNodeGenerator
-     * @param withData
-     * @param <K>
-     * @param <T>
-     * @return
+     * @param data 原始数据
+     * @param treeNodeGenerator 树节点生成器
+     * @param withData 是否携带数据
+     * @param <K> key泛型
+     * @param <T> value泛型
+     * @return 返回数节点对象，根节点
      */
     public static <K, T> TreeNode<K, T> build(T data,
                                               TreeNodeGenerator<K, T> treeNodeGenerator,

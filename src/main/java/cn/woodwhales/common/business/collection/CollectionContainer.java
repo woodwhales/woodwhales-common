@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 /**
  * @author woodwhales on 2020-12-13 16:32
- * @description
  */
 public class CollectionContainer<K, T> implements CollectionFieldComparable<K> {
 

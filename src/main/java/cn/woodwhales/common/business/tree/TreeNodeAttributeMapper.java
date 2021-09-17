@@ -7,7 +7,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author woodwhales on 2020-12-11
- * @description
  */
 public class TreeNodeAttributeMapper<T> {
 
@@ -115,7 +114,7 @@ public class TreeNodeAttributeMapper<T> {
          * 设置字段变量的别名
          * 扩展字段的别名会覆盖掉已有的数据字段数据
          * @param extraName 扩展字段变量的别名
-         * @return
+         * @return TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder
          */
         public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> extraName(String extraName) {
             this.extraName = extraName;

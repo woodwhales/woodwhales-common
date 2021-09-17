@@ -16,19 +16,20 @@ public @interface EnumValidator {
 
     /**
      * 枚举Class对象
-     * @return
+     * @return 枚举Class对象
      */
 	Class<? extends Enum>[] target() default {};
 
     /**
      * 枚举中要校验的数值的对应方法
      * 默认值为：Enum 类 的 name() 方法
+     * @return 方法名称
      */
     String methodName() default "name";
 
     /**
      * 校验失败默认异常信息
-     * @return
+     * @return 校验失败默认异常信息
      */
     String message() default "入参值不在正确枚举中";
     

@@ -24,7 +24,7 @@ MybatisPlusExecutor
 
 > mybatisPlus sql 执行器
 
-org.woodwhales.common.util.ExcelTool
+cn.woodwhales.common.util.ExcelTool
 
 > excel 文件读取操作
 

@@ -10,7 +10,6 @@ import java.util.Date;
 
 /**
  * @author woodwhales on 2021-07-25 13:25
- * @Description
  */
 @Data
 public class DataSourceToolTempRbacRole {

@@ -23,19 +23,19 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * @author woodwhales on 2021-01-05 14:02
- * @description mybatisPlus sql 执行器
+ * mybatisPlus sql 执行器
  */
 public class MybatisPlusExecutor {
 
     /**
      * 查询数据集合
-     * @param mapper
-     * @param wrapper
-     * @param mapping
-     * @param <Entity>
-     * @param <Mapper>
-     * @param <DTO>
-     * @return
+     * @param mapper mapper
+     * @param wrapper wrapper
+     * @param mapping mapping
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @param <DTO> DTO
+     * @return list
      */
     public static <Entity, Mapper extends BaseMapper<Entity>, DTO> List<DTO> executeQueryList(Mapper mapper,
                                                                                               Wrapper<Entity> wrapper,
@@ -51,13 +51,13 @@ public class MybatisPlusExecutor {
 
     /**
      * 查询数据集合
-     * @param mapper
-     * @param lambdaQueryWrapperConsumer
-     * @param mapping
-     * @param <Entity>
-     * @param <Mapper>
-     * @param <DTO>
-     * @return
+     * @param mapper mapper
+     * @param lambdaQueryWrapperConsumer lambdaQueryWrapperConsumer
+     * @param mapping mapping
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @param <DTO> DTO泛型
+     * @return list
      */
     public static <Entity, Mapper extends BaseMapper<Entity>, DTO> List<DTO> executeQueryList(Mapper mapper,
                                                                                               Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
@@ -68,11 +68,11 @@ public class MybatisPlusExecutor {
 
     /**
      * 查询数据集合
-     * @param mapper
-     * @param wrapper
-     * @param <Entity>
-     * @param <Mapper>
-     * @return
+     * @param mapper mapper
+     * @param wrapper wrapper
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @return list
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> List<Entity> executeQueryList(Mapper mapper,
                                                                                             Wrapper<Entity> wrapper) {
@@ -85,11 +85,11 @@ public class MybatisPlusExecutor {
 
     /**
      * 查询数据集合
-     * @param mapper
-     * @param lambdaQueryWrapperConsumer
-     * @param <Entity>
-     * @param <Mapper>
-     * @return
+     * @param mapper mapper
+     * @param lambdaQueryWrapperConsumer lambdaQueryWrapperConsumer
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @return list
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> List<Entity> executeQueryList(Mapper mapper,
                                                                                             Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer) {
@@ -100,15 +100,15 @@ public class MybatisPlusExecutor {
 
     /**
      * 查询数据并按照 keyMapping 规则转成 map 集合
-     * @param mapper
-     * @param wrapper
-     * @param mapping
-     * @param keyMapping
-     * @param <Entity>
-     * @param <Mapper>
-     * @param <DTO>
-     * @param <Key>
-     * @return
+     * @param mapper mapper
+     * @param wrapper wrapper
+     * @param mapping mapping
+     * @param keyMapping keyMapping
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @param <DTO> DTO泛型
+     * @param <Key> key泛型
+     * @return list
      */
     public static <Entity, Mapper extends BaseMapper<Entity>, DTO, Key> Map<Key, DTO> executeQueryListMap(Mapper mapper,
                                                                                                           Wrapper<Entity> wrapper,
@@ -119,15 +119,15 @@ public class MybatisPlusExecutor {
 
     /**
      * 查询数据并按照 keyMapping 规则转成 map 集合
-     * @param mapper
-     * @param lambdaQueryWrapperConsumer
-     * @param mapping
-     * @param keyMapping
-     * @param <Entity>
-     * @param <Mapper>
-     * @param <DTO>
-     * @param <Key>
-     * @return
+     * @param mapper mapper
+     * @param lambdaQueryWrapperConsumer lambdaQueryWrapperConsumer
+     * @param mapping mapping
+     * @param keyMapping keyMapping
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @param <DTO> DTO泛型
+     * @param <Key> key泛型
+     * @return list
      */
     public static <Entity, Mapper extends BaseMapper<Entity>, DTO, Key> Map<Key, DTO> executeQueryListMap(Mapper mapper,
                                                                                                           Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
@@ -140,13 +140,13 @@ public class MybatisPlusExecutor {
 
     /**
      * 查询单条数据
-     * @param mapper
-     * @param wrapper
-     * @param mapping
-     * @param <Entity>
-     * @param <Mapper>
-     * @param <DTO>
-     * @return
+     * @param mapper mapper
+     * @param wrapper wrapper
+     * @param mapping mapping
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @param <DTO> DTO泛型
+     * @return DTO实例
      */
     public static <Entity, Mapper extends BaseMapper<Entity>, DTO> DTO executeQueryOne(Mapper mapper,
                                                                                        Wrapper<Entity> wrapper,
@@ -161,13 +161,13 @@ public class MybatisPlusExecutor {
 
     /**
      * 查询单条数据
-     * @param mapper
-     * @param lambdaQueryWrapperConsumer
-     * @param mapping
-     * @param <Entity>
-     * @param <Mapper>
-     * @param <DTO>
-     * @return
+     * @param mapper mapper
+     * @param lambdaQueryWrapperConsumer lambdaQueryWrapperConsumer
+     * @param mapping mapping
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @param <DTO> DTO泛型
+     * @return DTO实例
      */
     public static <Entity, Mapper extends BaseMapper<Entity>, DTO> DTO executeQueryOne(Mapper mapper,
                                                                                        Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
@@ -179,11 +179,11 @@ public class MybatisPlusExecutor {
 
     /**
      * 查询单条数据
-     * @param mapper
-     * @param wrapper
-     * @param <Entity>
-     * @param <Mapper>
-     * @return
+     * @param mapper mapper
+     * @param wrapper wrapper
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @return 数据实体
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> Entity executeQueryOne(Mapper mapper,
                                                                                      Wrapper<Entity> wrapper) {
@@ -197,14 +197,14 @@ public class MybatisPlusExecutor {
 
     /**
      * 分页查询数据
-     * @param mapper
-     * @param queryParam
-     * @param lambdaQueryWrapperConsumer
-     * @param mapping
-     * @param <Entity>
-     * @param <DTO>
-     * @param <Mapper>
-     * @return
+     * @param mapper mapper
+     * @param queryParam queryParam
+     * @param lambdaQueryWrapperConsumer lambdaQueryWrapperConsumer
+     * @param mapping mapping
+     * @param <Entity> 数据实体泛型
+     * @param <DTO> DTO泛型
+     * @param <Mapper> mapper泛型
+     * @return PageRespVO
      */
     public static <Entity, DTO, Mapper extends BaseMapper<Entity>> PageRespVO<DTO> executeQueryPage(Mapper mapper,
                                                                                                     PageQueryInterface queryParam,
@@ -216,12 +216,12 @@ public class MybatisPlusExecutor {
 
     /**
      * 分页查询数据
-     * @param mapper
-     * @param queryParam
-     * @param lambdaQueryWrapperConsumer
-     * @param <Entity>
-     * @param <Mapper>
-     * @return
+     * @param mapper mapper
+     * @param queryParam queryParam
+     * @param lambdaQueryWrapperConsumer lambdaQueryWrapperConsumer
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @return PageRespVO
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> PageRespVO<Entity> executeQueryPage(Mapper mapper,
                                                                                                   PageQueryInterface queryParam,
@@ -232,12 +232,12 @@ public class MybatisPlusExecutor {
 
     /**
      * 分页查询数据
-     * @param mapper
-     * @param queryParam
-     * @param wrapper
-     * @param <Entity>
-     * @param <Mapper>
-     * @return
+     * @param mapper mapper
+     * @param queryParam queryParam
+     * @param wrapper wrapper
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @return PageRespVO
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> PageRespVO<Entity> executeQueryPage(Mapper mapper,
                                                                                                   PageQueryInterface queryParam,
@@ -249,12 +249,12 @@ public class MybatisPlusExecutor {
 
     /**
      * 分页查询数据
-     * @param mapper
-     * @param queryParam
-     * @param lambdaQueryWrapperConsumer
-     * @param <Entity>
-     * @param <Mapper>
-     * @return
+     * @param mapper mapper
+     * @param queryParam queryParam
+     * @param lambdaQueryWrapperConsumer lambdaQueryWrapperConsumer
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @return IPage
      */
     private static <Entity, Mapper extends BaseMapper<Entity>> IPage<Entity> executeSelectPage(Mapper mapper,
                                                                                                PageQueryInterface queryParam,
@@ -267,11 +267,11 @@ public class MybatisPlusExecutor {
 
     /**
      * 批量插入数据
-     * @param batchMapper
-     * @param entityList
-     * @param <Mapper>
-     * @param <Entity>
-     * @return
+     * @param batchMapper batchMapper
+     * @param entityList entityList
+     * @param <Mapper> mapper泛型
+     * @param <Entity> 数据实体泛型
+     * @return 影响行数
      */
     public static <Mapper extends BaseMapper<Entity>, Entity> boolean batchInsert(ServiceImpl<Mapper, Entity> batchMapper, List<Entity> entityList) {
         if(isEmpty(entityList)) {
@@ -282,13 +282,13 @@ public class MybatisPlusExecutor {
 
     /**
      * 批量插入数据
-     * @param batchMapper
-     * @param mapping
-     * @param dtoList
-     * @param <Mapper>
-     * @param <Entity>
-     * @param <DTO>
-     * @return
+     * @param batchMapper batchMapper
+     * @param mapping mapping
+     * @param dtoList dtoList
+     * @param <Mapper> mapper泛型
+     * @param <Entity> 数据实体泛型
+     * @param <DTO> DTO泛型
+     * @return 是否成功
      */
     public static <Mapper extends BaseMapper<Entity>, Entity, DTO> boolean batchInsert(ServiceImpl<Mapper, Entity> batchMapper,
                                                                                        Function<List<DTO>, List<Entity>> mapping,
@@ -298,14 +298,14 @@ public class MybatisPlusExecutor {
 
     /**
      * 按照 entityIdFunction 更新数据
-     * @param mapper
-     * @param entity
-     * @param entityIdFunction
-     * @param function
-     * @param <Mapper>
-     * @param <Entity>
-     * @param <K>
-     * @return
+     * @param mapper mapper
+     * @param entity entity
+     * @param entityIdFunction entityIdFunction
+     * @param function function
+     * @param <Mapper> mapper泛型
+     * @param <Entity> 数据实体泛型
+     * @param <K> key泛型
+     * @return 影响行数
      */
     public static <Mapper extends BaseMapper<Entity>, Entity, K extends Serializable> int update(Mapper mapper,
                                                                                                  Entity entity,

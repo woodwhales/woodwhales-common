@@ -4,7 +4,7 @@ import cn.woodwhales.common.model.result.BaseRespResult;
 
 /**
  * @author woodwhales on 2020-08-25
- * @description 通用响应枚举
+ * 通用响应枚举
  */
 public enum RespCodeEnum implements BaseRespResult {
 

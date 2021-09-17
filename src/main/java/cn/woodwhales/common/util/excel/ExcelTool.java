@@ -23,7 +23,7 @@ import static cn.woodwhales.common.business.DataTool.toMapForSaveNew;
 
 /**
  * @author woodwhales on 2021-01-29 15:32
- * @description excel 数据解析工具
+ * excel 数据解析工具
  */
 public class ExcelTool {
 
@@ -32,10 +32,10 @@ public class ExcelTool {
      * 默认解析：
      *  第一个 sheet
      *  跳过第一行数据
-     * @param filePath
-     * @param function
-     * @param <T>
-     * @return
+     * @param filePath 文件路径
+     * @param function 解析接口
+     * @param <T> 返回数据泛型
+     * @return list
      */
     public static <T> List<T> parseData(String filePath, BiFunction<Integer, Row, T> function) {
         return parseData(filePath, 0, 1, function);
@@ -46,10 +46,10 @@ public class ExcelTool {
      * 默认解析：
      *  第一个 sheet
      *  跳过第一行数据
-     * @param inputStream
-     * @param function
-     * @param <T>
-     * @return
+     * @param inputStream 文件输入流
+     * @param function 解析接口
+     * @param <T> 返回数据泛型
+     * @return list
      */
     public static <T> List<T> parseData(InputStream inputStream, BiFunction<Integer, Row, T> function) {
         return parseData(buildWorkbook(inputStream), 0, 1, function, null);
@@ -104,11 +104,12 @@ public class ExcelTool {
 
     /**
      * 解析 excel 中的内容为 list 集合数据
-     * @param filePath
-     * @param sheetIndex
+     * @param filePath 文件路径
+     * @param sheetIndex sheet索引
      * @param skipLineNumbers 跳过第几行（物理行数）
-     * @param <T>
-     * @return
+     * @param function 解析接口
+     * @param <T> 返回数据泛型
+     * @return list
      */
     public static <T> List<T> parseData(String filePath,
                                         int sheetIndex,

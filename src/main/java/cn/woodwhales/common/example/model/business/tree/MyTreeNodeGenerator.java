@@ -4,7 +4,6 @@ import cn.woodwhales.common.business.tree.TreeNodeGenerator;
 
 /**
  * @author woodwhales on 2021-07-25 12:26
- * @Description
  */
 public class MyTreeNodeGenerator implements TreeNodeGenerator<Integer, TreeToolTempMenu> {
     @Override

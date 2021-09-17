@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * @author woodwhales on 2020-08-25
- * @description 分页查询响应视图
+ * 分页查询响应视图
  */
 @Data
 public class PageRespVO<T> extends RespVO<List<T>> {
@@ -48,12 +48,12 @@ public class PageRespVO<T> extends RespVO<List<T>> {
     }
 
     /**
-     * IPage<T> 数据按照 mapper 规则转成 PageRespVO<<R>
-     * @param page
-     * @param mapper
-     * @param <S>
-     * @param <T>
-     * @return
+     * IPage 数据按照 mapper 规则转成 PageRespVO
+     * @param page page
+     * @param mapper mapper
+     * @param <S> 原始数据泛型
+     * @param <T> 目标数据泛型
+     * @return PageRespVO
      */
     public static <S, T> PageRespVO<T> buildPageRespVO(IPage<S> page,
                                                        Function<? super S, ? extends T> mapper) {

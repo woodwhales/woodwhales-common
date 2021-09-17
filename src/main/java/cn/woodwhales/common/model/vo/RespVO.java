@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 /**
  * @author woodwhales on 2020-08-25
- * @description 通用响应视图
+ * 通用响应视图
  */
 @Data
 @Builder

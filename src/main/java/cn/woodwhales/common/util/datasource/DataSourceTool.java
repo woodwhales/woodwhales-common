@@ -20,7 +20,7 @@ import static java.util.Objects.nonNull;
 
 /**
  * @author woodwhales on 2021-01-28 21:22
- * @description 数据库查询工具
+ * 数据库查询工具
  */
 @Slf4j
 public class DataSourceTool {

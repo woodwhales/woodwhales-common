@@ -10,7 +10,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * @author woodwhales
- * @create 2020-12-07 22:27
+ * 2020-12-07 22:27
  */
 public class ChineseDataContainer<T> {
 
@@ -36,8 +36,8 @@ public class ChineseDataContainer<T> {
 
     /**
      * 对中文字段进行比较
-     * @param chineseDataContainer
-     * @return
+     * @param chineseDataContainer 中文数据容器
+     * @return 比较结果值
      */
     public int compare(ChineseDataContainer chineseDataContainer) {
         return ComparisonChain.start()

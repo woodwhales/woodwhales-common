@@ -10,7 +10,6 @@ import java.util.Set;
 
 /**
  * @author woodwhales on 2020-12-13 17:35
- * @description
  */
 class CollectionMathResultTest {
 

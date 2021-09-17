@@ -5,7 +5,6 @@ import lombok.Data;
 
 /**
  * @author woodwhales on 2021-07-25 12:38
- * @Description
  */
 @Data
 @AllArgsConstructor
