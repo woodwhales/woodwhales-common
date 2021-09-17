@@ -4,23 +4,23 @@
 
 ## 常用小工具
 
-org.woodwhales.common.business.DataTool
+DataTool
 
 > 旧集合转新集合操作
 
-org.woodwhales.common.business.collection.CollectionMath
+CollectionMath
 
 > 集合元素交集、并集操作
 
-org.woodwhales.common.business.DataTool#deduplicate
+DataTool#deduplicate
 
 > 集合元素去重器
 
-org.woodwhales.common.business.chinese.ChineseDataTool
+ChineseDataTool
 
 > 中文字段排序操作
 
-org.woodwhales.common.mybatisplus.MybatisPlusExecutor
+MybatisPlusExecutor
 
 > mybatisPlus sql 执行器
 
@@ -28,6 +28,6 @@ org.woodwhales.common.util.ExcelTool
 
 > excel 文件读取操作
 
-org.woodwhales.common.util.datasource.DataSourceTool
+DataSourceTool
 
 >   数据库执行器

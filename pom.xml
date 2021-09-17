@@ -3,14 +3,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.woodwhales.common</groupId>
+    <groupId>cn.woodwhales.common</groupId>
     <artifactId>woodwhales-common</artifactId>
     <version>3.3.0</version>
     <name>woodwhales-common</name>
-    <description>woodwhales-common, see to https://github.com/woodwhales/woodwhales-common</description>
+
+    <description>https://github.com/woodwhales</description>
+    <url>https://github.com/woodwhales/woodwhales-common</url>
 
     <properties>
-
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <mybatis-plus.version>3.2.0</mybatis-plus.version>
         <lombok.version>1.18.12</lombok.version>
