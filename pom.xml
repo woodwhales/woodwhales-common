@@ -5,9 +5,10 @@
 
     <groupId>cn.woodwhales.common</groupId>
     <artifactId>woodwhales-common</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
     <name>woodwhales-common</name>
 
+    <!-- 项目描述 -->
     <description>https://github.com/woodwhales</description>
     <url>https://github.com/woodwhales/woodwhales-common</url>
 
@@ -38,6 +39,7 @@
     </properties>
 
     <licenses>
+        <!-- 开源协议 -->
         <license>
             <name>The Apache Software License, Version2.0</name>
             <url>http://www.apache.org/licenses/</url>
@@ -45,17 +47,27 @@
         </license>
     </licenses>
 
+    <!-- scm -->
     <scm>
-        <url>scm:git:git@github.com:woodwhales/woodwhales-common.git</url>
-        <connection>scm:git:git@github.com:woodwhales/woodwhales-common.git</connection>
-        <developerConnection>scm:git:git@github.com:woodwhales/woodwhales-common.git</developerConnection>
+        <tag>master</tag>
+        <url>https://github.com/woodwhales/woodwhales-common</url>
+        <connection>scm:git:git://github.com:woodwhales/woodwhales-common.git</connection>
+        <developerConnection>scm:git:git://github.com:woodwhales/woodwhales-common.git</developerConnection>
     </scm>
+    <!-- issues -->
+    <issueManagement>
+        <system>GitHub Issue Management</system>
+        <url>https://github.com/woodwhales/woodwhales-common/issues</url>
+    </issueManagement>
 
+    <!-- 开发者信息 -->
     <developers>
         <developer>
+            <id>woodwhales</id>
             <name>woodwhales</name>
             <email>woodwhales@163.com</email>
             <url>https://woodwhales.cn/</url>
+            <timezone>+8</timezone>
         </developer>
     </developers>
 
@@ -183,32 +195,38 @@
         </dependency>
     </dependencies>
 
+    <!-- distributionManagement -->
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>central</id>-->
-<!--            <name>aliyun maven</name>-->
-<!--            <url>https://maven.aliyun.com/repository/public</url>-->
-<!--            <layout>default</layout>-->
-<!--            &lt;!&ndash; 是否开启发布版构件下载 &ndash;&gt;-->
-<!--            <releases>-->
-<!--                <enabled>true</enabled>-->
-<!--            </releases>-->
-<!--            &lt;!&ndash; 是否开启快照版构件下载 &ndash;&gt;-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
-<!--    </repositories>-->
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>aliyun maven</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <layout>default</layout>
+            <!-- 是否开启发布版构件下载 -->
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <!-- 是否开启快照版构件下载 -->
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
+            <!-- 将git信息打包至jar文件中 -->
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
@@ -242,6 +260,7 @@
                     <!--<format>json</format>-->
                 </configuration>
             </plugin>
+            <!-- maven 编译插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -253,6 +272,16 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+            <!-- maven 编译时跳过单元测试 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <!-- maven 打包资源文件插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -262,14 +291,7 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
+            <!-- maven 打包时附带源码文件插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -277,27 +299,41 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-            <!-- 这个是必须要的，不如提交到官方仓库的时候会不通过 -->
+            <!-- 生成 javadoc 插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>
+            <!-- sonatype staging 插件 -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <!-- maven-gpg 插件 -->
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.5</version>
@@ -310,7 +346,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 
