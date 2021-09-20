@@ -41,7 +41,7 @@ public class ApplicationEventConfig {
 
     /**
      * 监听 WebhookEvent 事件
-     * @param webhookEvent
+     * @param webhookEvent WebhookEvent 事件
      */
     @EventListener
     public void handleCustomEvent(WebhookEvent webhookEvent) {

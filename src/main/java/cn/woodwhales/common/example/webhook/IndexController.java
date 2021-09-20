@@ -23,9 +23,9 @@ public class IndexController {
     private RuntimeException exception = new RuntimeException("报错啦");
 
     /**
-     *
-     * @param content
-     * @return
+     * 发送 webhook 通知
+     * @param content 要发送的内容
+     * @return 响应对象
      */
     @GetMapping("/send")
     public String send(@RequestParam("content") String content) {
