@@ -1,9 +1,9 @@
 package cn.woodwhales.common.model.field;
 
 /**
- * @author: woodwhales
- * 2020.9.18 22:15
+ * @author: woodwhales on 2020-09-18 22:15
  *
+ * 分页查询请求对象接口
  */
 public interface PageQueryInterface {
 

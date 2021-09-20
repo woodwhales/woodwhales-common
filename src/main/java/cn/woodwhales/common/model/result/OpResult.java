@@ -5,12 +5,16 @@ import cn.woodwhales.common.model.enums.RespCodeEnum;
 import java.util.Objects;
 
 /**
- * @author: woodwhales
- * 2020.9.18 22:05
  * 业务数据响应体
+ *
+ * @author: woodwhales on 2020-09-18 22:05
+ *
  */
 public class OpResult<T> {
 
+    /**
+     * 通用基础响应结果对象
+     */
     private BaseRespResult baseRespResult;
 
     /**

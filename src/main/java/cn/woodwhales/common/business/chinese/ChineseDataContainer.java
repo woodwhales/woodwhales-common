@@ -1,37 +1,38 @@
 package cn.woodwhales.common.business.chinese;
 
+import cn.woodwhales.common.business.DataTool;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import java.util.function.Function;
 
 /**
+ * 数据存储对象
  * @author woodwhales
  * 2020-12-07 22:27
  */
 public class ChineseDataContainer<T> {
 
+    /**
+     * 原始数据对象
+     */
     private T data;
+
+    /**
+     * 要排序的对象属性名称
+     */
     private String field;
 
-    public ChineseDataContainer(T data, ChineseInterface<T> chineseInterface) {
+    public ChineseDataContainer(T data, Function<T, String> stringFunction) {
+        Preconditions.checkNotNull(data);
+        Preconditions.checkNotNull(stringFunction);
         this.data = data;
-        this.field = chineseInterface.getSortedField(data);
+        this.field = stringFunction.apply(data);
     }
 
-    public static <T> List<ChineseDataContainer<T>> build(List<T> dataList, ChineseInterface<T> chineseInterface) {
-        if(isEmpty(dataList)) {
-            return Collections.emptyList();
-        }
-
-        List<ChineseDataContainer<T>> list = new ArrayList<>(dataList.size());
-        for (T data : dataList) {
-            list.add(new ChineseDataContainer(data, chineseInterface));
-        }
-        return list;
+    public static <T> List<ChineseDataContainer<T>> build(List<T> dataList, Function<T, String> stringFunction) {
+        return DataTool.toList(dataList, data -> new ChineseDataContainer(data, stringFunction));
     }
 
     /**

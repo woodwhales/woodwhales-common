@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author woodwhales on 2020-08-25
+ * 分页查询请求对象
  */
 @Data
 public class PageQueryParam implements PageQueryInterface {

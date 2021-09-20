@@ -24,7 +24,7 @@ public class ChineseDataToolExample {
         dataList.add(new ChineseDataToolTempData("刘备", 8));
         dataList.add(new ChineseDataToolTempData("关羽", 9));
 
-        List<ChineseDataToolTempData> list = ChineseDataTool.sortedList(dataList, data -> data.getName());
+        List<ChineseDataToolTempData> list = ChineseDataTool.sortedList(dataList, ChineseDataToolTempData::getName);
         list.stream().forEach(System.out::println);
     }
 }

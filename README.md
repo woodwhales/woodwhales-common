@@ -4,30 +4,42 @@
 
 ## 常用小工具
 
-DataTool
+### DataTool
 
 > 旧集合转新集合操作
 
-CollectionMath
+使用示例：[cn/woodwhales/common/example/business/DataToolExample.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/business/DataToolExample.java)
+
+### CollectionMath
 
 > 集合元素交集、并集操作
 
-DataTool#deduplicate
+使用示例：[cn/woodwhales/common/example/business/collection/CollectionMathResultExample.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/business/collection/CollectionMathResultExample.java)
 
-> 集合元素去重器
-
-ChineseDataTool
+### ChineseDataTool
 
 > 中文字段排序操作
 
-MybatisPlusExecutor
+使用示例：[cn/woodwhales/common/example/business/chinese/ChineseDataToolExample.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/business/chinese/ChineseDataToolExample.java)
+
+### MybatisPlusExecutor
 
 > mybatisPlus sql 执行器
 
-cn.woodwhales.common.util.ExcelTool
+### ExcelTool
 
 > excel 文件读取操作
 
-DataSourceTool
+使用示例：[cn/woodwhales/common/example/util/excel/ExcelToolExample.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/util/excel/ExcelToolExample.java)
+
+### DataSourceTool
 
 >   数据库执行器
+
+使用示例：[cn/woodwhales/common/example/util/datasource/DataSourceToolExample.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/util/datasource/DataSourceToolExample.java)
+
+### TreeTool
+
+>   list 转 tree
+
+使用示例：[cn/woodwhales/common/example/business/tree/TreeToolExample.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/business/tree/TreeToolExample.java)

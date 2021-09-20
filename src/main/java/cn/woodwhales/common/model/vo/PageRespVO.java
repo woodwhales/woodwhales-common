@@ -16,8 +16,9 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 /**
- * @author woodwhales on 2020-08-25
  * 分页查询响应视图
+ * @author woodwhales on 2020-08-25
+ *
  */
 @Data
 public class PageRespVO<T> extends RespVO<List<T>> {

@@ -13,8 +13,9 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * @author woodwhales on 2020-08-25
  * 通用响应视图
+ * @author woodwhales on 2020-08-25
+ *
  */
 @Data
 @Builder
