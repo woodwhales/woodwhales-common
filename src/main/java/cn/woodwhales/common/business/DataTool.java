@@ -334,7 +334,7 @@ public class DataTool {
     }
 
     /**
-     * 将原始的 list 按照 filter 过滤之后，按照 mapper 规则转成新的 list，如果
+     * 将原始的 list 按照 filter 过滤之后，按照 mapper 规则转成新的 list
      * @param source 源数据集合
      * @param filter 源数据集合过滤规则
      * @param mapper 生成新的 list 接口规则
@@ -343,7 +343,8 @@ public class DataTool {
      * @param <T> 目标数据类型
      * @return list
      */
-    public static <S, T> List<T> toList(List<S> source, Predicate<S> filter,
+    public static <S, T> List<T> toList(List<S> source,
+                                        Predicate<S> filter,
                                         Function<? super S, ? extends T> mapper,
                                         boolean distinct) {
         if (isEmpty(source)) {
@@ -353,6 +354,36 @@ public class DataTool {
         Stream<? extends T> stream = source.stream()
                                            .filter(filter::test)
                                            .map(mapper);
+
+        if(distinct) {
+            stream = stream.distinct();
+        }
+
+        return stream.collect(Collectors.toList());
+    }
+
+    /**
+     * 将原始的 list 按照 filter 过滤之后，按照 mapper 规则转成新的 list
+     *
+     * @param source 源数据数组
+     * @param filter 源数据集合过滤规则
+     * @param mapper 生成新的 list 接口规则
+     * @param distinct 是否去重 distinct 为 true，表示过滤之后生成list之前进行去重操作
+     * @param <S> 源数据类型
+     * @param <T> 目标数据类型
+     * @return list
+     */
+    public static <S, T> List<T> toList(S[] source,
+                                        Predicate<S> filter,
+                                        Function<? super S, ? extends T> mapper,
+                                        boolean distinct) {
+        if (Objects.isNull(source)) {
+            return Collections.emptyList();
+        }
+
+        Stream<? extends T> stream = Stream.of(source)
+                                            .filter(filter::test)
+                                            .map(mapper);
 
         if(distinct) {
             stream = stream.distinct();
@@ -687,6 +718,24 @@ public class DataTool {
         }
 
         return source.stream()
+                .filter(filter)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 将原始的 list 按照 filter 过滤
+     * @param source 数据原始数组
+     * @param filter 过滤规则
+     * @param <T> 数据类型
+     * @return list
+     */
+    public static <T> List<T> filter(T[] source,
+                                     Predicate<? super T> filter) {
+        if (Objects.isNull(source)) {
+            return Collections.emptyList();
+        }
+
+        return Stream.of(source)
                 .filter(filter)
                 .collect(Collectors.toList());
     }
