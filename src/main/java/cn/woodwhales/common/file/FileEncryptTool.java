@@ -105,7 +105,7 @@ public class FileEncryptTool {
             // 填充加密字节信息
             byte[] fillBuffer = Hex.decodeHex(encodeHexStr);
             randomAccessFile.seek(0);
-            randomAccessFile.write(buffer, 0, fillBuffer.length);
+            randomAccessFile.write(fillBuffer, 0, fillBuffer.length);
 
         } catch (Exception e) {
             e.printStackTrace();
