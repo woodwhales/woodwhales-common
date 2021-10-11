@@ -37,6 +37,8 @@
         <!-- 文件拷贝时的编码 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
 
     <licenses>
@@ -48,20 +50,6 @@
         </license>
     </licenses>
 
-    <!-- scm -->
-    <scm>
-        <tag>master</tag>
-        <url>https://github.com/woodwhales/woodwhales-common</url>
-        <connection>scm:git:git://github.com:woodwhales/woodwhales-common.git</connection>
-        <developerConnection>scm:git:git://github.com:woodwhales/woodwhales-common.git</developerConnection>
-    </scm>
-    <!-- issues -->
-    <issueManagement>
-        <system>GitHub Issue Management</system>
-        <url>https://github.com/woodwhales/woodwhales-common/issues</url>
-    </issueManagement>
-
-    <!-- 开发者信息 -->
     <developers>
         <developer>
             <id>woodwhales</id>
@@ -69,8 +57,28 @@
             <email>woodwhales@163.com</email>
             <url>https://woodwhales.cn/</url>
             <timezone>+8</timezone>
+            <roles>
+                <role>Original Author</role>
+            </roles>
         </developer>
     </developers>
+
+    <contributors>
+
+    </contributors>
+
+    <!-- scm -->
+    <scm>
+        <connection>scm:git:git://github.com/woodwhales/woodwhales-common.git</connection>
+        <developerConnection>scm:git:git@github.com:woodwhales/woodwhales-common.git</developerConnection>
+        <url>https://github.com/woodwhales/woodwhales-common.git</url>
+    </scm>
+
+    <!-- issues -->
+    <issueManagement>
+        <system>GitHub Issue Management</system>
+        <url>https://github.com/woodwhales/woodwhales-common/issues</url>
+    </issueManagement>
 
     <dependencies>
         <dependency>
@@ -128,7 +136,7 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
             <version>${icu4j.version}</version>
