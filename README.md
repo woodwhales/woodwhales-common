@@ -1,6 +1,8 @@
 # woodwhales-common
 
 > free business tools for develop business code quikcly
+> 
+> 本项目已发布至 maven 中央仓库：https://mvnrepository.com/artifact/cn.woodwhales.common/woodwhales-common
 
 ## 一、常用小工具
 
