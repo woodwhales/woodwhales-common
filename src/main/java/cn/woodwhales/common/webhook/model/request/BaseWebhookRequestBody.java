@@ -23,6 +23,12 @@ public abstract class BaseWebhookRequestBody {
     protected WebhookGlobalInfo webhookGlobalInfo;
 
     @JsonIgnore
+    protected List<String> userIdList;
+
+    @JsonIgnore
+    protected List<String> userMobileList;
+
+    @JsonIgnore
     protected Map<String, String> map = new LinkedHashMap<>();
 
     public String toJsonSting() {
@@ -30,6 +36,30 @@ public abstract class BaseWebhookRequestBody {
         allInfoPair.stream().forEach(pair -> map.put(pair.getLeft(), pair.getRight()));
         preToJsonSting();
         return JsonUtils.toJson(this);
+    }
+
+    /**
+     * 添加用户id集合
+     * @param userIdList 用户id集合
+     * @return BaseWebhookRequestBody 对象
+     */
+    protected BaseWebhookRequestBody addUserIdList(List<String> userIdList) {
+        if(userIdList != null && userIdList.size() > 0) {
+            this.userIdList = userIdList;
+        }
+        return this;
+    }
+
+    /**
+     * 添加用户手机号集合
+     * @param userMobileList 用户手机号集合
+     * @return BaseWebhookRequestBody 对象
+     */
+    protected BaseWebhookRequestBody addUserMobileList(List<String> userMobileList) {
+        if(userMobileList != null && userMobileList.size() > 0) {
+            this.userMobileList = userMobileList;
+        }
+        return this;
     }
 
     /**

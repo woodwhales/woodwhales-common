@@ -7,6 +7,7 @@ import cn.woodwhales.common.webhook.model.request.WebhookRequestBodyFactory;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Consumer;
@@ -29,17 +30,79 @@ public class WebhookEvent extends ApplicationEvent {
 
     private Throwable throwable;
 
+    /**
+     * 用户id集合
+     */
+    private List<String> userIdList;
+
+    /**
+     * 用户手机号集合
+     */
+    private List<String> userMobileList;
+
     public WebhookEvent(Object source,
                         Throwable throwable,
                         WebhookProductEnum webhookProductEnum,
                         String title,
                         Consumer<BaseWebhookRequestBody> consumer) {
         super(source);
+        new WebhookEvent(source, throwable, webhookProductEnum, title, consumer, null, null);
+    }
+
+    public WebhookEvent(Object source,
+                        Throwable throwable,
+                        WebhookProductEnum webhookProductEnum,
+                        String title,
+                        List<String> userIdList,
+                        Consumer<BaseWebhookRequestBody> consumer) {
+        super(source);
         this.title = title;
         this.consumer = consumer;
         this.throwable = throwable;
+        if(userIdList != null && userIdList.size() > 0) {
+            this.userIdList = userIdList;
+        }
+        if (Objects.nonNull(webhookProductEnum)) {
+            fillField(webhookProductEnum);
+        }
+    }
 
-        if(Objects.nonNull(webhookProductEnum)) {
+    public WebhookEvent(Object source,
+                        Throwable throwable,
+                        WebhookProductEnum webhookProductEnum,
+                        String title,
+                        Consumer<BaseWebhookRequestBody> consumer,
+                        List<String> userMobileList) {
+        super(source);
+        this.title = title;
+        this.consumer = consumer;
+        this.throwable = throwable;
+        if(userMobileList != null && userMobileList.size() > 0) {
+            this.userMobileList = userMobileList;
+        }
+        if (Objects.nonNull(webhookProductEnum)) {
+            fillField(webhookProductEnum);
+        }
+    }
+
+    public WebhookEvent(Object source,
+                        Throwable throwable,
+                        WebhookProductEnum webhookProductEnum,
+                        String title,
+                        Consumer<BaseWebhookRequestBody> consumer,
+                        List<String> userIdList,
+                        List<String> userMobileList) {
+        super(source);
+        this.title = title;
+        this.consumer = consumer;
+        this.throwable = throwable;
+        if(userIdList != null && userIdList.size() > 0) {
+            this.userIdList = userIdList;
+        }
+        if(userMobileList != null && userMobileList.size() > 0) {
+            this.userMobileList = userMobileList;
+        }
+        if (Objects.nonNull(webhookProductEnum)) {
             fillField(webhookProductEnum);
         }
     }

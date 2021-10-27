@@ -61,7 +61,7 @@
 |  产品   | 接口文档  |
 |  ----  | ----  |
 |  企业微信  | https://work.weixin.qq.com/api/doc/90000/90136/91770  |
-| 钉钉  | https://developers.dingtalk.com/document/app/custom-robot-access |
+| 钉钉  | https://developers.dingtalk.com/document/robots/custom-robot-access |
 | 飞书  | https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN |
 
 ### 2.2 架构设计
@@ -199,10 +199,10 @@ public class IndexController {
     }
 
     private void example2(String content) {
-        WebhookEvent webhookEvent = WebhookEventFactory.newWebhookEvent(this, "测试标题", exception, request -> {
+        WebhookEvent webhookEvent = WebhookEventFactory.newWebhookEventWithUserId(this, "测试标题", exception, request -> {
             request.addContent("content：", content);
             request.addContent("key：", content);
-        });
+        }, Arrays.asList("xxx"));
         applicationEventPublisher.publishEvent(webhookEvent);
     }
 
