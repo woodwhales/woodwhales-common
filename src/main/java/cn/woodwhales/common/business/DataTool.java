@@ -933,4 +933,32 @@ public class DataTool {
         return resultList;
     }
 
+    /**
+     * 获取 list 集合中的第一个元素
+     * @param list list 集合
+     * @param <T> 集合元素的泛型
+     * @return 集合元素
+     */
+    public static <T> T getFirstItem(List<T> list) {
+        if(CollectionUtils.isEmpty(list)) {
+            return null;
+        }
+
+        return list.get(0);
+    }
+
+    /**
+     * 获取 list 集合中的最后一个元素
+     * @param list list 集合
+     * @param <T> 集合元素的泛型
+     * @return 集合元素
+     */
+    public static <T> T getLastItem(List<T> list) {
+        if(CollectionUtils.isEmpty(list)) {
+            return null;
+        }
+
+        return list.get(list.size() - 1);
+    }
+
 }
