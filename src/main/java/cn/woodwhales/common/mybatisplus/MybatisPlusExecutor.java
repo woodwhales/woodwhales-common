@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -263,6 +264,21 @@ public class MybatisPlusExecutor {
         LambdaQueryWrapper<Entity> wrapper = Wrappers.<Entity>lambdaQuery();
         lambdaQueryWrapperConsumer.accept(wrapper);
         return mapper.selectPage(page, wrapper);
+    }
+
+    /**
+     * 插入数据
+     * @param mapper mapper
+     * @param entity entity
+     * @param <Entity> 数据实体泛型
+     * @param <Mapper> mapper泛型
+     * @return
+     */
+    public static <Entity, Mapper extends BaseMapper<Entity>> int insert(Mapper mapper, Entity entity) {
+        if (Objects.nonNull(entity)) {
+            return mapper.insert(entity);
+        }
+        return -1;
     }
 
     /**
