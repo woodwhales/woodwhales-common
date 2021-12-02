@@ -230,7 +230,7 @@ public class IndexController {
 
 #### 2.3.2 非 spring-boot 项目使用示例
 
-> 具体使用示例参见：[src/main/java/cn/woodwhales/common/example/webhook/WebhookExecutorTest.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/webhook/WebhookExecutorTest.java)
+> 具体使用示例参见：[src/main/java/cn/woodwhales/common/example/webhook/nonspringboot/WebhookExecutorTest.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/webhook/nonspringboot/WebhookExecutorTest.java)
 
 方式1：
 
