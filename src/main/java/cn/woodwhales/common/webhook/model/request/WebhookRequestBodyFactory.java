@@ -5,7 +5,6 @@ import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
 import java.util.List;
 
 /**
- * webhook 请求对象创建工厂
  * @author woodwhales on 2021-07-20 10:02
  */
 public class WebhookRequestBodyFactory {

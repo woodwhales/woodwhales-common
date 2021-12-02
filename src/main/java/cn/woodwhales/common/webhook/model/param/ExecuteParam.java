@@ -1,10 +1,10 @@
 package cn.woodwhales.common.webhook.model.param;
 
 /**
- * webhook 请求参数对象
+ * 请求参数对象
  * @author woodwhales on 2021-07-16 21:38
  */
-public class WebhookExecuteParam {
+public class ExecuteParam {
     /**
      * 通知地址
      */
@@ -15,12 +15,12 @@ public class WebhookExecuteParam {
      */
     public String content;
 
-    private WebhookExecuteParam(String url, String content) {
+    private ExecuteParam(String url, String content) {
         this.url = url;
         this.content = content;
     }
 
-    public static WebhookExecuteParam newInstance(String url, String content) {
-        return new WebhookExecuteParam(url, content);
+    public static ExecuteParam newInstance(String url, String content) {
+        return new ExecuteParam(url, content);
     }
 }

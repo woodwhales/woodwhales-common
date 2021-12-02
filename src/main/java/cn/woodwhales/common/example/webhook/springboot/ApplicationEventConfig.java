@@ -1,4 +1,4 @@
-package cn.woodwhales.common.example.webhook;
+package cn.woodwhales.common.example.webhook.springboot;
 
 import cn.woodwhales.common.webhook.event.WebhookEvent;
 import cn.woodwhales.common.webhook.event.WebhookEventHandler;

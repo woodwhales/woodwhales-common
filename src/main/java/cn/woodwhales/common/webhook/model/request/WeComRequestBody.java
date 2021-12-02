@@ -5,7 +5,6 @@ import lombok.Data;
 import java.util.Objects;
 
 /**
- * 企业微信 webhook 请求对象
  * @author woodwhales on 2021-07-19 18:26
  */
 @Data
@@ -26,9 +25,9 @@ public class WeComRequestBody extends BaseWebhookRequestBody {
         StringBuilder stringBuilder = new StringBuilder();
         if(Objects.nonNull(map) && !map.isEmpty()) {
             map.entrySet().stream().forEach(entry ->
-                                                stringBuilder.append(entry.getKey())
-                                                             .append(entry.getValue())
-                                                             .append(" \n")
+                    stringBuilder.append(entry.getKey())
+                            .append(entry.getValue())
+                            .append(" \n")
             );
         }
         this.markdown.setContent(stringBuilder.toString());

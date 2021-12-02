@@ -57,8 +57,8 @@ public class WebhookExtraInfo {
 
     private void fillCache(long duration, TimeUnit unit) {
         this.cache = CacheBuilder.newBuilder()
-                            .expireAfterAccess(duration, unit)
-                            .build();
+                .expireAfterAccess(duration, unit)
+                .build();
     }
 
     public void fillGitProperties() {
@@ -67,7 +67,7 @@ public class WebhookExtraInfo {
                 return;
             }
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream,
-                                                                                     Charset.defaultCharset().name()));
+                    Charset.defaultCharset().name()));
             if(nonNull(bufferedReader)) {
                 this.gitProperties = new Properties();
                 this.gitProperties.load(bufferedReader);

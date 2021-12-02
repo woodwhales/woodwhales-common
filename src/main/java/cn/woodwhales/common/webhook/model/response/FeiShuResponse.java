@@ -1,7 +1,7 @@
 package cn.woodwhales.common.webhook.model.response;
 
 /**
- * 飞书 webhook 响应对象
+ * 飞书webhook响应对象
  * @author woodwhales 2021-07-19 14:38
  */
 public class FeiShuResponse {

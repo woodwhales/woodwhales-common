@@ -3,7 +3,6 @@ package cn.woodwhales.common.webhook.model;
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -13,12 +12,12 @@ import java.util.stream.Stream;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.time.DateFormatUtils.format;
 
 /**
- * 通用信息对象
  * @author woodwhales on 2021-07-20 10:45
  */
-public class WebhookGlobalInfo {
+public class GlobalInfo {
 
     public Throwable throwable;
 
@@ -26,7 +25,7 @@ public class WebhookGlobalInfo {
 
     public Properties gitProperties;
 
-    private String occurTime = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
+    private String occurTime = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
 
     private String basePackName;
 
@@ -39,11 +38,11 @@ public class WebhookGlobalInfo {
 
     private String defaultErrorDesc = "异常栈信息太长，不打印全栈日志";
 
-    public WebhookGlobalInfo(WebhookProductEnum webhookProductEnum,
-                             Throwable throwable,
-                             String basePackName,
-                             LinkedHashMap<String, String> machineInfoMap,
-                             Properties gitProperties) {
+    public GlobalInfo(WebhookProductEnum webhookProductEnum,
+                      Throwable throwable,
+                      String basePackName,
+                      LinkedHashMap<String, String> machineInfoMap,
+                      Properties gitProperties) {
         this.webhookProductEnum = webhookProductEnum;
         this.throwable = throwable;
         this.basePackName = basePackName;
@@ -51,9 +50,9 @@ public class WebhookGlobalInfo {
         this.gitProperties = gitProperties;
     }
 
-    public WebhookGlobalInfo(WebhookProductEnum webhookProductEnum,
-                             Throwable throwable,
-                             String basePackName) {
+    public GlobalInfo(WebhookProductEnum webhookProductEnum,
+                      Throwable throwable,
+                      String basePackName) {
         this.webhookProductEnum = webhookProductEnum;
         this.throwable = throwable;
         this.basePackName = basePackName;
@@ -97,7 +96,7 @@ public class WebhookGlobalInfo {
     private void generateMachineInfoMap(List<Pair<String, String>> allInfoPair) {
         if(nonNull(this.machineInfoMap) && !this.machineInfoMap.isEmpty()) {
             this.machineInfoMap.entrySet().stream().forEach(
-                entry -> allInfoPair.add(Pair.of(entry.getKey(), entry.getValue()))
+                    entry -> allInfoPair.add(Pair.of(entry.getKey(), entry.getValue()))
             );
         }
     }
@@ -120,21 +119,21 @@ public class WebhookGlobalInfo {
             StackTraceElement[] stackTrace = this.throwable.getStackTrace();
             if (Objects.nonNull(stackTrace)) {
                 List<String> systemStackInfoList = Stream.of(stackTrace)
-                                                         .filter(stackTraceElement ->
-                                                                     isNotBlank(this.basePackName) &&
-                                                                     containsIgnoreCase(stackTraceElement.getClassName(), this.basePackName))
-                                                         .filter(stackTraceElement -> !containsIgnoreCase(stackTraceElement.getClassName(), "$$"))
-                                                         .map(stackTraceElement -> String.format("%s#%s(%s:%d)",
-                                                                                                 stackTraceElement.getClassName(),
-                                                                                                 stackTraceElement.getMethodName(),
-                                                                                                 stackTraceElement.getFileName(),
-                                                                                                 stackTraceElement.getLineNumber()))
-                                                         .collect(Collectors.toList());
+                        .filter(stackTraceElement ->
+                                isNotBlank(this.basePackName) &&
+                                        containsIgnoreCase(stackTraceElement.getClassName(), this.basePackName))
+                        .filter(stackTraceElement -> !containsIgnoreCase(stackTraceElement.getClassName(), "$$"))
+                        .map(stackTraceElement -> String.format("%s#%s(%s:%d)",
+                                stackTraceElement.getClassName(),
+                                stackTraceElement.getMethodName(),
+                                stackTraceElement.getFileName(),
+                                stackTraceElement.getLineNumber()))
+                        .collect(Collectors.toList());
 
                 if (nonNull(systemStackInfoList) && !systemStackInfoList.isEmpty() && isNotBlank(this.basePackName)) {
                     allInfoPair.add(Pair.of("本系统 ", this.basePackName + " 包下异常栈信息："));
                     systemStackInfoList.stream().forEach(systemStackInfo ->
-                        allInfoPair.add(Pair.of("栈信息：", systemStackInfo))
+                            allInfoPair.add(Pair.of("栈信息：", systemStackInfo))
                     );
                 }
 

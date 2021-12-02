@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 飞书 webhook 请求对象
  * @author woodwhales on 2021-07-19 14:48
  */
 @Data
@@ -26,17 +25,17 @@ public class FeiShuRequestBody extends BaseWebhookRequestBody {
     @Override
     public void preToJsonSting() {
         LinkedList<List<BaseContentItemDTO>> contentList = this.getContent()
-                                                               .getPost()
-                                                               .getZh_cn()
-                                                               .getContent();
+                .getPost()
+                .getZh_cn()
+                .getContent();
         map.entrySet()
-           .stream()
-           .forEach(entry -> {
-               List<BaseContentItemDTO> list = new ArrayList<>();
-               list.add(new ContentItemDTO(entry.getKey()));
-               list.add(new ContentItemDTO((String)entry.getValue()));
-               contentList.add(list);
-           });
+                .stream()
+                .forEach(entry -> {
+                    List<BaseContentItemDTO> list = new ArrayList<>();
+                    list.add(new ContentItemDTO(entry.getKey()));
+                    list.add(new ContentItemDTO((String)entry.getValue()));
+                    contentList.add(list);
+                });
 
         List<BaseContentItemDTO> baseContentItemDTOS = contentList.get(0);
         if(this.userIdList != null && this.userIdList.size() > 0) {
@@ -100,8 +99,8 @@ public class FeiShuRequestBody extends BaseWebhookRequestBody {
         private String tag = "at";
         private String user_id;
 
-        public ContentUserItemDTO(String userId) {
-            this.user_id = userId;
+        public ContentUserItemDTO(String user_id) {
+            this.user_id = user_id;
         }
     }
 

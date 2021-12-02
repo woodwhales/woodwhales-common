@@ -5,7 +5,7 @@
 
     <groupId>cn.woodwhales.common</groupId>
     <artifactId>woodwhales-common</artifactId>
-    <version>3.6.3</version>
+    <version>3.6.5</version>
     <name>woodwhales-common</name>
 
     <!-- 项目描述 -->

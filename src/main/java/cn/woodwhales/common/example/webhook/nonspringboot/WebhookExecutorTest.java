@@ -1,13 +1,14 @@
-package cn.woodwhales.common.example.webhook;
+package cn.woodwhales.common.example.webhook.nonspringboot;
 
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
 import cn.woodwhales.common.webhook.executor.WebhookExecutorFactory;
-import cn.woodwhales.common.webhook.model.WebhookGlobalInfo;
+import cn.woodwhales.common.webhook.model.GlobalInfo;
 import cn.woodwhales.common.webhook.model.request.BaseWebhookRequestBody;
 import cn.woodwhales.common.webhook.model.request.WebhookRequestBodyFactory;
 
 /**
  * 非 springboot 项目使用 webhook 示例
+ *
  * @author woodwhales on 2021-09-20 21:05
  */
 public class WebhookExecutorTest {
@@ -29,7 +30,7 @@ public class WebhookExecutorTest {
         requestBody.addContent("key2：", "value2");
         requestBody.addContent("key3：", "value3");
 
-        WebhookGlobalInfo globalInfo = new WebhookGlobalInfo(WebhookProductEnum.DING_TALK, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
+        GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.DING_TALK, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
         requestBody.addGlobalInfo(globalInfo);
 
         WebhookExecutorFactory.execute(url, requestBody);
@@ -43,7 +44,7 @@ public class WebhookExecutorTest {
         requestBody.addContent("key2：", "value2");
         requestBody.addContent("key3：", "value3");
 
-        WebhookGlobalInfo globalInfo = new WebhookGlobalInfo(WebhookProductEnum.FEI_SHU, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
+        GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.FEI_SHU, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
         requestBody.addGlobalInfo(globalInfo);
 
         WebhookExecutorFactory.execute(url, requestBody);
@@ -56,7 +57,7 @@ public class WebhookExecutorTest {
             req.addContent("key1：", "value1");
             req.addContent("key2：", "value2");
             req.addContent("key3：", "value3");
-            WebhookGlobalInfo globalInfo = new WebhookGlobalInfo(WebhookProductEnum.WE_COM, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
+            GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.WE_COM, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
             req.addGlobalInfo(globalInfo);
         });
     }

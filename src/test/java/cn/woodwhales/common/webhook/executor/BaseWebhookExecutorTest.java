@@ -1,7 +1,7 @@
 package cn.woodwhales.common.webhook.executor;
 
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
-import cn.woodwhales.common.webhook.model.WebhookGlobalInfo;
+import cn.woodwhales.common.webhook.model.GlobalInfo;
 import cn.woodwhales.common.webhook.model.request.BaseWebhookRequestBody;
 import cn.woodwhales.common.webhook.model.request.WebhookRequestBodyFactory;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ class BaseWebhookExecutorTest {
         requestBody.addContent("key2：", "value2");
         requestBody.addContent("key3：", "value3");
 
-        WebhookGlobalInfo globalInfo = new WebhookGlobalInfo(WebhookProductEnum.DING_TALK, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
+        GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.DING_TALK, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
         requestBody.addGlobalInfo(globalInfo);
 
         WebhookExecutorFactory.execute(url, requestBody);
@@ -31,7 +31,7 @@ class BaseWebhookExecutorTest {
         requestBody.addContent("key2：", "value2");
         requestBody.addContent("key3：", "value3");
 
-        WebhookGlobalInfo globalInfo = new WebhookGlobalInfo(WebhookProductEnum.FEI_SHU, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
+        GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.FEI_SHU, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
         requestBody.addGlobalInfo(globalInfo);
 
         WebhookExecutorFactory.execute(url, requestBody);
@@ -45,7 +45,7 @@ class BaseWebhookExecutorTest {
             req.addContent("key1：", "value1");
             req.addContent("key2：", "value2");
             req.addContent("key3：", "value3");
-            WebhookGlobalInfo globalInfo = new WebhookGlobalInfo(WebhookProductEnum.WE_COM, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
+            GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.WE_COM, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
             req.addGlobalInfo(globalInfo);
         });
     }

@@ -1,9 +1,9 @@
 package cn.woodwhales.common.webhook.executor;
 
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
-import cn.woodwhales.common.webhook.model.param.WebhookExecuteParam;
+import cn.woodwhales.common.webhook.model.param.ExecuteParam;
 import cn.woodwhales.common.webhook.model.request.BaseWebhookRequestBody;
-import cn.woodwhales.common.webhook.model.response.WebhookExecuteResponse;
+import cn.woodwhales.common.webhook.model.response.ExecuteResponse;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -18,7 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import static java.util.Objects.nonNull;
 
 /**
- * 通用 webhook 请求执行器
+ * 请求执行器
  * @author woodwhales on 2021-07-16 21:24
  */
 @Slf4j
@@ -26,62 +26,62 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
 
     /**
      * 请求之前的处理方法
-     * @param webhookExecuteParam webhook 请求参数
+     * @param executeParam executeParam
      */
-    protected void beforeHandler(WebhookExecuteParam webhookExecuteParam) {
+    protected void beforeHandler(ExecuteParam executeParam) {
         return;
     }
 
     /**
      * 请求之后的处理方法
-     * @param webhookExecuteParam webhook 请求参数
-     * @param executeResponse 响应结果
+     * @param executeParam executeParam
+     * @param executeResponse executeResponse
      */
-    protected void afterHandler(WebhookExecuteParam webhookExecuteParam, WebhookExecuteResponse<Response> executeResponse) {
+    protected void afterHandler(ExecuteParam executeParam, ExecuteResponse<Response> executeResponse) {
         return;
     }
 
     /**
      * 校验解析后的响应结果
-     * @param executeResponse 响应结果
-     * @return 校验是否成功
+     * @param executeResponse  executeResponse
+     * @return 是都校验通过
      */
-    protected abstract boolean checkResponseObjectHandler(WebhookExecuteResponse<Response> executeResponse);
+    protected abstract boolean checkResponseObjectHandler(ExecuteResponse<Response> executeResponse);
 
     /**
      * 解析响应结果
-     * @param executeResponse 响应结果
-     * @return 响应结果
+     * @param executeResponse executeResponse
+     * @return 解析响应结果
      */
-    protected Response parseResponseHandler(WebhookExecuteResponse<Response> executeResponse) {
+    protected Response parseResponseHandler(ExecuteResponse<Response> executeResponse) {
         ParameterizedType genericSuperclass = (ParameterizedType)this.getClass()
-                                                                          .getGenericSuperclass();
+                .getGenericSuperclass();
         Class<Response> clazz = (Class<Response>)genericSuperclass.getActualTypeArguments()[1];
         return new Gson().fromJson(executeResponse.originResponseContent, clazz);
     }
 
     /**
      * 校验响应结果失败之后的处理
-     * @param webhookExecuteParam webhook 请求参数
-     * @param executeResponse 响应结果
+     * @param executeParam executeParam
+     * @param executeResponse executeResponse
      */
-    protected void checkFailHandler(WebhookExecuteParam webhookExecuteParam, WebhookExecuteResponse<Response> executeResponse) {
+    protected void checkFailHandler(ExecuteParam executeParam, ExecuteResponse<Response> executeResponse) {
         log.error("{}发送消息失败, requestContent = {}, originResponseContent = {}",
-                  webhookProductEnum().chineseName,
-                  webhookExecuteParam.content,
-                  executeResponse.originResponseContent);
+                webhookProductEnum().chineseName,
+                executeParam.content,
+                executeResponse.originResponseContent);
     }
 
     /**
      * 校验响应结果成功之后的处理
-     * @param webhookExecuteParam webhook 请求参数
-     * @param executeResponse 响应结果
+     * @param executeParam executeParam
+     * @param executeResponse executeResponse
      */
-    protected void checkSuccessHandler(WebhookExecuteParam webhookExecuteParam, WebhookExecuteResponse<Response> executeResponse) {
+    protected void checkSuccessHandler(ExecuteParam executeParam, ExecuteResponse<Response> executeResponse) {
         log.info("{}发送消息成功, requestContent = {}, originResponseContent = {}",
-                 webhookProductEnum().chineseName,
-                 webhookExecuteParam.content,
-                 executeResponse.originResponseContent);
+                webhookProductEnum().chineseName,
+                executeParam.content,
+                executeResponse.originResponseContent);
     }
 
     /**
@@ -92,23 +92,23 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
 
     /**
      * 执行发送消息
-     * @param url webhook 通知地址
-     * @param content 通知内容
+     * @param url 请求地址
+     * @param content 请求报文
      */
     protected void execute(String url, String content) {
-        this.execute(WebhookExecuteParam.newInstance(url, content));
+        this.execute(ExecuteParam.newInstance(url, content));
     }
 
     /**
      * 执行发送消息
-     * @param webhookExecuteParam webhook 请求参数
+     * @param executeParam executeParam
      */
-    protected void execute(WebhookExecuteParam webhookExecuteParam) {
+    protected void execute(ExecuteParam executeParam) {
         // 请求之前处理
-        this.beforeHandler(webhookExecuteParam);
+        this.beforeHandler(executeParam);
 
         // 执行请求
-        WebhookExecuteResponse<Response> executeResponse = executeRequest(webhookExecuteParam);
+        ExecuteResponse<Response> executeResponse = executeRequest(executeParam);
 
         // 解析请求
         executeResponse.parsedResponseObject = this.parseResponseHandler(executeResponse);
@@ -116,22 +116,22 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
         // 校验请求
         executeResponse.checkResult = this.checkResponseObjectHandler(executeResponse);
         if(!executeResponse.checkResult) {
-            this.checkFailHandler(webhookExecuteParam, executeResponse);
+            this.checkFailHandler(executeParam, executeResponse);
         } else {
-            this.checkSuccessHandler(webhookExecuteParam, executeResponse);
+            this.checkSuccessHandler(executeParam, executeResponse);
         }
 
         // 请求之后处理
-        this.afterHandler(webhookExecuteParam, executeResponse);
+        this.afterHandler(executeParam, executeResponse);
     }
 
-    private WebhookExecuteResponse<Response> executeRequest(WebhookExecuteParam webhookExecuteParam) {
-        WebhookExecuteResponse<Response> executeResponse = null;
+    private ExecuteResponse<Response> executeRequest(ExecuteParam executeParam) {
+        ExecuteResponse<Response> executeResponse = null;
         try (CloseableHttpClient httpClient = HttpClients.createDefault()){
-            HttpPost post = new HttpPost(webhookExecuteParam.url);
+            HttpPost post = new HttpPost(executeParam.url);
             post.setHeader("Accept","aplication/json");
             post.setHeader("Content-Type", "application/json;charset=UTF-8");
-            StringEntity se = new StringEntity(webhookExecuteParam.content, "UTF-8");
+            StringEntity se = new StringEntity(executeParam.content, "UTF-8");
             se.setContentEncoding("UTF-8");
             se.setContentType("application/json");
             post.setEntity(se);
@@ -139,13 +139,18 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
 
             int statusCode = response.getStatusLine().getStatusCode();
             String originResponseContent = EntityUtils.toString(response.getEntity());
-            executeResponse  = new WebhookExecuteResponse<>(statusCode, originResponseContent);
+            executeResponse  = new ExecuteResponse<>(statusCode, originResponseContent);
         } catch (Exception e) {
             log.error("{}发送消息失败, 异常原因：", e.getMessage(), e);
         }
         return executeResponse;
     }
 
+    /**
+     * 执行请求
+     * @param url 请求地址
+     * @param requestBody 请求报文
+     */
     public void execute(String url, RequestBody requestBody) {
         if(nonNull(requestBody)) {
             this.execute(url, requestBody.toJsonSting());
@@ -154,7 +159,7 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
         }
     }
 
-    protected Response getParsedResponse(WebhookExecuteResponse<Response> executeResponse) {
+    protected Response getParsedResponse(ExecuteResponse<Response> executeResponse) {
         return executeResponse.parsedResponseObject;
     }
 

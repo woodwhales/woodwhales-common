@@ -5,10 +5,10 @@ import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
 import cn.woodwhales.common.webhook.model.request.BaseWebhookRequestBody;
 import cn.woodwhales.common.webhook.model.request.WebhookRequestBodyFactory;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * webhook 执行器工厂
  * @author woodwhales on 2021-07-20 9:26
  */
 public class WebhookExecutorFactory {
@@ -45,13 +45,22 @@ public class WebhookExecutorFactory {
      * @param webhookProductEnum webhook 类型枚举
      * @param url 请求地址
      * @param title 报文标题
-     * @param consumer BaseWebhookRequestBody 对象处理器
+     * @param consumer consumer
      */
     public static void execute(WebhookProductEnum webhookProductEnum,
                                String url,
                                String title,
                                Consumer<BaseWebhookRequestBody> consumer) {
-        BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(webhookProductEnum, title);
+        execute(webhookProductEnum, url, title, consumer, null, null);
+    }
+
+    public static void execute(WebhookProductEnum webhookProductEnum,
+                               String url,
+                               String title,
+                               Consumer<BaseWebhookRequestBody> consumer,
+                               List<String> userIdList,
+                               List<String> userMobileList) {
+        BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(webhookProductEnum, title, userIdList, userMobileList);
         consumer.accept(requestBody);
         newInstance(requestBody.getWebhookProductEnum()).execute(url, requestBody);
     }

@@ -4,7 +4,7 @@ package cn.woodwhales.common.webhook.model.response;
  * 通用 webhook 响应对象
  * @author woodwhales on 2021-07-19 9:38
  */
-public class WebhookExecuteResponse<R> {
+public class ExecuteResponse<R> {
 
     /**
      * 响应原始报文
@@ -26,8 +26,9 @@ public class WebhookExecuteResponse<R> {
      */
     public int statusCode;
 
-    public WebhookExecuteResponse(int statusCode, String originResponseContent) {
+    public ExecuteResponse(int statusCode, String originResponseContent) {
         this.statusCode = statusCode;
         this.originResponseContent = originResponseContent;
     }
+
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * webhook 事件对象创建工厂
  * @author woodwhales on 2021-09-15 15:17
  */
 public class WebhookEventFactory {

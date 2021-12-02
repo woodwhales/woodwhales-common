@@ -2,7 +2,7 @@ package cn.woodwhales.common.webhook.model.request;
 
 import cn.woodwhales.common.util.JsonUtils;
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
-import cn.woodwhales.common.webhook.model.WebhookGlobalInfo;
+import cn.woodwhales.common.webhook.model.GlobalInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 通用 webhook 请求对象
  * @author woodwhales on 2021-07-19 14:52
  */
 public abstract class BaseWebhookRequestBody {
@@ -20,7 +19,7 @@ public abstract class BaseWebhookRequestBody {
     protected WebhookProductEnum webhookProductEnum;
 
     @JsonIgnore
-    protected WebhookGlobalInfo webhookGlobalInfo;
+    protected GlobalInfo globalInfo;
 
     @JsonIgnore
     protected List<String> userIdList;
@@ -29,10 +28,10 @@ public abstract class BaseWebhookRequestBody {
     protected List<String> userMobileList;
 
     @JsonIgnore
-    protected Map<String, String> map = new LinkedHashMap<>();
+    protected Map<String, Object> map = new LinkedHashMap<>();
 
     public String toJsonSting() {
-        List<Pair<String, String>> allInfoPair = this.webhookGlobalInfo.getAllInfoPair();
+        List<Pair<String, String>> allInfoPair = this.globalInfo.getAllInfoPair();
         allInfoPair.stream().forEach(pair -> map.put(pair.getLeft(), pair.getRight()));
         preToJsonSting();
         return JsonUtils.toJson(this);
@@ -67,18 +66,17 @@ public abstract class BaseWebhookRequestBody {
      */
     public abstract void preToJsonSting();
 
-    public Map<String, String> getMap() {
+    public Map<String, Object> getMap() {
         return map;
     }
 
-    /**
-     * 添加 k-v 信息
-     * @param tag key
-     * @param text value
-     * @return BaseWebhookRequestBody
-     */
     public BaseWebhookRequestBody addContent(String tag, String text) {
         this.map.put(tag, text);
+        return this;
+    }
+
+    public BaseWebhookRequestBody addContent(String tag, Object obj) {
+        this.map.put(tag, obj);
         return this;
     }
 
@@ -90,8 +88,8 @@ public abstract class BaseWebhookRequestBody {
         return webhookProductEnum;
     }
 
-    public BaseWebhookRequestBody addGlobalInfo(WebhookGlobalInfo webhookGlobalInfo) {
-        this.webhookGlobalInfo = webhookGlobalInfo;
+    public BaseWebhookRequestBody addGlobalInfo(GlobalInfo globalInfo) {
+        this.globalInfo = globalInfo;
         return this;
     }
 

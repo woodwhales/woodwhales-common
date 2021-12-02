@@ -1,5 +1,7 @@
 package cn.woodwhales.common.webhook.enums;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -8,8 +10,8 @@ import java.util.Map;
 /**
  * webhook 类型枚举
  * @author woodwhales on 2021-07-16 21:09
- * 
  */
+@Slf4j
 public enum WebhookProductEnum {
 
     /**
@@ -57,9 +59,8 @@ public enum WebhookProductEnum {
             String host = url.getHost();
             return hostMap.get(host);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            log.error("noticeUrl=[{}], 配置非法", noticeUrl);
         }
-
         return null;
     }
 

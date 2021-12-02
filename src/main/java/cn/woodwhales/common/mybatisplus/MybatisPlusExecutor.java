@@ -272,7 +272,7 @@ public class MybatisPlusExecutor {
      * @param entity entity
      * @param <Entity> 数据实体泛型
      * @param <Mapper> mapper泛型
-     * @return
+     * @return 响应行数
      */
     public static <Entity, Mapper extends BaseMapper<Entity>> int insert(Mapper mapper, Entity entity) {
         if (Objects.nonNull(entity)) {
