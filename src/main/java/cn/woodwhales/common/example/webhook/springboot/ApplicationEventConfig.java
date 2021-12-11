@@ -26,6 +26,12 @@ public class ApplicationEventConfig {
     private String noticeUrl;
 
     /**
+     * 在 application.yml 中配置 notice.secret
+     */
+    @Value("${notice.secret}")
+    private String secret = "";
+
+    /**
      * 项目基包路径
      */
     private String basePackageName = "cn.woodwhales.webhook";
@@ -45,7 +51,7 @@ public class ApplicationEventConfig {
      */
     @EventListener
     public void handleCustomEvent(WebhookEvent webhookEvent) {
-        WebhookEventHandler.handleCustomEvent(webhookEvent, noticeUrl, basePackageName, webhookExtraInfo());
+        WebhookEventHandler.handleCustomEvent(webhookEvent, noticeUrl, secret, basePackageName, webhookExtraInfo());
     }
 
 }

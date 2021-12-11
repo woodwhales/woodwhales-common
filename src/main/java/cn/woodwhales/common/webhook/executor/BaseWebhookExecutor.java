@@ -14,6 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.lang.reflect.ParameterizedType;
+import java.nio.charset.StandardCharsets;
 
 import static java.util.Objects.nonNull;
 
@@ -62,26 +63,24 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
 
     /**
      * 校验响应结果失败之后的处理
-     * @param executeParam executeParam
      * @param executeResponse executeResponse
      */
-    protected void checkFailHandler(ExecuteParam executeParam, ExecuteResponse<Response> executeResponse) {
-        log.error("{}发送消息失败, requestContent = {}, originResponseContent = {}",
-                webhookProductEnum().chineseName,
-                executeParam.content,
-                executeResponse.originResponseContent);
+    protected void checkFailHandler(ExecuteResponse<Response> executeResponse) {
+        log.error("{}发送消息失败, url = {}, requestContent = {}, originResponseContent = {}", webhookProductEnum().chineseName,
+                                                                                            executeResponse.url,
+                                                                                            executeResponse.requestContent,
+                                                                                            executeResponse.originResponseContent);
     }
 
     /**
      * 校验响应结果成功之后的处理
-     * @param executeParam executeParam
      * @param executeResponse executeResponse
      */
-    protected void checkSuccessHandler(ExecuteParam executeParam, ExecuteResponse<Response> executeResponse) {
-        log.info("{}发送消息成功, requestContent = {}, originResponseContent = {}",
-                webhookProductEnum().chineseName,
-                executeParam.content,
-                executeResponse.originResponseContent);
+    protected void checkSuccessHandler(ExecuteResponse<Response> executeResponse) {
+        log.info("{}发送消息成功, url = {}, requestContent = {}, originResponseContent = {}", webhookProductEnum().chineseName,
+                                                                                            executeResponse.url,
+                                                                                            executeResponse.requestContent,
+                                                                                            executeResponse.originResponseContent);
     }
 
     /**
@@ -92,15 +91,6 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
 
     /**
      * 执行发送消息
-     * @param url 请求地址
-     * @param content 请求报文
-     */
-    protected void execute(String url, String content) {
-        this.execute(ExecuteParam.newInstance(url, content));
-    }
-
-    /**
-     * 执行发送消息
      * @param executeParam executeParam
      */
     protected void execute(ExecuteParam executeParam) {
@@ -108,17 +98,17 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
         this.beforeHandler(executeParam);
 
         // 执行请求
-        ExecuteResponse<Response> executeResponse = executeRequest(executeParam);
+        ExecuteResponse<Response> executeResponse = this.executeRequest(executeParam);
 
-        // 解析请求
+        // 解析响应
         executeResponse.parsedResponseObject = this.parseResponseHandler(executeResponse);
 
-        // 校验请求
+        // 校验响应
         executeResponse.checkResult = this.checkResponseObjectHandler(executeResponse);
         if(!executeResponse.checkResult) {
-            this.checkFailHandler(executeParam, executeResponse);
+            this.checkFailHandler(executeResponse);
         } else {
-            this.checkSuccessHandler(executeParam, executeResponse);
+            this.checkSuccessHandler(executeResponse);
         }
 
         // 请求之后处理
@@ -127,11 +117,13 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
 
     private ExecuteResponse<Response> executeRequest(ExecuteParam executeParam) {
         ExecuteResponse<Response> executeResponse = null;
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()){
-            HttpPost post = new HttpPost(executeParam.url);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            final String noticeUrl = executeParam.getNoticeUrl();
+            HttpPost post = new HttpPost(noticeUrl);
             post.setHeader("Accept","aplication/json");
             post.setHeader("Content-Type", "application/json;charset=UTF-8");
-            StringEntity se = new StringEntity(executeParam.content, "UTF-8");
+            final String noticeContent = executeParam.getNoticeContent();
+            StringEntity se = new StringEntity(noticeContent, StandardCharsets.UTF_8);
             se.setContentEncoding("UTF-8");
             se.setContentType("application/json");
             post.setEntity(se);
@@ -139,7 +131,7 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
 
             int statusCode = response.getStatusLine().getStatusCode();
             String originResponseContent = EntityUtils.toString(response.getEntity());
-            executeResponse  = new ExecuteResponse<>(statusCode, originResponseContent);
+            executeResponse  = new ExecuteResponse<>(noticeUrl, noticeContent, statusCode, originResponseContent);
         } catch (Exception e) {
             log.error("{}发送消息失败, 异常原因：", e.getMessage(), e);
         }
@@ -152,8 +144,18 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
      * @param requestBody 请求报文
      */
     public void execute(String url, RequestBody requestBody) {
+        execute(url, null, requestBody);
+    }
+
+    /**
+     * 执行请求
+     * @param url 请求地址
+     * @param requestBody 请求报文
+     * @param requestBody 请求对象
+     */
+    public void execute(String url, String secret, RequestBody requestBody) {
         if(nonNull(requestBody)) {
-            this.execute(url, requestBody.toJsonSting());
+            this.execute(ExecuteParam.newInstance(url, secret, requestBody));
         } else {
             log.warn("dingTalkRequestBody is NULL");
         }

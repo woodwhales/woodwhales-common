@@ -7,6 +7,16 @@ package cn.woodwhales.common.webhook.model.response;
 public class ExecuteResponse<R> {
 
     /**
+     * 请求地址
+     */
+    public String url;
+
+    /**
+     * 请求内容
+     */
+    public String requestContent;
+
+    /**
      * 响应原始报文
      */
     public String originResponseContent;
@@ -26,7 +36,9 @@ public class ExecuteResponse<R> {
      */
     public int statusCode;
 
-    public ExecuteResponse(int statusCode, String originResponseContent) {
+    public ExecuteResponse(String url, String requestContent, int statusCode, String originResponseContent) {
+        this.url = url;
+        this.requestContent = requestContent;
         this.statusCode = statusCode;
         this.originResponseContent = originResponseContent;
     }

@@ -1,5 +1,7 @@
 package cn.woodwhales.common.webhook.model.request;
 
+import cn.woodwhales.common.webhook.model.param.ExecuteParam;
+import com.google.gson.annotations.Expose;
 import lombok.Data;
 
 import java.util.Objects;
@@ -10,14 +12,21 @@ import java.util.Objects;
 @Data
 public class WeComRequestBody extends BaseWebhookRequestBody {
 
+    @Expose
     private String msgtype = "markdown";
 
+    @Expose
     private MarkdownContent markdown = new MarkdownContent();
 
     public static WeComRequestBody newInstance(String title) {
         WeComRequestBody feiShuNoticeRequestBody = new WeComRequestBody();
         feiShuNoticeRequestBody.getMap().put("# ", title);
         return feiShuNoticeRequestBody;
+    }
+
+    @Override
+    public String getUrlAndSignContent(ExecuteParam executeParam) {
+        return executeParam.getUrl();
     }
 
     @Override

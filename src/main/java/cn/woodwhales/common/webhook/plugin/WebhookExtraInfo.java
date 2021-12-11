@@ -38,9 +38,9 @@ public class WebhookExtraInfo {
     }
 
     private void init(long duration, TimeUnit unit) {
-        fillGitProperties();
-        fillCache(duration, unit);
-        fillMachineInfo();
+        this.fillGitProperties();
+        this.fillCache(duration, unit);
+        this.fillMachineInfo();
     }
 
     private void fillMachineInfo() {

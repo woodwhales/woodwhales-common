@@ -24,6 +24,7 @@ public class WebhookExecutorTest {
 
     public static void DingTalkExecutor() {
         String url = "https://oapi.dingtalk.com/robot/send?access_token=xxx";
+        String secret = "yyy";
 
         BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(WebhookProductEnum.DING_TALK, "test title");
         requestBody.addContent("key1：", "value1");
@@ -33,11 +34,12 @@ public class WebhookExecutorTest {
         GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.DING_TALK, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
         requestBody.addGlobalInfo(globalInfo);
 
-        WebhookExecutorFactory.execute(url, requestBody);
+        WebhookExecutorFactory.execute(url, secret, requestBody);
     }
 
     public static void FeiShuExecutor() {
         String url = "https://open.feishu.cn/open-apis/bot/v2/hook/xxx";
+        String secret = "yyy";
 
         BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(WebhookProductEnum.FEI_SHU, "test title");
         requestBody.addContent("key1：", "value1");
@@ -47,7 +49,7 @@ public class WebhookExecutorTest {
         GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.FEI_SHU, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
         requestBody.addGlobalInfo(globalInfo);
 
-        WebhookExecutorFactory.execute(url, requestBody);
+        WebhookExecutorFactory.execute(url, secret, requestBody);
     }
 
     public static void WeComExecutor() {

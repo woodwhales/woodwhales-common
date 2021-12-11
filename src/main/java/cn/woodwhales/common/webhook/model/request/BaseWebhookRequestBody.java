@@ -1,9 +1,12 @@
 package cn.woodwhales.common.webhook.model.request;
 
-import cn.woodwhales.common.util.JsonUtils;
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
 import cn.woodwhales.common.webhook.model.GlobalInfo;
+import cn.woodwhales.common.webhook.model.param.ExecuteParam;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.LinkedHashMap;
@@ -16,26 +19,39 @@ import java.util.Map;
 public abstract class BaseWebhookRequestBody {
 
     @JsonIgnore
+    @Expose(serialize = false)
     protected WebhookProductEnum webhookProductEnum;
 
     @JsonIgnore
+    @Expose(serialize = false)
     protected GlobalInfo globalInfo;
 
     @JsonIgnore
+    @Expose(serialize = false)
     protected List<String> userIdList;
 
     @JsonIgnore
+    @Expose(serialize = false)
     protected List<String> userMobileList;
 
     @JsonIgnore
+    @Expose(serialize = false)
     protected Map<String, Object> map = new LinkedHashMap<>();
 
     public String toJsonSting() {
         List<Pair<String, String>> allInfoPair = this.globalInfo.getAllInfoPair();
         allInfoPair.stream().forEach(pair -> map.put(pair.getLeft(), pair.getRight()));
         preToJsonSting();
-        return JsonUtils.toJson(this);
+        final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
     }
+
+    /**
+     * 对内容签名并返回 url
+     * @param executeParam 请求对象
+     * @return 签名的通知地址
+     */
+    public abstract String getUrlAndSignContent(ExecuteParam executeParam);
 
     /**
      * 添加用户id集合
@@ -78,6 +94,10 @@ public abstract class BaseWebhookRequestBody {
     public BaseWebhookRequestBody addContent(String tag, Object obj) {
         this.map.put(tag, obj);
         return this;
+    }
+
+    public BaseWebhookRequestBody addSign(long timestamp, String sign) {
+        return this.addContent("sign", sign).addContent("timestamp", timestamp);
     }
 
     public void setWebhookProductEnum(WebhookProductEnum webhookProductEnum) {

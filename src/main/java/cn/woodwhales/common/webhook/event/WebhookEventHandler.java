@@ -27,6 +27,22 @@ public class WebhookEventHandler {
                                          String noticeUrl,
                                          String basePackageName,
                                          WebhookExtraInfo webhookExtraInfo) {
+        handleCustomEvent(webhookEvent, noticeUrl, basePackageName, webhookExtraInfo);
+    }
+
+    /**
+     * 处理通知
+     * @param webhookEvent 要发布的通知事件
+     * @param noticeUrl 优先使用 WebhookEvent 中的 noticeUrl
+     * @param secret 签名密钥
+     * @param basePackageName 优先使用 WebhookEvent 中的基础包全类名
+     * @param webhookExtraInfo 扩展信息对象
+     */
+    public static void handleCustomEvent(WebhookEvent webhookEvent,
+                                         String noticeUrl,
+                                         String secret,
+                                         String basePackageName,
+                                         WebhookExtraInfo webhookExtraInfo) {
         final String finalNoticeUrl = defaultIfBlank(webhookEvent.getNoticeUrl(), noticeUrl);
 
         // 从 finalNoticeUrl 中动态获取 WebhookProductEnum
@@ -45,7 +61,7 @@ public class WebhookEventHandler {
         }
 
         log.info("监听到异常报警事件，消息为：{}, 发布时间：{}", webhookEvent.getOccurTime(), webhookEvent.getTitle());
-        execute(finalNoticeUrl, webhookEvent.getBaseWebhookRequestBody());
+        execute(finalNoticeUrl, secret, webhookEvent.getBaseWebhookRequestBody());
     }
 
 }

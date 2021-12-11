@@ -37,7 +37,17 @@ public class WebhookExecutorFactory {
      * @param requestBody 请求报文
      */
     public static void execute(String url, BaseWebhookRequestBody requestBody) {
-        newInstance(requestBody.getWebhookProductEnum()).execute(url, requestBody);
+        execute(url, null, requestBody);
+    }
+
+    /**
+     * 请求执行
+     * @param url 请求地址
+     * @param secret 签名密钥
+     * @param requestBody 请求报文
+     */
+    public static void execute(String url, String secret, BaseWebhookRequestBody requestBody) {
+        newInstance(requestBody.getWebhookProductEnum()).execute(url, secret, requestBody);
     }
 
     /**
