@@ -1,10 +1,9 @@
 package cn.woodwhales.common.example.webhook.nonspringboot;
 
-import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
 import cn.woodwhales.common.webhook.executor.WebhookExecutorFactory;
-import cn.woodwhales.common.webhook.model.GlobalInfo;
-import cn.woodwhales.common.webhook.model.request.BaseWebhookRequestBody;
-import cn.woodwhales.common.webhook.model.request.WebhookRequestBodyFactory;
+import cn.woodwhales.common.webhook.plugin.WebhookExtraInfo;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 非 springboot 项目使用 webhook 示例
@@ -13,55 +12,55 @@ import cn.woodwhales.common.webhook.model.request.WebhookRequestBodyFactory;
  */
 public class WebhookExecutorTest {
 
+    private static WebhookExtraInfo webhookExtraInfo = new WebhookExtraInfo(5, TimeUnit.MINUTES);
+
     public static void main(String[] args) {
-        // 方式一
         DingTalkExecutor();
         FeiShuExecutor();
-
-        // 方式二
         WeComExecutor();
     }
 
     public static void DingTalkExecutor() {
         String url = "https://oapi.dingtalk.com/robot/send?access_token=xxx";
         String secret = "yyy";
+        String title = "test title1";
 
-        BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(WebhookProductEnum.DING_TALK, "test title");
-        requestBody.addContent("key1：", "value1");
-        requestBody.addContent("key2：", "value2");
-        requestBody.addContent("key3：", "value3");
-
-        GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.DING_TALK, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
-        requestBody.addGlobalInfo(globalInfo);
-
-        WebhookExecutorFactory.execute(url, secret, requestBody);
+        WebhookExecutorFactory.Builder.build(url, title, req -> {
+                    req.addContent("key1：", "value1");
+                    req.addContent("key2：", "value2");
+                    req.addContent("key3：", "value3");
+                }).secret(secret)
+                .throwable(new NullPointerException("报错啦"), "cn.woodwhales")
+                .webhookExtraInfo(webhookExtraInfo)
+                .execute();
     }
 
     public static void FeiShuExecutor() {
         String url = "https://open.feishu.cn/open-apis/bot/v2/hook/xxx";
         String secret = "yyy";
+        String title = "test title1";
 
-        BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(WebhookProductEnum.FEI_SHU, "test title");
-        requestBody.addContent("key1：", "value1");
-        requestBody.addContent("key2：", "value2");
-        requestBody.addContent("key3：", "value3");
+        WebhookExecutorFactory.Builder.build(url, title, req -> {
+                    req.addContent("key1：", "value1");
+                    req.addContent("key2：", "value2");
+                    req.addContent("key3：", "value3");
+                }).secret(secret)
+                .throwable(new NullPointerException("报错啦"), "cn.woodwhales")
+                .webhookExtraInfo(webhookExtraInfo)
+                .execute();
 
-        GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.FEI_SHU, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
-        requestBody.addGlobalInfo(globalInfo);
-
-        WebhookExecutorFactory.execute(url, secret, requestBody);
     }
 
     public static void WeComExecutor() {
         String url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx";
-
-        WebhookExecutorFactory.execute(WebhookProductEnum.WE_COM, url, "test title", req -> {
-            req.addContent("key1：", "value1");
-            req.addContent("key2：", "value2");
-            req.addContent("key3：", "value3");
-            GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.WE_COM, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
-            req.addGlobalInfo(globalInfo);
-        });
+        String title = "test title1";
+        WebhookExecutorFactory.Builder.build(url, title, req -> {
+                    req.addContent("key1：", "value1");
+                    req.addContent("key2：", "value2");
+                    req.addContent("key3：", "value3");
+                })
+                .webhookExtraInfo(webhookExtraInfo)
+                .execute();
     }
 
 }

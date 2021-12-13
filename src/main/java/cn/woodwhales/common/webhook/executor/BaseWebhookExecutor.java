@@ -150,7 +150,7 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
     /**
      * 执行请求
      * @param url 请求地址
-     * @param requestBody 请求报文
+     * @param secret 密钥
      * @param requestBody 请求对象
      */
     public void execute(String url, String secret, RequestBody requestBody) {
