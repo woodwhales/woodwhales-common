@@ -42,7 +42,7 @@ public class IndexController {
 
     private void example1(String content) {
         applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                                    .throwable(exception)
+                                                                    .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
                                                                     .consumer(request -> {
                                                                         request.addContent("content：", content);
                                                                         request.addContent("key：", content);
@@ -52,7 +52,7 @@ public class IndexController {
 
     private void example2(String content) {
         applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                                    .throwable(exception)
+                                                                    .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
                                                                     .consumer(request -> {
                                                                         request.addContent("content：", content);
                                                                         request.addContent("key：", content);
@@ -62,7 +62,7 @@ public class IndexController {
 
     private void example3(String content) {
         applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                .throwable(exception)
+                                                .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
                                                 .consumer(request -> {
                                                     request.addContent("content：", content);
                                                     request.addContent("key：", content);

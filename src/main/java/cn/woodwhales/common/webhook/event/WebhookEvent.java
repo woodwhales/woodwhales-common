@@ -74,6 +74,7 @@ public class WebhookEvent extends ApplicationEvent {
 
     public WebhookEvent(Object source,
                         Throwable throwable,
+                        String[] basePackageNames,
                         String title,
                         String noticeUrl,
                         String secret,
@@ -86,20 +87,21 @@ public class WebhookEvent extends ApplicationEvent {
         this.secret = secret;
         this.consumer = consumer;
         this.throwable = throwable;
-        if(userIdList != null && userIdList.size() > 0) {
+        this.basePackageNames = basePackageNames;
+        if (userIdList != null && userIdList.size() > 0) {
             this.userIdList = userIdList;
         }
-        if(userMobileList != null && userMobileList.size() > 0) {
+        if (userMobileList != null && userMobileList.size() > 0) {
             this.userMobileList = userMobileList;
         }
         this.fillField();
-        if(Objects.nonNull(this.baseWebhookRequestBody) && Objects.nonNull(this.consumer)) {
+        if (Objects.nonNull(this.baseWebhookRequestBody) && Objects.nonNull(this.consumer)) {
             this.consumer.accept(this.baseWebhookRequestBody);
         }
     }
 
     private void fillField() {
-        if(Objects.nonNull(this.noticeUrl)) {
+        if (Objects.nonNull(this.noticeUrl)) {
             this.webhookProductEnum = WebhookProductEnum.getWebhookProductEnumByNoticeUrl(this.noticeUrl);
             this.globalInfo = new GlobalInfo(this.webhookProductEnum, this.throwable, this.basePackageNames, null);
             this.baseWebhookRequestBody = WebhookRequestBodyFactory.newInstance(this.webhookProductEnum, this.title, this.consumer, this.getUserIdList(), this.userMobileList);
@@ -110,6 +112,7 @@ public class WebhookEvent extends ApplicationEvent {
         private Object source;
         private String title;
         private Throwable throwable;
+        private String[] basePackageNames;
         private String noticeUrl;
         private String secret;
         private Consumer<BaseWebhookRequestBody> consumer;
@@ -125,6 +128,17 @@ public class WebhookEvent extends ApplicationEvent {
 
         public WebhookEvent.Builder throwable(Throwable throwable) {
             this.throwable = throwable;
+            return this;
+        }
+
+        public WebhookEvent.Builder throwable(Throwable throwable, String... basePackageNames) {
+            this.throwable = throwable;
+            this.basePackageNames = basePackageNames;
+            return this;
+        }
+
+        public WebhookEvent.Builder basePackageNames(String... basePackageNames) {
+            this.basePackageNames = basePackageNames;
             return this;
         }
 
@@ -155,8 +169,9 @@ public class WebhookEvent extends ApplicationEvent {
         }
 
         public WebhookEvent build() {
-            return new WebhookEvent(this.source, this.throwable,
-                    this.title, this.noticeUrl, this.secret , this.consumer, this.userIdList, this.userMobileList);
+            return new WebhookEvent(this.source, this.throwable, this.basePackageNames,
+                                    this.title, this.noticeUrl, this.secret,
+                                    this.consumer, this.userIdList, this.userMobileList);
         }
     }
 
@@ -182,10 +197,6 @@ public class WebhookEvent extends ApplicationEvent {
 
     public String getTitle() {
         return title;
-    }
-
-    public void setBasePackNames(String[] basePackageNames) {
-        this.globalInfo.setBasePackageNames(basePackageNames);
     }
 
     public String getNoticeUrl() {

@@ -16,9 +16,9 @@ public class WebhookExecutorTest {
     private static WebhookExtraInfo webhookExtraInfo = new WebhookExtraInfo(5, TimeUnit.MINUTES);
 
     public static void main(String[] args) {
-//        DingTalkExecutor();
+        DingTalkExecutor();
         FeiShuExecutor();
-//        WeComExecutor();
+        WeComExecutor();
     }
 
     public static void DingTalkExecutor() {
@@ -31,7 +31,7 @@ public class WebhookExecutorTest {
                     req.addContent("key2：", "value2");
                     req.addContent("key3：", "value3");
                 }).secret(secret)
-                .throwable(new NullPointerException("报错啦"), "cn.woodwhales", "com.woodwhales")
+                .throwable(new NullPointerException("报错啦"), "cn.woodwhales", "cn.cloudcoders")
                 .webhookExtraInfo(webhookExtraInfo)
                 .userMobileList(Arrays.asList("13521349377"))
                 .execute();
@@ -47,7 +47,7 @@ public class WebhookExecutorTest {
                     req.addContent("key2：", "value2");
                     req.addContent("key3：", "value3");
                 }).secret(secret)
-                .throwable(new NullPointerException("报错啦"), "cn.woodwhales")
+                .throwable(new NullPointerException("报错啦"), "cn.woodwhales", "cn.cloudcoders")
                 .webhookExtraInfo(webhookExtraInfo)
                 .execute();
 
@@ -61,6 +61,7 @@ public class WebhookExecutorTest {
                     req.addContent("key2：", "value2");
                     req.addContent("key3：", "value3");
                 })
+                .throwable(new NullPointerException("报错啦"), "cn.woodwhales", "cn.cloudcoders")
                 .webhookExtraInfo(webhookExtraInfo)
                 .execute();
     }
