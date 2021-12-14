@@ -4,6 +4,7 @@ import cn.woodwhales.common.webhook.model.param.ExecuteParam;
 import com.google.gson.annotations.Expose;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -65,7 +66,9 @@ public class DingTalkRequestBody extends BaseWebhookRequestBody {
             );
         }
         this.markdown.setText(stringBuilder.toString());
-        this.at = new AtDTO(this.userIdList, this.userMobileList);
+        if(CollectionUtils.isNotEmpty(this.userIdList) || CollectionUtils.isNotEmpty(this.userMobileList)) {
+            this.at = new AtDTO(this.userIdList, this.userMobileList);
+        }
     }
 
     @Data

@@ -1,7 +1,11 @@
 package cn.woodwhales.common.webhook.model;
 
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
+import cn.woodwhales.common.webhook.plugin.WebhookExtraInfo;
+import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Sets;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -27,7 +31,7 @@ public class GlobalInfo {
 
     private String occurTime = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
 
-    private String basePackName;
+    private String[] basePackageNames;
 
     /**
      * 限制栈的内存占用空间大小
@@ -40,22 +44,15 @@ public class GlobalInfo {
 
     public GlobalInfo(WebhookProductEnum webhookProductEnum,
                       Throwable throwable,
-                      String basePackName,
-                      LinkedHashMap<String, String> machineInfoMap,
-                      Properties gitProperties) {
+                      String[] basePackageNames,
+                      WebhookExtraInfo webhookExtraInfo) {
         this.webhookProductEnum = webhookProductEnum;
         this.throwable = throwable;
-        this.basePackName = basePackName;
-        this.machineInfoMap = machineInfoMap;
-        this.gitProperties = gitProperties;
-    }
-
-    public GlobalInfo(WebhookProductEnum webhookProductEnum,
-                      Throwable throwable,
-                      String basePackName) {
-        this.webhookProductEnum = webhookProductEnum;
-        this.throwable = throwable;
-        this.basePackName = basePackName;
+        this.basePackageNames = basePackageNames;
+        if(Objects.nonNull(webhookExtraInfo)) {
+            this.machineInfoMap = webhookExtraInfo.getMachineInfoMap();
+            this.gitProperties = webhookExtraInfo.getGitProperties();
+        }
     }
 
     public void setMachineInfoMap(LinkedHashMap<String, String> machineInfoMap) {
@@ -66,16 +63,20 @@ public class GlobalInfo {
         this.gitProperties = gitProperties;
     }
 
-    public void setBasePackName(String basePackName) {
-        this.basePackName = basePackName;
+    public void setBasePackageNames(String[] basePackageNames) {
+        this.basePackageNames = basePackageNames;
     }
 
-    public List<Pair<String, String>> getAllInfoPair() {
+    public List<Pair<String, String>> getAllInfoPair(WebhookProductEnum webhookProductEnum) {
+        if(Objects.isNull(this.webhookProductEnum)) {
+            this.webhookProductEnum = webhookProductEnum;
+        }
+
         List<Pair<String, String>> allInfoPair = new ArrayList<>();
-        generateOccurTime(allInfoPair);
-        generateGitProperties(allInfoPair);
-        generateMachineInfoMap(allInfoPair);
-        generateThrowable(allInfoPair);
+        this.generateOccurTime(allInfoPair);
+        this.generateGitProperties(allInfoPair);
+        this.generateMachineInfoMap(allInfoPair);
+        this.generateThrowable(allInfoPair);
         return allInfoPair;
     }
 
@@ -118,24 +119,24 @@ public class GlobalInfo {
 
             StackTraceElement[] stackTrace = this.throwable.getStackTrace();
             if (Objects.nonNull(stackTrace)) {
-                List<String> systemStackInfoList = Stream.of(stackTrace)
-                        .filter(stackTraceElement ->
-                                isNotBlank(this.basePackName) &&
-                                        containsIgnoreCase(stackTraceElement.getClassName(), this.basePackName))
-                        .filter(stackTraceElement -> !containsIgnoreCase(stackTraceElement.getClassName(), "$$"))
-                        .map(stackTraceElement -> String.format("%s#%s(%s:%d)",
-                                stackTraceElement.getClassName(),
-                                stackTraceElement.getMethodName(),
-                                stackTraceElement.getFileName(),
-                                stackTraceElement.getLineNumber()))
-                        .collect(Collectors.toList());
+                if (Objects.nonNull(this.basePackageNames)) {
+                    final HashSet<String> basePackageNameSet = Sets.newHashSet(this.basePackageNames);
+                    List<String> systemStackInfoList = Stream.of(stackTrace)
+                            .filter(stackTraceElement -> this.matchBasePackageNameSet(basePackageNameSet, stackTraceElement.getClassName()))
+                            .filter(stackTraceElement -> !containsIgnoreCase(stackTraceElement.getClassName(), "$$"))
+                            .map(stackTraceElement -> String.format("%s#%s(%s:%d)",
+                                    stackTraceElement.getClassName(),
+                                    stackTraceElement.getMethodName(),
+                                    stackTraceElement.getFileName(),
+                                    stackTraceElement.getLineNumber()))
+                            .collect(Collectors.toList());
 
-                if (nonNull(systemStackInfoList) && !systemStackInfoList.isEmpty() && isNotBlank(this.basePackName)) {
-                    allInfoPair.add(Pair.of("本系统 ", this.basePackName + " 包下异常栈信息："));
-                    systemStackInfoList.stream().forEach(systemStackInfo ->
-                            allInfoPair.add(Pair.of("栈信息：", systemStackInfo))
-                    );
+                    if(CollectionUtils.isNotEmpty(systemStackInfoList)) {
+                        allInfoPair.add(Pair.of(String.format("本系统 %s 包下异常栈信息：\n\r", Joiner.on(",").join(this.basePackageNames)),
+                                                Joiner.on("\n\r").join(systemStackInfoList)));
+                    }
                 }
+
 
                 String stackTraceAsString = Throwables.getStackTraceAsString(this.throwable);
                 int length = StringUtils.length(stackTraceAsString);
@@ -146,6 +147,18 @@ public class GlobalInfo {
                 }
             }
         }
+    }
+
+    private boolean matchBasePackageNameSet(final HashSet<String> basePackageNameSet, String className) {
+
+        final Iterator<String> iterator = basePackageNameSet.iterator();
+        while (iterator.hasNext()) {
+            final String basePackageName = iterator.next();
+            if(StringUtils.containsIgnoreCase(className, basePackageName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

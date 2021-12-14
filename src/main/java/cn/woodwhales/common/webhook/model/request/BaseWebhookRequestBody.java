@@ -39,9 +39,10 @@ public abstract class BaseWebhookRequestBody {
     protected Map<String, Object> map = new LinkedHashMap<>();
 
     public String toJsonSting() {
-        List<Pair<String, String>> allInfoPair = this.globalInfo.getAllInfoPair();
+        List<Pair<String, String>> allInfoPair = this.globalInfo.getAllInfoPair(webhookProductEnum);
         allInfoPair.stream().forEach(pair -> map.put(pair.getLeft(), pair.getRight()));
-        preToJsonSting();
+
+        this.preToJsonSting();
         final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(this);
     }
@@ -58,7 +59,7 @@ public abstract class BaseWebhookRequestBody {
      * @param userIdList 用户id集合
      * @return BaseWebhookRequestBody 对象
      */
-    protected BaseWebhookRequestBody addUserIdList(List<String> userIdList) {
+    public BaseWebhookRequestBody addUserIdList(List<String> userIdList) {
         if(userIdList != null && userIdList.size() > 0) {
             this.userIdList = userIdList;
         }
@@ -70,7 +71,7 @@ public abstract class BaseWebhookRequestBody {
      * @param userMobileList 用户手机号集合
      * @return BaseWebhookRequestBody 对象
      */
-    protected BaseWebhookRequestBody addUserMobileList(List<String> userMobileList) {
+    public BaseWebhookRequestBody addUserMobileList(List<String> userMobileList) {
         if(userMobileList != null && userMobileList.size() > 0) {
             this.userMobileList = userMobileList;
         }
