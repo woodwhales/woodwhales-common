@@ -1,30 +1,15 @@
-package cn.woodwhales.common.example.webhook.nonspringboot;
+package cn.woodwhales.common.webhook.executor;
 
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
-import cn.woodwhales.common.webhook.executor.WebhookExecutorFactory;
 import cn.woodwhales.common.webhook.model.GlobalInfo;
 import cn.woodwhales.common.webhook.model.request.BaseWebhookRequestBody;
 import cn.woodwhales.common.webhook.model.request.WebhookRequestBodyFactory;
+import org.junit.jupiter.api.Test;
 
-/**
- * 非 springboot 项目使用 webhook 示例
- *
- * @author woodwhales on 2021-09-20 21:05
- */
-public class WebhookExecutorTest {
-
-    public static void main(String[] args) {
-        // 方式一
-        DingTalkExecutor();
-        FeiShuExecutor();
-
-        // 方式二
-        WeComExecutor();
-    }
-
-    public static void DingTalkExecutor() {
+class BaseWebhookExecutorTest {
+    @Test
+    public void DingTalkExecutor() {
         String url = "https://oapi.dingtalk.com/robot/send?access_token=xxx";
-        String secret = "yyy";
 
         BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(WebhookProductEnum.DING_TALK, "test title");
         requestBody.addContent("key1：", "value1");
@@ -34,12 +19,12 @@ public class WebhookExecutorTest {
         GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.DING_TALK, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
         requestBody.addGlobalInfo(globalInfo);
 
-        WebhookExecutorFactory.execute(url, secret, requestBody);
+        WebhookExecutorFactory.execute(url, requestBody);
     }
 
-    public static void FeiShuExecutor() {
+    @Test
+    public void FeiShuExecutor() {
         String url = "https://open.feishu.cn/open-apis/bot/v2/hook/xxx";
-        String secret = "yyy";
 
         BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(WebhookProductEnum.FEI_SHU, "test title");
         requestBody.addContent("key1：", "value1");
@@ -49,10 +34,11 @@ public class WebhookExecutorTest {
         GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.FEI_SHU, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
         requestBody.addGlobalInfo(globalInfo);
 
-        WebhookExecutorFactory.execute(url, secret, requestBody);
+        WebhookExecutorFactory.execute(url, requestBody);
     }
 
-    public static void WeComExecutor() {
+    @Test
+    public void WeComExecutor() {
         String url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx";
 
         WebhookExecutorFactory.execute(WebhookProductEnum.WE_COM, url, "test title", req -> {
@@ -63,5 +49,4 @@ public class WebhookExecutorTest {
             req.addGlobalInfo(globalInfo);
         });
     }
-
 }

@@ -1,9 +1,7 @@
 package cn.woodwhales.common.webhook.model;
 
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
-import cn.woodwhales.common.webhook.plugin.WebhookExtraInfo;
 import com.google.common.base.Throwables;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -43,14 +41,21 @@ public class GlobalInfo {
     public GlobalInfo(WebhookProductEnum webhookProductEnum,
                       Throwable throwable,
                       String basePackName,
-                      WebhookExtraInfo webhookExtraInfo) {
+                      LinkedHashMap<String, String> machineInfoMap,
+                      Properties gitProperties) {
         this.webhookProductEnum = webhookProductEnum;
         this.throwable = throwable;
         this.basePackName = basePackName;
-        if(Objects.nonNull(webhookExtraInfo)) {
-            this.machineInfoMap = webhookExtraInfo.getMachineInfoMap();
-            this.gitProperties = webhookExtraInfo.getGitProperties();
-        }
+        this.machineInfoMap = machineInfoMap;
+        this.gitProperties = gitProperties;
+    }
+
+    public GlobalInfo(WebhookProductEnum webhookProductEnum,
+                      Throwable throwable,
+                      String basePackName) {
+        this.webhookProductEnum = webhookProductEnum;
+        this.throwable = throwable;
+        this.basePackName = basePackName;
     }
 
     public void setMachineInfoMap(LinkedHashMap<String, String> machineInfoMap) {
@@ -65,15 +70,12 @@ public class GlobalInfo {
         this.basePackName = basePackName;
     }
 
-    public List<Pair<String, String>> getAllInfoPair(WebhookProductEnum webhookProductEnum) {
+    public List<Pair<String, String>> getAllInfoPair() {
         List<Pair<String, String>> allInfoPair = new ArrayList<>();
-        this.generateOccurTime(allInfoPair);
-        this.generateGitProperties(allInfoPair);
-        this.generateMachineInfoMap(allInfoPair);
-        if(Objects.isNull(this.webhookProductEnum)) {
-            this.webhookProductEnum = webhookProductEnum;
-        }
-        this.generateThrowable(allInfoPair);
+        generateOccurTime(allInfoPair);
+        generateGitProperties(allInfoPair);
+        generateMachineInfoMap(allInfoPair);
+        generateThrowable(allInfoPair);
         return allInfoPair;
     }
 
@@ -116,23 +118,23 @@ public class GlobalInfo {
 
             StackTraceElement[] stackTrace = this.throwable.getStackTrace();
             if (Objects.nonNull(stackTrace)) {
-                if (isNotBlank(this.basePackName)) {
-                    List<String> systemStackInfoList = Stream.of(stackTrace)
-                            .filter(stackTraceElement ->
-                                    isNotBlank(this.basePackName) &&
-                                            containsIgnoreCase(stackTraceElement.getClassName(), this.basePackName))
-                            .filter(stackTraceElement -> !containsIgnoreCase(stackTraceElement.getClassName(), "$$"))
-                            .map(stackTraceElement -> String.format("%s#%s(%s:%d)",
-                                    stackTraceElement.getClassName(),
-                                    stackTraceElement.getMethodName(),
-                                    stackTraceElement.getFileName(),
-                                    stackTraceElement.getLineNumber()))
-                            .collect(Collectors.toList());
+                List<String> systemStackInfoList = Stream.of(stackTrace)
+                        .filter(stackTraceElement ->
+                                isNotBlank(this.basePackName) &&
+                                        containsIgnoreCase(stackTraceElement.getClassName(), this.basePackName))
+                        .filter(stackTraceElement -> !containsIgnoreCase(stackTraceElement.getClassName(), "$$"))
+                        .map(stackTraceElement -> String.format("%s#%s(%s:%d)",
+                                stackTraceElement.getClassName(),
+                                stackTraceElement.getMethodName(),
+                                stackTraceElement.getFileName(),
+                                stackTraceElement.getLineNumber()))
+                        .collect(Collectors.toList());
 
-                    if(CollectionUtils.isNotEmpty(systemStackInfoList)) {
-                        allInfoPair.add(Pair.of("本系统 " + this.basePackName + " 包下异常栈信息：",
-                                                "\n\r" + StringUtils.join(systemStackInfoList, "\n\r")));
-                    }
+                if (nonNull(systemStackInfoList) && !systemStackInfoList.isEmpty() && isNotBlank(this.basePackName)) {
+                    allInfoPair.add(Pair.of("本系统 ", this.basePackName + " 包下异常栈信息："));
+                    systemStackInfoList.stream().forEach(systemStackInfo ->
+                            allInfoPair.add(Pair.of("栈信息：", systemStackInfo))
+                    );
                 }
 
                 String stackTraceAsString = Throwables.getStackTraceAsString(this.throwable);

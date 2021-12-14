@@ -178,50 +178,50 @@ public class IndexController {
 
     /**
      * 发送 webhook 通知
-     *
      * @param content 要发送的内容
      * @return 响应对象
      */
     @GetMapping("/send")
     public String send(@RequestParam("content") String content) {
 
+        // 方式1 不推荐，显示创建指定webhook事件对象
         example1(content);
+
+        // 方式1 推荐，不用显示创建指定webhook事件对象，根据通知发送链接自动识别创建对应的webhook事件对象
         example2(content);
+
+        // 方式3 推荐，不带用户id信息，
         example3(content);
 
         return "ok";
     }
 
     private void example1(String content) {
-        applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                                    .throwable(exception)
-                                                                    .consumer(request -> {
-                                                                        request.addContent("content：", content);
-                                                                        request.addContent("key：", content);
-                                                                    })
-                                                                    .build());
+        WebhookEvent webhookEvent = WebhookEventFactory.dingTalk(this, "测试标题", exception, request -> {
+            request.addContent("content：", content);
+            request.addContent("key：", content);
+        });
+        applicationEventPublisher.publishEvent(webhookEvent);
     }
 
     private void example2(String content) {
-        applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                                    .throwable(exception)
-                                                                    .consumer(request -> {
-                                                                        request.addContent("content：", content);
-                                                                        request.addContent("key：", content);
-                                                                    })
-                                                                    .userIdList(Arrays.asList("xxx")).build());
+        WebhookEvent webhookEvent = WebhookEventFactory.newWebhookEventWithUserId(this, "测试标题", exception, request -> {
+            request.addContent("content：", content);
+            request.addContent("key：", content);
+        }, Arrays.asList("xxx"));
+        applicationEventPublisher.publishEvent(webhookEvent);
     }
 
     private void example3(String content) {
-        applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                .throwable(exception)
-                                                .consumer(request -> {
-                                                    request.addContent("content：", content);
-                                                    request.addContent("key：", content);
-                                                })
-                                                // 发送到指定webhook，不使用默认配置的webhook
-                                                .noticeUrl("https://oapi.dingtalk.com/robot/send?access_token=yyy").build()
-        );
+        final WebhookEvent webhookEvent = WebhookEventFactory.newWebhookEvent(this, "aaa", exception, request -> {
+            request.addContent("content：", content);
+            request.addContent("key：", content);
+        });
+
+        // 发送到指定webhook，不使用默认配置的webhook
+        webhookEvent.setNoticeUrl("https://oapi.dingtalk.com/robot/send?access_token=yyy");
+
+        applicationEventPublisher.publishEvent(webhookEvent);
     }
 
 }
@@ -232,59 +232,40 @@ public class IndexController {
 
 > 具体使用示例参见：[src/main/java/cn/woodwhales/common/example/webhook/nonspringboot/WebhookExecutorTest.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/webhook/nonspringboot/WebhookExecutorTest.java)
 
-通过 WebhookExecutorFactory 构建需要发送的请求连接信息及报文即可：
+方式1：
 
 ```java
-private static WebhookExtraInfo webhookExtraInfo = new WebhookExtraInfo(5, TimeUnit.MINUTES);
+@Test
+public static void DingTalkExecutor() {
+    String url = "https://oapi.dingtalk.com/robot/send?access_token=xxx";
 
-    public static void main(String[] args) {
-        DingTalkExecutor();
-        FeiShuExecutor();
-        WeComExecutor();
-    }
+    BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(WebhookProductEnum.DING_TALK, "test title");
+    requestBody.addContent("key1：", "value1");
+    requestBody.addContent("key2：", "value2");
+    requestBody.addContent("key3：", "value3");
 
-    public static void DingTalkExecutor() {
-        String url = "https://oapi.dingtalk.com/robot/send?access_token=xxx";
-        String secret = "yyy";
-        String title = "test title1";
+    GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.DING_TALK, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
+    requestBody.addGlobalInfo(globalInfo);
 
-        WebhookExecutorFactory.Builder.build(url, title, req -> {
-                    req.addContent("key1：", "value1");
-                    req.addContent("key2：", "value2");
-                    req.addContent("key3：", "value3");
-                }).secret(secret)
-                .throwable(new NullPointerException("报错啦"), "cn.woodwhales")
-                .webhookExtraInfo(webhookExtraInfo)
-                .execute();
-    }
+    WebhookExecutorFactory.execute(url, requestBody);
+}
+```
 
-    public static void FeiShuExecutor() {
-        String url = "https://open.feishu.cn/open-apis/bot/v2/hook/xxx";
-        String secret = "yyy";
-        String title = "test title1";
+方式2：
 
-        WebhookExecutorFactory.Builder.build(url, title, req -> {
-                    req.addContent("key1：", "value1");
-                    req.addContent("key2：", "value2");
-                    req.addContent("key3：", "value3");
-                }).secret(secret)
-                .throwable(new NullPointerException("报错啦"), "cn.woodwhales")
-                .webhookExtraInfo(webhookExtraInfo)
-                .execute();
+```java
+@Test
+public static void WeComExecutor() {
+    String url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx";
 
-    }
-
-    public static void WeComExecutor() {
-        String url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx";
-        String title = "test title1";
-        WebhookExecutorFactory.Builder.build(url, title, req -> {
-                    req.addContent("key1：", "value1");
-                    req.addContent("key2：", "value2");
-                    req.addContent("key3：", "value3");
-                })
-                .webhookExtraInfo(webhookExtraInfo)
-                .execute();
-    }
+    WebhookExecutorFactory.execute(WebhookProductEnum.WE_COM, url, "test title", req -> {
+        req.addContent("key1：", "value1");
+        req.addContent("key2：", "value2");
+        req.addContent("key3：", "value3");
+        GlobalInfo globalInfo = new GlobalInfo(WebhookProductEnum.WE_COM, new NullPointerException("报错啦"), "cn.woodwhales.webhook");
+        req.addGlobalInfo(globalInfo);
+    });
+}
 ```
 
 ### 2.4 附件

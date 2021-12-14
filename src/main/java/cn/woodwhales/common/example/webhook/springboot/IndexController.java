@@ -1,6 +1,7 @@
 package cn.woodwhales.common.example.webhook.springboot;
 
 import cn.woodwhales.common.webhook.event.WebhookEvent;
+import cn.woodwhales.common.webhook.event.WebhookEventFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,6 @@ import java.util.Arrays;
 
 /**
  * springboot 项目使用 webhook 示例
- *
  * @author woodwhales on 2021-07-16 20:46
  */
 @RestController
@@ -26,50 +26,50 @@ public class IndexController {
 
     /**
      * 发送 webhook 通知
-     *
      * @param content 要发送的内容
      * @return 响应对象
      */
     @GetMapping("/send")
     public String send(@RequestParam("content") String content) {
 
+        // 方式1 不推荐，显示创建指定webhook事件对象
         example1(content);
+
+        // 方式1 推荐，不用显示创建指定webhook事件对象，根据通知发送链接自动识别创建对应的webhook事件对象
         example2(content);
+
+        // 方式3 推荐，不带用户id信息，
         example3(content);
 
         return "ok";
     }
 
     private void example1(String content) {
-        applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                                    .throwable(exception)
-                                                                    .consumer(request -> {
-                                                                        request.addContent("content：", content);
-                                                                        request.addContent("key：", content);
-                                                                    })
-                                                                    .build());
+        WebhookEvent webhookEvent = WebhookEventFactory.dingTalk(this, "测试标题", exception, request -> {
+            request.addContent("content：", content);
+            request.addContent("key：", content);
+        });
+        applicationEventPublisher.publishEvent(webhookEvent);
     }
 
     private void example2(String content) {
-        applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                                    .throwable(exception)
-                                                                    .consumer(request -> {
-                                                                        request.addContent("content：", content);
-                                                                        request.addContent("key：", content);
-                                                                    })
-                                                                    .userIdList(Arrays.asList("xxx")).build());
+        WebhookEvent webhookEvent = WebhookEventFactory.newWebhookEventWithUserId(this, "测试标题", exception, request -> {
+            request.addContent("content：", content);
+            request.addContent("key：", content);
+        }, Arrays.asList("xxx"));
+        applicationEventPublisher.publishEvent(webhookEvent);
     }
 
     private void example3(String content) {
-        applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                .throwable(exception)
-                                                .consumer(request -> {
-                                                    request.addContent("content：", content);
-                                                    request.addContent("key：", content);
-                                                })
-                                                // 发送到指定webhook，不使用默认配置的webhook
-                                                .noticeUrl("https://oapi.dingtalk.com/robot/send?access_token=yyy").build()
-        );
+        final WebhookEvent webhookEvent = WebhookEventFactory.newWebhookEvent(this, "aaa", exception, request -> {
+            request.addContent("content：", content);
+            request.addContent("key：", content);
+        });
+
+        // 发送到指定webhook，不使用默认配置的webhook
+        webhookEvent.setNoticeUrl("https://oapi.dingtalk.com/robot/send?access_token=yyy");
+
+        applicationEventPublisher.publishEvent(webhookEvent);
     }
 
 }

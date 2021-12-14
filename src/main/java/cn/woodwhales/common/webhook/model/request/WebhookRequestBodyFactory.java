@@ -3,8 +3,6 @@ package cn.woodwhales.common.webhook.model.request;
 import cn.woodwhales.common.webhook.enums.WebhookProductEnum;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * @author woodwhales on 2021-07-20 10:02
@@ -12,8 +10,12 @@ import java.util.function.Consumer;
 public class WebhookRequestBodyFactory {
 
     public static BaseWebhookRequestBody newInstance(WebhookProductEnum webhookProductEnum,
+                                                     String title) {
+        return newInstance(webhookProductEnum, title, null, null);
+    }
+
+    public static BaseWebhookRequestBody newInstance(WebhookProductEnum webhookProductEnum,
                                                      String title,
-                                                     Consumer<BaseWebhookRequestBody> consumer,
                                                      List<String> userIdList,
                                                      List<String> userMobileList) {
         BaseWebhookRequestBody requestBody = null;
@@ -36,9 +38,6 @@ public class WebhookRequestBodyFactory {
                 break;
         }
         requestBody.setWebhookProductEnum(webhookProductEnum);
-        if(Objects.nonNull(consumer)) {
-            consumer.accept(requestBody);
-        }
         return requestBody;
     }
 

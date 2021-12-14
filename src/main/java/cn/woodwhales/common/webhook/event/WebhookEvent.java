@@ -23,11 +23,6 @@ public class WebhookEvent extends ApplicationEvent {
     private String noticeUrl;
 
     /**
-     * webhook 密钥
-     */
-    private String secret;
-
-    /**
      * 基础包全类名
      */
     private String basePackageName;
@@ -72,18 +67,73 @@ public class WebhookEvent extends ApplicationEvent {
      */
     private List<String> userMobileList;
 
+    /**
+     * 创建 WebhookEvent
+     * @param source source
+     * @param throwable throwable
+     * @param webhookProductEnum webhookProductEnum
+     * @param title title
+     * @param consumer consumer
+     */
     public WebhookEvent(Object source,
                         Throwable throwable,
+                        WebhookProductEnum webhookProductEnum,
                         String title,
-                        String noticeUrl,
-                        String secret,
+                        Consumer<BaseWebhookRequestBody> consumer) {
+        super(source);
+        this.title = title;
+        this.consumer = consumer;
+        this.throwable = throwable;
+        if (Objects.nonNull(webhookProductEnum)) {
+            fillField(webhookProductEnum);
+        }
+    }
+
+    public WebhookEvent(Object source,
+                        Throwable throwable,
+                        WebhookProductEnum webhookProductEnum,
+                        String title,
+                        List<String> userIdList,
+                        Consumer<BaseWebhookRequestBody> consumer) {
+        super(source);
+        this.title = title;
+        this.consumer = consumer;
+        this.throwable = throwable;
+        if(userIdList != null && userIdList.size() > 0) {
+            this.userIdList = userIdList;
+        }
+        if (Objects.nonNull(webhookProductEnum)) {
+            fillField(webhookProductEnum);
+        }
+    }
+
+    public WebhookEvent(Object source,
+                        Throwable throwable,
+                        WebhookProductEnum webhookProductEnum,
+                        String title,
+                        Consumer<BaseWebhookRequestBody> consumer,
+                        List<String> userMobileList) {
+        super(source);
+        this.title = title;
+        this.consumer = consumer;
+        this.throwable = throwable;
+        if(userMobileList != null && userMobileList.size() > 0) {
+            this.userMobileList = userMobileList;
+        }
+        if (Objects.nonNull(webhookProductEnum)) {
+            fillField(webhookProductEnum);
+        }
+    }
+
+    public WebhookEvent(Object source,
+                        Throwable throwable,
+                        WebhookProductEnum webhookProductEnum,
+                        String title,
                         Consumer<BaseWebhookRequestBody> consumer,
                         List<String> userIdList,
                         List<String> userMobileList) {
         super(source);
         this.title = title;
-        this.noticeUrl = noticeUrl;
-        this.secret = secret;
         this.consumer = consumer;
         this.throwable = throwable;
         if(userIdList != null && userIdList.size() > 0) {
@@ -92,72 +142,27 @@ public class WebhookEvent extends ApplicationEvent {
         if(userMobileList != null && userMobileList.size() > 0) {
             this.userMobileList = userMobileList;
         }
-        this.fillField();
-        if(Objects.nonNull(this.baseWebhookRequestBody) && Objects.nonNull(this.consumer)) {
-            this.consumer.accept(this.baseWebhookRequestBody);
+        if (Objects.nonNull(webhookProductEnum)) {
+            fillField(webhookProductEnum);
         }
     }
 
-    private void fillField() {
-        if(Objects.nonNull(this.noticeUrl)) {
-            this.webhookProductEnum = WebhookProductEnum.getWebhookProductEnumByNoticeUrl(this.noticeUrl);
-            this.globalInfo = new GlobalInfo(this.webhookProductEnum, this.throwable, this.basePackageName, null);
-            this.baseWebhookRequestBody = WebhookRequestBodyFactory.newInstance(this.webhookProductEnum, this.title, this.consumer, this.getUserIdList(), this.userMobileList);
-        }
+    public WebhookEvent fillField(WebhookProductEnum webhookProductEnum) {
+        this.webhookProductEnum = webhookProductEnum;
+        this.baseWebhookRequestBody =
+                WebhookRequestBodyFactory.newInstance(webhookProductEnum, title, this.userIdList, this.userMobileList);
+        this.consumer.accept(this.baseWebhookRequestBody);
+        this.globalInfo = new GlobalInfo(webhookProductEnum, this.throwable, null);
+        this.baseWebhookRequestBody.addGlobalInfo(this.globalInfo);
+        return this;
     }
 
-    public static class Builder {
-        private Object source;
-        private String title;
-        private Throwable throwable;
-        private String noticeUrl;
-        private String secret;
-        private Consumer<BaseWebhookRequestBody> consumer;
-        private List<String> userIdList;
-        private List<String> userMobileList;
-
-        public static WebhookEvent.Builder build(Object source, String title) {
-            final WebhookEvent.Builder builder = new WebhookEvent.Builder();
-            builder.source = source;
-            builder.title = title;
-            return builder;
-        }
-
-        public WebhookEvent.Builder throwable(Throwable throwable) {
-            this.throwable = throwable;
-            return this;
-        }
-
-        public WebhookEvent.Builder consumer(Consumer<BaseWebhookRequestBody> consumer) {
-            this.consumer = consumer;
-            return this;
-        }
-
-        public WebhookEvent.Builder userIdList(List<String> userIdList) {
-            this.userIdList = userIdList;
-            return this;
-        }
-
-        public WebhookEvent.Builder userMobileList(List<String> userMobileList) {
-            this.userMobileList = userMobileList;
-            return this;
-        }
-
-        public WebhookEvent.Builder noticeUrl(String noticeUrl) {
-            this.noticeUrl = noticeUrl;
-            return this;
-        }
-
-        public WebhookEvent.Builder noticeUrl(String noticeUrl, String secret) {
-            this.noticeUrl = noticeUrl;
-            this.secret = secret;
-            return this;
-        }
-
-        public WebhookEvent build() {
-            return new WebhookEvent(this.source, this.throwable,
-                    this.title, this.noticeUrl, this.secret , this.consumer, this.userIdList, this.userMobileList);
-        }
+    /**
+     * 是否需要动态获取 WebhookProductEnum 枚举
+     * @return 是否需要动态获取 WebhookProductEnum 枚举
+     */
+    public boolean needFillField() {
+        return Objects.isNull(this.webhookProductEnum);
     }
 
     public WebhookProductEnum getWebhookProductEnum() {
@@ -192,23 +197,15 @@ public class WebhookEvent extends ApplicationEvent {
         return noticeUrl;
     }
 
-    public String getSecret() {
-        return secret;
+    public void setNoticeUrl(String noticeUrl) {
+        this.noticeUrl = noticeUrl;
     }
 
     public String getBasePackageName() {
         return basePackageName;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
-    }
-
-    public List<String> getUserIdList() {
-        return userIdList;
-    }
-
-    public List<String> getUserMobileList() {
-        return userMobileList;
+    public void setBasePackageName(String basePackageName) {
+        this.basePackageName = basePackageName;
     }
 }

@@ -34,7 +34,7 @@ public class WebhookExtraInfo {
     private Cache<String, String> cache;
 
     public WebhookExtraInfo(long duration, TimeUnit unit) {
-        this.init(duration, unit);
+        init(duration, unit);
     }
 
     private void init(long duration, TimeUnit unit) {

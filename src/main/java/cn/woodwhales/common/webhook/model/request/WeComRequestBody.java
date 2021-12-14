@@ -44,7 +44,6 @@ public class WeComRequestBody extends BaseWebhookRequestBody {
 
     @Data
     private static class MarkdownContent {
-        @Expose
         private String content;
     }
 

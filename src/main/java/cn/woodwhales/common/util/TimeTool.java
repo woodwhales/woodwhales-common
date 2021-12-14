@@ -3,9 +3,7 @@ package cn.woodwhales.common.util;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
@@ -17,7 +15,7 @@ import java.util.Objects;
 public class TimeTool {
 
     /**
-     * JDK中日期时间格式：EEE MMM dd HH:mm:ss zzz yyyy
+     * date 的默认时间格式
      */
     private final static String date_pattern = "EEE MMM dd HH:mm:ss zzz yyyy";
 
@@ -25,12 +23,6 @@ public class TimeTool {
      * 默认输出时间格式
      */
     private final static String default_pattern = "yyyy-MM-dd HH:mm:ss";
-
-
-    /**
-     * 标准日期时间格式，精确到毫秒：yyyy-MM-dd HH:mm:ss.SSS
-     */
-    private static final String normal_datetime_ms_pattern = "yyyy-MM-dd HH:mm:ss.SSS";
 
     /**
      * local_date_time 的默认时间格式
@@ -63,18 +55,9 @@ public class TimeTool {
         }
 
         final LocalDateTime parseLocalDateTime = LocalDateTime.parse(dateStr, dateTimeFormatter);
-        return format(parseLocalDateTime, default_pattern);
-    }
+        final DateTimeFormatter defaultTimeFormatter = DateTimeFormatter.ofPattern(default_pattern);
+        return defaultTimeFormatter.format(parseLocalDateTime);
 
-    /**
-     * 格式化时间
-     * @param localDateTime 当前时间
-     * @param pattern 样式
-     * @return 格式化的日期字符串
-     */
-    public static String format(LocalDateTime localDateTime, String pattern) {
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-        return formatter.format(localDateTime);
     }
 
     /**
@@ -90,7 +73,7 @@ public class TimeTool {
      * @return LocalDateTime
      */
     public static LocalDateTime getMexicoTime() {
-        return localDateTime("-6");
+        return LocalDateTime.now(ZoneOffset.of("-6"));
     }
 
     /**
@@ -99,15 +82,6 @@ public class TimeTool {
      */
     public static LocalDateTime getGMTTime() {
         return LocalDateTime.now(ZoneOffset.of("+0"));
-    }
-
-    /**
-     * 生成 LocalDateTime
-     * @param zoneId 时区名称
-     * @return LocalDateTime
-     */
-    public static LocalDateTime localDateTime(String zoneId) {
-        return ZonedDateTime.now(ZoneId.of(zoneId)).toLocalDateTime();
     }
 
 }
