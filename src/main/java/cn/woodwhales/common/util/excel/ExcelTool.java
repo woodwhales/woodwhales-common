@@ -1,16 +1,14 @@
 package cn.woodwhales.common.util.excel;
 
 import cn.hutool.core.date.DatePattern;
+import cn.woodwhales.common.business.DataTool;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import cn.woodwhales.common.business.DataTool;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -18,8 +16,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-import static java.util.Objects.isNull;
 import static cn.woodwhales.common.business.DataTool.toMapForSaveNew;
+import static java.util.Objects.isNull;
 
 /**
  * @author woodwhales on 2021-01-29 15:32
@@ -56,7 +54,7 @@ public class ExcelTool {
     }
 
     public static <T> List<T> parseData(InputStream inputStream, Class<T> clazz) {
-        Field[] declaredFields = clazz.getDeclaredFields();
+        final Field[] declaredFields = FieldUtils.getAllFields(clazz);
         Map<String, ExcelFieldConfig> excelFieldConfigMap =
             toMapForSaveNew(DataTool.toList(declaredFields, ExcelFieldConfig::new), ExcelFieldConfig::getExcelFieldName);
 
@@ -102,6 +100,24 @@ public class ExcelTool {
         excelFieldConfig.fillField(target, row, cell);
     }
 
+    public static void exportToFile(File file, Workbook workbook) {
+        try {
+            exportToFile(new FileOutputStream(file), workbook);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public static void exportToFile(OutputStream outputStream, Workbook workbook) {
+        try {
+            workbook.write(outputStream);
+            outputStream.close();
+            workbook.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     /**
      * 解析 excel 中的内容为 list 集合数据
      * @param filePath 文件路径
@@ -122,7 +138,6 @@ public class ExcelTool {
 
         Workbook workbook = buildWorkbook(file);
         return parseData(workbook, sheetIndex, skipLineNumbers, function, null);
-
     }
 
     private static <T> List<T> parseData(Workbook workbook,
@@ -174,6 +189,20 @@ public class ExcelTool {
         }
 
         return dataList;
+    }
+
+    /**
+     * 获取 cell 对象
+     * @param row Row 对象
+     * @param index cell 所在索引
+     * @return index 所在索引的 cell
+     */
+    public static Cell getCell(Row row, int index) {
+        Cell cell = row.getCell(index);
+        if(Objects.isNull(cell)) {
+            cell = row.createCell(index);
+        }
+        return cell;
     }
 
     public static String getStringValue(Row row, int cellIndex) {
@@ -314,7 +343,12 @@ public class ExcelTool {
         return DateFormatUtils.format(dateValue, pattern);
     }
 
-    private static Workbook buildWorkbook(InputStream inputStream) {
+    /**
+     * 创建 Workbook
+     * @param inputStream 输入流
+     * @return Workbook 对象
+     */
+    public static Workbook buildWorkbook(InputStream inputStream) {
         Objects.requireNonNull(inputStream, "inputStream不允许为空");
         Workbook workbook = null;
         try {
@@ -325,7 +359,12 @@ public class ExcelTool {
         return workbook;
     }
 
-    private static Workbook buildWorkbook(File file) {
+    /**
+     * 创建 Workbook
+     * @param file 文件
+     * @return Workbook 对象
+     */
+    public static Workbook buildWorkbook(File file) {
         Workbook workbook = null;
         try (InputStream inputStream = new FileInputStream(file)) {
             workbook = buildWorkbook(inputStream);
@@ -356,7 +395,7 @@ public class ExcelTool {
             if(Objects.nonNull(excelField)) {
                 this.excelFieldType = ExcelFieldType.NORMAL;
                 this.clazz = excelField.type();
-                this.excelFieldName = excelField.value();
+                this.excelFieldName = StringUtils.defaultIfBlank(excelField.value(), field.getName());
             }
 
             ExcelDateField excelDateField = field.getAnnotation(ExcelDateField.class);

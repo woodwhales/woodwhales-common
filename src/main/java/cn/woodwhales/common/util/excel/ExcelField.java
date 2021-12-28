@@ -18,7 +18,7 @@ public @interface ExcelField {
      * excel列字段，默认为数据对象属性名
      * @return excel列字段
      */
-    String value();
+    String value() default "";
 
     /**
      * 字段类型，默认为 String.class

@@ -30,6 +30,7 @@ public class ExcelToolExample {
             Date createTime = ExcelTool.getDateValue(row, 5);
             String memo = ExcelTool.getStringValue(row, 6);
 
+            System.out.println("index = " + index);
             System.out.println("name = " + name);
             System.out.println("age = " + age);
             System.out.println("gender = " + gender);
@@ -37,6 +38,7 @@ public class ExcelToolExample {
             System.out.println("birthday = " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(birthday));
             System.out.println("createTime = " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(createTime));
             System.out.println("createTime = " + memo);
+            System.out.println(" ============== ");
             return name;
         });
     }

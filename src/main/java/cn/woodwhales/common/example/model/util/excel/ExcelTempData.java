@@ -16,7 +16,7 @@ public class ExcelTempData extends BaseExcelTempData {
     @ExcelField(value = "年龄", type = Integer.class)
     private Integer age;
 
-    @ExcelField("性别")
+    @ExcelField
     private String gender;
 
     @ExcelDateField(value = "出生日期", pattern = "yyyy-MM-dd")
