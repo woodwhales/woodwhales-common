@@ -53,6 +53,13 @@ public class ExcelTool {
         return parseData(buildWorkbook(inputStream), 0, 1, function, null);
     }
 
+    /**
+     * 解析数据
+     * @param inputStream 输入流
+     * @param clazz 解析数据对象类型
+     * @param <T> 解析数据对象类型泛型
+     * @return 解析数据集合
+     */
     public static <T> List<T> parseData(InputStream inputStream, Class<T> clazz) {
         final Field[] declaredFields = FieldUtils.getAllFields(clazz);
         Map<String, ExcelFieldConfig> excelFieldConfigMap =
@@ -100,15 +107,25 @@ public class ExcelTool {
         excelFieldConfig.fillField(target, row, cell);
     }
 
-    public static void exportToFile(File file, Workbook workbook) {
+    /**
+     * 导出文件
+     * @param workbook Workbook
+     * @param file 目标文件
+     */
+    public static void exportToOutputStream(Workbook workbook, File file) {
         try {
-            exportToFile(new FileOutputStream(file), workbook);
+            exportToOutputStream(workbook, new FileOutputStream(file));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public static void exportToFile(OutputStream outputStream, Workbook workbook) {
+    /**
+     * 导出至输出流
+     * @param workbook Workbook
+     * @param outputStream 输出流
+     */
+    public static void exportToOutputStream(Workbook workbook, OutputStream outputStream) {
         try {
             workbook.write(outputStream);
             outputStream.close();
@@ -285,7 +302,7 @@ public class ExcelTool {
         throw new RuntimeException("cellIndex=[" + cellIndex + "]不是数值单元格");
     }
 
-    private static String formatNumeric(Double numericCellValue) {
+    public static String formatNumeric(Double numericCellValue) {
         DecimalFormat decimalFormat = new DecimalFormat("0");
         if(Objects.isNull(numericCellValue)) {
             return null;

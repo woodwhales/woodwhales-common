@@ -1,7 +1,6 @@
 package cn.woodwhales.common.example.util.datasource;
 
 import cn.woodwhales.common.example.model.util.datasource.DataSourceToolTempMusic;
-import cn.woodwhales.common.example.model.util.datasource.MyAnnotation;
 import cn.woodwhales.common.util.datasource.DataSourceTool;
 
 import java.util.List;
@@ -19,7 +18,9 @@ public class DataSourceToolExample {
         List<DataSourceToolTempMusic> musicList = dataSourceTool.queryList("select * from music", DataSourceToolTempMusic.class);
         musicList.stream().forEach(System.out::println);
 
-        DataSourceToolTempMusic music = dataSourceTool.queryOne("select * from rbac_role where id = 3", DataSourceToolTempMusic.class, MyAnnotation.class, MyAnnotation::dbColumn);
+        System.out.println(" ================ ");
+
+        DataSourceToolTempMusic music = dataSourceTool.queryOne("select * from music where id = 3", DataSourceToolTempMusic.class);
         System.out.println("music = " + music);
     }
 

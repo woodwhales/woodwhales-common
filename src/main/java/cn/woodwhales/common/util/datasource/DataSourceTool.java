@@ -1,24 +1,24 @@
 package cn.woodwhales.common.util.datasource;
 
+import cn.woodwhales.common.business.DataTool;
 import cn.woodwhales.common.example.model.util.datasource.DataSourceIgnore;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.google.common.base.CaseFormat;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Table;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 /**
  * @author woodwhales on 2021-01-28 21:22
@@ -56,7 +56,7 @@ public class DataSourceTool {
      * key 数据对象的类对象
      * value TargetInfo 对象（数据对象的类对象、数据对象的所有属性映射关系）
      */
-    private Map<Class, TargetInfo.TargetFieldInfo> targetInfoCache = new HashMap<>(16);
+    private Map<Class, LinkedHashMap<Field, ColumnDict>> dbColumnMapping = new HashMap<>(16);
 
 
     public static DataSourceTool newMysql(String url, String username, String password) {
@@ -71,7 +71,7 @@ public class DataSourceTool {
         return new DataSourceTool("oracle.jdbc.OracleDriver", url, username, password);
     }
 
-    public <A extends Annotation> DataSourceTool(String driverClass, String url, String username, String password) {
+    public DataSourceTool(String driverClass, String url, String username, String password) {
         this.driverClass = driverClass;
         this.url = url;
         this.username = username;
@@ -83,10 +83,10 @@ public class DataSourceTool {
             this.connection = connection;
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            if(cause instanceof SQLException){
+            if (cause instanceof SQLException) {
                 SQLException sqlException = (SQLException) cause;
                 String sqlState = sqlException.getSQLState();
-                if("28000".equals(sqlState)) {
+                if ("28000".equals(sqlState)) {
                     log.error("数据库账号或密码错误!!!");
                     System.err.println("数据库账号或密码错误!!!");
                 }
@@ -99,196 +99,236 @@ public class DataSourceTool {
 
     }
 
-    public <T, A extends Annotation> List<T> queryList(String sql,
-                                       Class<T> clazz,
-                                       Class<A> annotationClass,
-                                       Function<A, String> function) throws Exception {
-
-        return queryList(sql, this.getTarget(clazz, annotationClass, function));
-    }
-
-    public <T, A extends Annotation> T queryOne(String sql,
-                                                Class<T> clazz,
-                                                Class<A> annotationClass,
-                                                Function<A, String> function) throws Exception {
-        return queryOne(sql, this.getTarget(clazz, annotationClass, function));
-    }
-
-    private <T, A extends Annotation> TargetInfo<T, A> cacheTarget(Class<T> clazz,
-                                                                   Class<A> annotationClass,
-                                                                   Function<A, String> function) {
-        if(!this.targetInfoCache.containsKey(clazz)) {
-            this.targetInfoCache.put(clazz, new TargetInfo<>(clazz, annotationClass, function));
-        }
-        return this.targetInfoCache.get(clazz);
-    }
-
-    private <T, A extends Annotation> Function<ResultSet, T> getTarget(Class<T> clazz,
-                                                                       Class<A> annotationClass,
-                                                                       Function<A, String> function) {
-        this.cacheTarget(clazz, annotationClass, function);
-        return resultSet -> this.fillFieldValue(clazz, resultSet);
-    }
-
     public <T> List<T> queryList(String sql, Class<T> clazz) throws Exception {
-        Field[] declaredFields = FieldUtils.getAllFields(clazz);
+        return this.queryList(sql,
+                              resultSet -> this.cacheDbColumnMapping(clazz, resultSet),
+                              resultSet -> this.getDataFromResultSet(clazz, resultSet));
+    }
 
-        List<Field> needFillFieldList = new ArrayList<>(declaredFields.length);
-        for (Field field : declaredFields) {
-            if(Objects.isNull(field.getAnnotation(DataSourceIgnore.class))) {
-                needFillFieldList.add(field);
+    private <T> List<Field> getNeedFillFieldList(Class<T> clazz) {
+        List<Field> needFillFieldList = null;
+        if (!this.dbColumnMapping.containsKey(clazz)) {
+            Field[] declaredFields = FieldUtils.getAllFields(clazz);
+            needFillFieldList = new ArrayList<>(declaredFields.length);
+            for (Field field : declaredFields) {
+                if (Objects.isNull(field.getAnnotation(DataSourceIgnore.class))) {
+                    needFillFieldList.add(field);
+                }
+            }
+        }
+        return needFillFieldList;
+    }
+
+    private void cacheDbColumnMapping(Class<?> clazz, ResultSet resultSet) {
+        if (!this.dbColumnMapping.containsKey(clazz)) {
+            List<Field> fieldList = this.getNeedFillFieldList(clazz);
+            List<ColumnDict> dbColumnDictList = getDbColumnDictList(resultSet);
+            this.dbColumnMapping.put(clazz, this.dbColumnMap(fieldList, dbColumnDictList));
+        }
+    }
+
+    private List<ColumnDict> getDbColumnDictList(ResultSet resultSet) {
+        List<ColumnDict> dbColumnDictList = new ArrayList<>();
+        ResultSetMetaData metaData = this.getMetaData(resultSet);
+        int columnCount = this.getColumnCount(metaData);
+        for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+            String columnName = this.getColumnName(metaData, columnIndex);
+            String columnTypeName = this.getColumnTypeName(metaData, columnIndex);
+            dbColumnDictList.add(new ColumnDict(columnIndex, columnName, columnTypeName));
+        }
+        return dbColumnDictList;
+    }
+
+    private LinkedHashMap<Field, ColumnDict> dbColumnMap(List<Field> fieldList, List<ColumnDict> dbColumnDictList) {
+        Map<String, ColumnDict> dbColumnDictMap = DataTool.toMap(dbColumnDictList, ColumnDict::getColumnName);
+        LinkedHashMap<Field, ColumnDict> result = new LinkedHashMap<>();
+        for (Field field : fieldList) {
+            String name = field.getName();
+            if (dbColumnDictMap.containsKey(name)) {
+                result.put(field, dbColumnDictMap.get(name));
+            } else {
+                // name 中含有大写的字母转小写，并使用下划线拼接
+                String convertName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
+                if (dbColumnDictMap.containsKey(convertName)) {
+                    result.put(field, dbColumnDictMap.get(convertName));
+                }
             }
         }
 
-        List<TargetInfo.TargetFieldInfo> targetInfoList = new ArrayList<>();
-        this.targetInfoCache.put(clazz, targetInfoList);
-        for (Field field : needFillFieldList) {
-            final Annotation[] annotations = field.getAnnotations();
+        return result;
+    }
 
-            if(Objects.isNull(annotations)) {
-                targetInfoList.add(new TargetInfo.TargetFieldInfo(field, field.getName()));
-            }
+    public String getColumnTypeName(ResultSetMetaData metaData, int columnIndex) {
+        String columnTypeName = null;
+        try {
+            columnTypeName = metaData.getColumnTypeName(columnIndex);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return columnTypeName;
+    }
 
-        return null;
+    public String getColumnName(ResultSetMetaData metaData, int columnIndex) {
+        String columnName = null;
+        try {
+            columnName = metaData.getColumnName(columnIndex);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return columnName;
+    }
+
+    public int getColumnCount(ResultSetMetaData metaData) {
+        int columnCount = 0;
+        try {
+            columnCount = metaData.getColumnCount();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return columnCount;
+    }
+
+    public ResultSetMetaData getMetaData(ResultSet resultSet) {
+        ResultSetMetaData metaData = null;
+        try {
+            metaData = resultSet.getMetaData();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return metaData;
     }
 
     public <T> T queryOne(String sql, Class<T> clazz) throws Exception {
-        return queryOne(sql, clazz, null, null);
+        return this.queryOne(sql,
+                             resultSet -> this.cacheDbColumnMapping(clazz, resultSet),
+                             resultSet -> this.getDataFromResultSet(clazz, resultSet));
     }
 
-    public <T> T fillFieldValue(Class<T> clazz, ResultSet resultSet) {
+    public <T> T getDataFromResultSet(Class<T> clazz, ResultSet resultSet) {
+        T target = null;
         try {
-            T target = clazz.newInstance();
-            TargetInfo<T, ?> targetInfo = this.targetInfoCache.get(clazz);
-            for (TargetInfo.TargetFieldInfo targetFieldInfo : targetInfo.targetFieldInfoList) {
-                Object object = getObject(resultSet, targetFieldInfo);
-                if(nonNull(object)) {
-                    boolean accessible = targetFieldInfo.field.isAccessible();
-                    targetFieldInfo.field.setAccessible(true);
-                    targetFieldInfo.field.set(target, object);
-                    targetFieldInfo.field.setAccessible(accessible);
+            target = clazz.newInstance();
+            LinkedHashMap<Field, ColumnDict> fieldHashMap = this.dbColumnMapping.get(clazz);
+            if (MapUtils.isNotEmpty(fieldHashMap)) {
+                for (Map.Entry<Field, ColumnDict> entry : fieldHashMap.entrySet()) {
+                    Field field = entry.getKey();
+                    try {
+                        Object object = this.getObject(resultSet, field, entry.getValue());
+                        boolean accessible = field.isAccessible();
+                        field.setAccessible(true);
+                        field.set(target, object);
+                        field.setAccessible(accessible);
+                    } catch (SQLException | IllegalAccessException e) {
+                        throw new RuntimeException(String.format("cause by = %s, fieldName=%s, fieldType=%s, ColumnDict = %s",
+                                e.getMessage(), field.getName(), field.getType().getName(), entry.getValue()));
+                    }
                 }
             }
-            return target;
-        } catch (Exception e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        return null;
+        return target;
     }
 
-    private Object getObject(ResultSet resultSet, TargetInfo.TargetFieldInfo targetFieldInfo) throws SQLException {
-        String fieldTypeName = targetFieldInfo.field.getType().getName();
-        String columnLabel = targetFieldInfo.columnLabel;
+    private Object getObject(ResultSet resultSet, Field field, ColumnDict columnDict) throws SQLException {
+        // 属性类型的类名称
+        Class<?> type = field.getType();
 
-        if(isNull(columnLabel)) {
-            return null;
-        }
+        Object object = null;
 
-        Object object;
-        switch (fieldTypeName) {
-            case "java.util.Date" :
-                object = resultSet.getTimestamp(targetFieldInfo.columnLabel);
-                break;
-            case "java.lang.Byte" :
-                object = resultSet.getByte(targetFieldInfo.columnLabel);
-                break;
-            case "java.time.LocalDateTime" :
-                object = Optional.ofNullable(resultSet.getTimestamp(columnLabel))
-                        .map(timestamp -> timestamp.toInstant()
-                                .atZone( ZoneId.systemDefault() )
-                                .toLocalDateTime())
-                        .orElse(null);
-                break;
-            default:
-                object = resultSet.getObject(columnLabel, targetFieldInfo.field.getType());
+        if (type.isAssignableFrom(String.class)) {
+            object = resultSet.getString(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Integer.class) || type.isAssignableFrom(int.class)) {
+            object = resultSet.getInt(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(Boolean.class)) {
+            object = resultSet.getBoolean(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(Boolean.class)) {
+            object = resultSet.getBoolean(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(BigDecimal.class)) {
+            object = resultSet.getBigDecimal(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Long.class) || type.isAssignableFrom(long.class)) {
+            object = resultSet.getLong(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Byte.class) || type.isAssignableFrom(byte.class)) {
+            object = resultSet.getByte(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Double.class) || type.isAssignableFrom(double.class)) {
+            object = resultSet.getByte(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Float.class) || type.isAssignableFrom(float.class)) {
+            object = resultSet.getByte(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Short.class) || type.isAssignableFrom(short.class)) {
+            object = resultSet.getShort(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Byte[].class) || type.isAssignableFrom(byte[].class)) {
+            object = resultSet.getBytes(columnDict.columnIndex);
+        } else if (type.isAssignableFrom(Date.class)) {
+            Timestamp timestamp = resultSet.getTimestamp(columnDict.columnIndex);
+            if (Objects.nonNull(timestamp)) {
+                object = new Date(timestamp.getTime());
+            }
+        } else if (type.isAssignableFrom(LocalDateTime.class)) {
+            Timestamp timestamp = resultSet.getTimestamp(columnDict.columnIndex);
+            if (Objects.nonNull(timestamp)) {
+                object = timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            }
+        } else if (type.isAssignableFrom(LocalDate.class)) {
+            Timestamp timestamp = resultSet.getTimestamp(columnDict.columnIndex);
+            if (Objects.nonNull(timestamp)) {
+                object = timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            }
+        } else if (type.isAssignableFrom(LocalTime.class)) {
+            Timestamp timestamp = resultSet.getTimestamp(columnDict.columnIndex);
+            if (Objects.nonNull(timestamp)) {
+                object = timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
+            }
         }
         return object;
     }
 
-    private static class TargetInfo<T, A extends Annotation> {
-        Class<T> clazz;
-        List<TargetFieldInfo> targetFieldInfoList;
+    @ToString
+    private static class ColumnDict {
+        public int columnIndex;
+        public String columnName;
+        public String columnTypeName;
 
-        public TargetInfo(Class<T> clazz, Class<A> annotationClass, Function<A, String> function) {
-            this.clazz = clazz;
-            this.targetFieldInfoList = new ArrayList<>();
-            Field[] declaredFields = FieldUtils.getAllFields(clazz);
-            for (Field declaredField : declaredFields) {
-                this.addTargetFieldInfo(declaredField, annotationClass, function);
-            }
+        public ColumnDict(int columnIndex, String columnName, String columnTypeName) {
+            this.columnIndex = columnIndex;
+            this.columnName = columnName;
+            this.columnTypeName = columnTypeName;
         }
 
-        public TargetInfo<T, A> addTargetFieldInfo(Field field, Class<A> clazz, Function<A, String> function) {
-            TargetFieldInfo<?> fieldInfo;
-            if(isNull(clazz) || isNull(function)) {
-                fieldInfo = new TargetFieldInfo<>(field, Column.class, Column::name);
-            } else {
-                fieldInfo = new TargetFieldInfo<>(field, clazz, function);
-            }
-            fieldInfo.fillColumnLabel(field, DataColumn.class, DataColumn::value);
-            fieldInfo.fillColumnLabel(field, DataTable.class, DataTable::value);
-
-            fieldInfo.fillColumnLabel(field, Table.class, Table::name);
-            fieldInfo.fillColumnLabel(field, Column.class, Column::name);
-
-            fieldInfo.fillColumnLabel(field, TableId.class, TableId::value);
-            fieldInfo.fillColumnLabel(field, TableField.class, TableField::value);
-
-            fieldInfo.fillColumnLabel(field, DataColumn.class, DataColumn::value);
-            fieldInfo.fillColumnLabel(field, DataColumn.class, DataColumn::value);
-
-            this.targetFieldInfoList.add(fieldInfo);
-            return this;
-        }
-
-        private static class TargetFieldInfo<A extends Annotation> {
-            private Field field;
-            private String columnLabel;
-
-            public TargetFieldInfo(Field field, String columnLabel) {
-                this.field = field;
-                this.columnLabel = columnLabel;
-            }
-
-            public TargetFieldInfo(Field field, Class<A> annotationClass, Function<A, String> function) {
-                this.field = field;
-                this.fillColumnLabel(field, annotationClass, function);
-            }
-
-            private <A> void fillColumnLabel(Field field,
-                                         Class<A> annotationClass,
-                                         Function<A, String> function) {
-                if(nonNull(this.columnLabel)
-                        || isNull(field.getAnnotations())
-                        || field.getAnnotations().length == 0) {
-                    return;
-                } else {
-                    Annotation[] annotations = field.getAnnotations();
-                    Map<? extends Class<? extends Annotation>, Annotation> annotationMap = Arrays.stream(annotations)
-                            .collect(Collectors.toMap(Annotation::annotationType, Function.identity()));
-
-                    if (annotationMap.containsKey(annotationClass)) {
-                        A annotation = (A) annotationMap.get(annotationClass);
-                        this.columnLabel = function.apply(annotation);
-                    }
-                }
-            }
+        public String getColumnName() {
+            return columnName;
         }
     }
 
-
     /**
      * 查询多条数据
-     * @param sql sql 语句
-     * @param function 解析函数
-     * @param <T> 要返回的数据对象泛型
+     *
+     * @param sql      sql 语句
+     * @param function 解析实现
+     * @param <T>      要返回的数据对象泛型
      * @return 数据对象
      * @throws Exception Exception
      */
     public <T> List<T> queryList(String sql, Function<ResultSet, T> function) throws Exception {
+        return this.queryList(sql, null, function);
+    }
+
+    /**
+     * 查询多条数据
+     *
+     * @param sql               sql 语句
+     * @param resultSetConsumer ResultSet 前置处理回调函数
+     * @param function          解析实现
+     * @param <T>               要返回的数据对象泛型
+     * @return 数据对象
+     * @throws Exception Exception
+     */
+    public <T> List<T> queryList(String sql, Consumer<ResultSet> resultSetConsumer, Function<ResultSet, T> function) throws Exception {
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(sql);
+
+        if (Objects.nonNull(resultSetConsumer)) {
+            resultSetConsumer.accept(rs);
+        }
 
         List<T> dataList = new ArrayList<>();
         while (rs.next()) {
@@ -302,15 +342,34 @@ public class DataSourceTool {
 
     /**
      * 查询单条数据
-     * @param sql sql 语句
-     * @param function 解析函数
-     * @param <T> 要返回的数据对象泛型
+     *
+     * @param sql      sql 语句
+     * @param function 解析实现
+     * @param <T>      要返回的数据对象泛型
      * @return 数据对象
      * @throws Exception Exception
      */
     public <T> T queryOne(String sql, Function<ResultSet, T> function) throws Exception {
+        return this.queryOne(sql, null, function);
+    }
+
+    /**
+     * 查询单条数据
+     *
+     * @param sql               sql 语句
+     * @param resultSetConsumer ResultSet 前置处理回调函数
+     * @param function          解析实现
+     * @param <T>               要返回的数据对象泛型
+     * @return 数据对象
+     * @throws Exception Exception
+     */
+    public <T> T queryOne(String sql, Consumer<ResultSet> resultSetConsumer, Function<ResultSet, T> function) throws Exception {
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(sql);
+
+        if (Objects.nonNull(resultSetConsumer)) {
+            resultSetConsumer.accept(rs);
+        }
 
         try {
             rs.next();
