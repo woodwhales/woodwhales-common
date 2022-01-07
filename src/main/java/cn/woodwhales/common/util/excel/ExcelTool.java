@@ -81,7 +81,7 @@ public class ExcelTool {
                     fillFieldValue(target, row, cell, excelFieldConfig);
                 }
             } catch (Exception e) {
-                System.out.println("cell value = " + cell);
+                System.err.printf("index = %s, cell value = [%s], parese error, cause by : %s\n", index, cell, e.getMessage());
                 e.printStackTrace();
             }
             return target;
@@ -449,7 +449,7 @@ public class ExcelTool {
             if (this.jsonFlag) {
                 final String jsonStr = getStringValue(row, this.cellIndex);
                 if(StringUtils.isNotBlank(jsonStr)) {
-                    this.field.set(target, new Gson().fromJson(jsonStr, this.clazz));
+                    this.field.set(target, new Gson().fromJson(jsonStr, this.field.getType()));
                 }
                 return;
             }
