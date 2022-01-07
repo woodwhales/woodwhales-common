@@ -26,4 +26,10 @@ public @interface ExcelField {
      */
     Class type() default String.class;
 
+    /**
+     * json字符串标识
+     * @return 字段为 json 类型
+     */
+    boolean jsonFlag() default false;
+
 }

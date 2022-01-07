@@ -2,6 +2,7 @@ package cn.woodwhales.common.util.excel;
 
 import cn.hutool.core.date.DatePattern;
 import cn.woodwhales.common.business.DataTool;
+import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -397,7 +398,7 @@ public class ExcelTool {
     private static class ExcelFieldConfig {
         public ExcelFieldType excelFieldType;
         public Field field;
-
+        public boolean jsonFlag;
         public Integer cellIndex;
         public Class<?> clazz;
         public String excelFieldName;
@@ -411,6 +412,7 @@ public class ExcelTool {
             ExcelField excelField = field.getAnnotation(ExcelField.class);
             if(Objects.nonNull(excelField)) {
                 this.excelFieldType = ExcelFieldType.NORMAL;
+                this.jsonFlag = excelField.jsonFlag();
                 this.clazz = excelField.type();
                 this.excelFieldName = StringUtils.defaultIfBlank(excelField.value(), field.getName());
             }
@@ -443,6 +445,15 @@ public class ExcelTool {
             boolean accessible = this.field.isAccessible();
             this.field.setAccessible(true);
             String typeName = this.clazz.getName();
+
+            if (this.jsonFlag) {
+                final String jsonStr = getStringValue(row, this.cellIndex);
+                if(StringUtils.isNotBlank(jsonStr)) {
+                    this.field.set(target, new Gson().fromJson(jsonStr, this.clazz));
+                }
+                return;
+            }
+
             if(String.class.getName().equals(typeName)) {
                 if(ExcelFieldType.DATE_STR.equals(this.excelFieldType)) {
                     this.field.set(target, DateFormatUtils.format(getDateValue(row, this.cellIndex), this.pattern));

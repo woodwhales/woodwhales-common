@@ -23,4 +23,13 @@ public class ExcelTempData extends BaseExcelTempData {
     private String birthday;
 
     private String memo;
+
+    @ExcelField(jsonFlag = true)
+    private Desc desc;
+
+    @Data
+    public static class Desc {
+        private String address;
+        private String tag;
+    }
 }
