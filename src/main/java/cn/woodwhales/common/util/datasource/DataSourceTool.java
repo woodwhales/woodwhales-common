@@ -204,9 +204,28 @@ public class DataSourceTool {
                              resultSet -> this.getDataFromResultSet(clazz, resultSet));
     }
 
+    /**
+     * 执行 DML SQL 操作
+     * @param sql 要执行的 sql
+     * @return 影响行数
+     */
+    public int executeUpdate(String sql) {
+        try (Statement statement = connection.createStatement()) {
+            return statement.executeUpdate(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
     public <T> T getDataFromResultSet(Class<T> clazz, ResultSet resultSet) {
         T target = null;
+
+
         try {
+            if(!resultSet.next()) {
+                return target;
+            }
             target = clazz.newInstance();
             LinkedHashMap<Field, ColumnDict> fieldHashMap = this.dbColumnMapping.get(clazz);
             if (MapUtils.isNotEmpty(fieldHashMap)) {
@@ -224,7 +243,7 @@ public class DataSourceTool {
                     }
                 }
             }
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | SQLException e) {
             e.printStackTrace();
         }
         return target;
@@ -364,20 +383,12 @@ public class DataSourceTool {
      * @throws Exception Exception
      */
     public <T> T queryOne(String sql, Consumer<ResultSet> resultSetConsumer, Function<ResultSet, T> function) throws Exception {
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(sql);
-
-        if (Objects.nonNull(resultSetConsumer)) {
-            resultSetConsumer.accept(rs);
-        }
-
-        try {
-            rs.next();
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(sql)) {
+            if (Objects.nonNull(resultSetConsumer)) {
+                resultSetConsumer.accept(rs);
+            }
             return function.apply(rs);
-        } finally {
-            rs.close();
-            statement.close();
-            connection.close();
         }
     }
 
