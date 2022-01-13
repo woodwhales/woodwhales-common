@@ -95,6 +95,42 @@ public class DataTool {
     }
 
     /**
+     * 数组 转 map 集合
+     * map 的 value 为集合元素本身
+     * @param source 数据源数组集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
+     * @return map 集合
+     */
+    public static <K, S> Map<K, S> toMap(S[] source,
+                                         Function<? super S, ? extends K> keyMapper) {
+        if(Objects.isNull(source)) {
+            return emptyMap();
+        }
+        return toMap(Arrays.asList(source), keyMapper, identity());
+    }
+
+    /**
+     * 数组 转 map 集合
+     * map 的 value 为集合元素本身
+     * @param source 数据源数组集合
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param mergeFunction 存在相同 key 时取 value 的规则
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
+     * @return map 集合
+     */
+    public static <K, S> Map<K, S> toMap(S[] source,
+                                         Function<? super S, ? extends K> keyMapper,
+                                         BinaryOperator<S> mergeFunction) {
+        if(Objects.isNull(source)) {
+            return emptyMap();
+        }
+        return toMap(Arrays.asList(source), keyMapper, identity(), mergeFunction);
+    }
+
+    /**
      * list 转 map 集合
      * map 的 value 为集合元素本身
      * @param source 数据源集合
