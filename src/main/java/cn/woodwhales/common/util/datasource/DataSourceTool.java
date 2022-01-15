@@ -74,9 +74,9 @@ public class DataSourceTool {
     /**
      * 包装字段值
      * 例如：
-     * 数字 2 => '2'
-     * 空值 null => 'NULL'
-     * 字符串 "woodwhales" => 'woodwhales'
+     * 数字 2 = '2'
+     * 空值 null = 'NULL'
+     * 字符串 "woodwhales" = 'woodwhales'
      * @param object 要包装的数据
      * @return 使用单引号包装后的字符串数据
      */
