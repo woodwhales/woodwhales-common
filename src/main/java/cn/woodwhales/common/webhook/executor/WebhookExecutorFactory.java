@@ -20,15 +20,15 @@ public class WebhookExecutorFactory {
     private static <RequestBody extends BaseWebhookRequestBody> BaseWebhookExecutor newInstance(WebhookProductEnum webhookProductEnum) {
         BaseWebhookExecutor baseWebhookExecutor = null;
         switch (webhookProductEnum) {
-            case WE_COM :
+            case WE_COM:
                 baseWebhookExecutor = WeComWebhookExecutor.<RequestBody>newInstance();
                 break;
 
-            case DING_TALK :
+            case DING_TALK:
                 baseWebhookExecutor = DingTalkWebhookExecutor.<RequestBody>newInstance();
                 break;
 
-            case FEI_SHU :
+            case FEI_SHU:
                 baseWebhookExecutor = FeiShuWebhookExecutor.<RequestBody>newInstance();
                 break;
         }
@@ -37,8 +37,9 @@ public class WebhookExecutorFactory {
 
     /**
      * 请求执行
-     * @param url 请求地址
-     * @param secret 签名密钥
+     *
+     * @param url         请求地址
+     * @param secret      签名密钥
      * @param requestBody 请求报文
      */
     private static void execute(String url, String secret, BaseWebhookRequestBody requestBody) {
@@ -46,11 +47,11 @@ public class WebhookExecutorFactory {
     }
 
     private static void execute(WebhookProductEnum webhookProductEnum,
-                               String url,
-                               String title,
-                               Consumer<BaseWebhookRequestBody> consumer,
-                               List<String> userIdList,
-                               List<String> userMobileList) {
+                                String url,
+                                String title,
+                                Consumer<BaseWebhookRequestBody> consumer,
+                                List<String> userIdList,
+                                List<String> userMobileList) {
         BaseWebhookRequestBody requestBody = WebhookRequestBodyFactory.newInstance(webhookProductEnum, title, consumer, userIdList, userMobileList);
         newInstance(requestBody.getWebhookProductEnum()).execute(url, requestBody);
     }
@@ -127,7 +128,7 @@ public class WebhookExecutorFactory {
             return builder;
         }
 
-        public Builder throwable(Throwable throwable, String ...basePackageNames) {
+        public Builder throwable(Throwable throwable, String... basePackageNames) {
             this.throwable = throwable;
             this.basePackageNames = basePackageNames;
             return this;
@@ -138,7 +139,7 @@ public class WebhookExecutorFactory {
             return this;
         }
 
-        public Builder basePackageNames(String ...basePackageNames) {
+        public Builder basePackageNames(String... basePackageNames) {
             this.basePackageNames = basePackageNames;
             return this;
         }
@@ -174,7 +175,7 @@ public class WebhookExecutorFactory {
         }
 
         public void execute() {
-            if(Objects.isNull(this.baseWebhookRequestBody)) {
+            if (Objects.isNull(this.baseWebhookRequestBody)) {
                 this.baseWebhookRequestBody = WebhookRequestBodyFactory.newInstance(WebhookProductEnum.getWebhookProductEnumByNoticeUrl(this.url), this.title, this.consumer, this.userIdList, this.userMobileList);
             }
 

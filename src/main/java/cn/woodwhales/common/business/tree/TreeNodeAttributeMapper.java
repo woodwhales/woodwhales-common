@@ -67,7 +67,8 @@ public class TreeNodeAttributeMapper<T> {
         private String sortName;
         private String extraName;
 
-        TreeNodeAttributeMapperBuilder() {}
+        TreeNodeAttributeMapperBuilder() {
+        }
 
         public TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder<T> nodeId(String nodeId) {
             this.nodeId = nodeId;
@@ -113,6 +114,7 @@ public class TreeNodeAttributeMapper<T> {
         /**
          * 设置字段变量的别名
          * 扩展字段的别名会覆盖掉已有的数据字段数据
+         *
          * @param extraName 扩展字段变量的别名
          * @return TreeNodeAttributeMapper.TreeNodeAttributeMapperBuilder
          */
@@ -123,68 +125,68 @@ public class TreeNodeAttributeMapper<T> {
 
         public TreeNodeAttributeMapper<T> build() {
             return new TreeNodeAttributeMapper<T>()
-                        .setNodeId(this.nodeId)
-                        .setOverNodeIdFunction(overNodeIdFunction)
-                        .setNodeName(this.nodeName)
-                        .setParentId(this.parentId)
-                        .setChildrenName(this.childrenName)
-                        .setDataName(this.dataName)
-                        .setSortName(this.sortName)
-                        .setExtraName(this.extraName);
+                    .setNodeId(this.nodeId)
+                    .setOverNodeIdFunction(overNodeIdFunction)
+                    .setNodeName(this.nodeName)
+                    .setParentId(this.parentId)
+                    .setChildrenName(this.childrenName)
+                    .setDataName(this.dataName)
+                    .setSortName(this.sortName)
+                    .setExtraName(this.extraName);
         }
     }
 
     public TreeNodeAttributeMapper<T> setNodeId(String nodeId) {
-        if(isNotBlank(nodeId)) {
+        if (isNotBlank(nodeId)) {
             this.nodeId = nodeId;
         }
         return this;
     }
 
     public TreeNodeAttributeMapper<T> setOverNodeIdFunction(Function<T, Object> overNodeIdFunction) {
-        if(nonNull(overNodeIdFunction)) {
+        if (nonNull(overNodeIdFunction)) {
             this.overNodeIdFunction = overNodeIdFunction;
         }
         return this;
     }
 
     public TreeNodeAttributeMapper<T> setNodeName(String nodeName) {
-        if(isNotBlank(nodeName)) {
+        if (isNotBlank(nodeName)) {
             this.nodeName = nodeName;
         }
         return this;
     }
 
     public TreeNodeAttributeMapper<T> setParentId(String parentId) {
-        if(isNotBlank(parentId)) {
+        if (isNotBlank(parentId)) {
             this.parentId = parentId;
         }
         return this;
     }
 
     public TreeNodeAttributeMapper<T> setChildrenName(String childrenName) {
-        if(isNotBlank(childrenName)) {
+        if (isNotBlank(childrenName)) {
             this.childrenName = childrenName;
         }
         return this;
     }
 
     public TreeNodeAttributeMapper<T> setDataName(String dataName) {
-        if(isNotBlank(dataName)) {
+        if (isNotBlank(dataName)) {
             this.dataName = dataName;
         }
         return this;
     }
 
     public TreeNodeAttributeMapper<T> setSortName(String sortName) {
-        if(isNotBlank(sortName)) {
+        if (isNotBlank(sortName)) {
             this.sortName = sortName;
         }
         return this;
     }
 
     public TreeNodeAttributeMapper<T> setExtraName(String extraName) {
-        if(isNotBlank(extraName)) {
+        if (isNotBlank(extraName)) {
             this.extraName = extraName;
         }
         return this;

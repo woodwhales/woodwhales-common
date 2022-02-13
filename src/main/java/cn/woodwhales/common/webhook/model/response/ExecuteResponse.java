@@ -2,6 +2,7 @@ package cn.woodwhales.common.webhook.model.response;
 
 /**
  * 通用 webhook 响应对象
+ *
  * @author woodwhales on 2021-07-19 9:38
  */
 public class ExecuteResponse<R> {

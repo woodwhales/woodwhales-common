@@ -19,21 +19,22 @@ public class ChineseDataTool {
 
     /**
      * 根据 dataList 进行中文字段排序
-     * @param dataList 原始数据
+     *
+     * @param dataList       原始数据
      * @param stringFunction 中文排序接口
-     * @param <T> 数据集合泛型
+     * @param <T>            数据集合泛型
      * @return 已排序的结果集
      */
     public static <T> List<T> sortedList(List<T> dataList, Function<T, String> stringFunction) {
-        if(isEmpty(dataList)) {
+        if (isEmpty(dataList)) {
             return emptyList();
         }
 
         List<ChineseDataContainer<T>> chineseDataContainerList = ChineseDataContainer.build(dataList, stringFunction);
 
         return chineseDataContainerList.stream()
-                                .sorted(ChineseDataContainer::compare)
-                                .map(ChineseDataContainer::getData)
-                                .collect(Collectors.toList());
+                .sorted(ChineseDataContainer::compare)
+                .map(ChineseDataContainer::getData)
+                .collect(Collectors.toList());
     }
 }

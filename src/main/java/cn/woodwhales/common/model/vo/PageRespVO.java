@@ -17,8 +17,8 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * 分页查询响应视图
- * @author woodwhales on 2020-08-25
  *
+ * @author woodwhales on 2020-08-25
  */
 @Data
 public class PageRespVO<T> extends RespVO<List<T>> {
@@ -50,36 +50,37 @@ public class PageRespVO<T> extends RespVO<List<T>> {
 
     /**
      * IPage 数据按照 mapper 规则转成 PageRespVO
-     * @param page page
+     *
+     * @param page   page
      * @param mapper mapper
-     * @param <S> 原始数据泛型
-     * @param <T> 目标数据泛型
+     * @param <S>    原始数据泛型
+     * @param <T>    目标数据泛型
      * @return PageRespVO
      */
     public static <S, T> PageRespVO<T> buildPageRespVO(IPage<S> page,
                                                        Function<? super S, ? extends T> mapper) {
-        if(CollectionUtils.isEmpty(page.getRecords())) {
+        if (CollectionUtils.isEmpty(page.getRecords())) {
             return buildPageRespVO(RespCodeEnum.SUCCESS, page.getTotal(), emptyList());
         }
 
         return buildPageRespVO(RespCodeEnum.SUCCESS, page.getTotal(), page.getRecords()
-                                                                          .stream()
-                                                                          .map(mapper)
-                                                                          .collect(toList()));
+                .stream()
+                .map(mapper)
+                .collect(toList()));
     }
 
     public static <S, T> PageRespVO<T> buildPageRespVO(IPage<S> page,
                                                        Function<? super S, ? extends T> mapper,
                                                        Comparator<T> comparator) {
-        if(CollectionUtils.isEmpty(page.getRecords())) {
+        if (CollectionUtils.isEmpty(page.getRecords())) {
             return buildPageRespVO(RespCodeEnum.SUCCESS, page.getTotal(), emptyList());
         }
 
         return buildPageRespVO(RespCodeEnum.SUCCESS, page.getTotal(), page.getRecords()
-                                                                          .stream()
-                                                                          .map(mapper)
-                                                                          .sorted(comparator)
-                                                                          .collect(toList()));
+                .stream()
+                .map(mapper)
+                .sorted(comparator)
+                .collect(toList()));
     }
 
     public static <T> PageRespVO<T> buildPageRespVO(@NotNull BaseRespResult baseRespResult,
@@ -98,7 +99,7 @@ public class PageRespVO<T> extends RespVO<List<T>> {
         pageRespVO.setCode(code);
         pageRespVO.setMsg(message);
 
-        if(CollectionUtils.isEmpty(data)) {
+        if (CollectionUtils.isEmpty(data)) {
             pageRespVO.setCount(0L);
             pageRespVO.setData(emptyList());
         } else {

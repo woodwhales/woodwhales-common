@@ -8,6 +8,7 @@ public interface CollectionFieldComparable<K> {
 
     /**
      * 获取可比较的 key
+     *
      * @return 获取可比较的 key
      */
     K getDataKey();

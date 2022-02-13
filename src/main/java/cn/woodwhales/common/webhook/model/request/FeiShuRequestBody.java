@@ -45,7 +45,7 @@ public class FeiShuRequestBody extends BaseWebhookRequestBody {
 
     @Override
     public String getUrlAndSignContent(ExecuteParam executeParam) {
-        final Long timestamp = Long.parseLong(StringUtils.substring(System.currentTimeMillis() + "", 0 ,10));
+        final Long timestamp = Long.parseLong(StringUtils.substring(System.currentTimeMillis() + "", 0, 10));
         final String sign = this.generateSign(executeParam.getSecret(), timestamp, executeParam.getRequestBody());
         this.timestamp = timestamp.toString();
         this.sign = sign;
@@ -63,12 +63,12 @@ public class FeiShuRequestBody extends BaseWebhookRequestBody {
                 .forEach(entry -> {
                     List<BaseContentItemDTO> list = new ArrayList<>();
                     list.add(new ContentItemDTO(entry.getKey()));
-                    list.add(new ContentItemDTO((String)entry.getValue()));
+                    list.add(new ContentItemDTO((String) entry.getValue()));
                     contentList.add(list);
                 });
 
         List<BaseContentItemDTO> baseContentItemDTOS = contentList.get(0);
-        if(this.userIdList != null && this.userIdList.size() > 0) {
+        if (this.userIdList != null && this.userIdList.size() > 0) {
             baseContentItemDTOS.addAll(this.userIdList.stream().map(ContentUserItemDTO::new).collect(Collectors.toList()));
         }
     }
@@ -90,7 +90,8 @@ public class FeiShuRequestBody extends BaseWebhookRequestBody {
         this.content = content;
     }
 
-    private FeiShuRequestBody() {}
+    private FeiShuRequestBody() {
+    }
 
     @Data
     private static class ContentDTO {

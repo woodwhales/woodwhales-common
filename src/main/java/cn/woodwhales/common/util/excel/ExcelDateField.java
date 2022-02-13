@@ -16,12 +16,14 @@ public @interface ExcelDateField {
 
     /**
      * excel列字段，默认为数据对象属性名
+     *
      * @return 列字段，默认为数据对象属性名
      */
     String value();
 
     /**
      * 当 type 为 Date.class 时，格式化
+     *
      * @return yyyy-MM-dd HH:mm:ss
      */
     String pattern() default "yyyy-MM-dd HH:mm:ss";

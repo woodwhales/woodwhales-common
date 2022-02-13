@@ -32,7 +32,7 @@ public class WeComRequestBody extends BaseWebhookRequestBody {
     @Override
     public void preToJsonSting() {
         StringBuilder stringBuilder = new StringBuilder();
-        if(Objects.nonNull(map) && !map.isEmpty()) {
+        if (Objects.nonNull(map) && !map.isEmpty()) {
             map.entrySet().stream().forEach(entry ->
                     stringBuilder.append(entry.getKey())
                             .append(entry.getValue())

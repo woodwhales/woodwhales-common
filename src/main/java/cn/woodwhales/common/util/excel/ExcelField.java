@@ -16,18 +16,21 @@ public @interface ExcelField {
 
     /**
      * excel列字段，默认为数据对象属性名
+     *
      * @return excel列字段
      */
     String value() default "";
 
     /**
      * 字段类型，默认为 String.class
+     *
      * @return 字段类型
      */
     Class type() default String.class;
 
     /**
      * json字符串标识
+     *
      * @return 字段为 json 类型
      */
     boolean jsonFlag() default false;

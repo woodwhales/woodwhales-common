@@ -230,9 +230,10 @@ public class DataToolExample {
         map.put(2, new DataToolTempHandleMapDTO(3, new DataToolTempDataDTO(3, "CC")));
         System.out.println("new Gson().toJson(map) = " + new Gson().toJson(map));
         DataTool.handleMap(map, (k, v) -> {
-            if("AA".equals(k)) {
+            if ("AA".equals(k)) {
                 new DataToolTempDataDTO(4, "DD");
-            };
+            }
+            ;
         });
         System.out.println("new Gson().toJson(map) = " + new Gson().toJson(map));
     }
@@ -268,8 +269,8 @@ public class DataToolExample {
         userExtraInfoDTOList.add(new UserExtraInfoDTO(5, 50, "杭州"));
 
         List<UserDetailDTO> result = DataTool.getListFromBaseList(userInfoDTOList, UserInfoDTO::getId,
-                                                                  userExtraInfoDTOList, UserExtraInfoDTO::getUserId,
-                                                                  UserDetailDTO::new);
+                userExtraInfoDTOList, UserExtraInfoDTO::getUserId,
+                UserDetailDTO::new);
         result.stream().forEach(System.out::println);
     }
 
@@ -290,11 +291,11 @@ public class DataToolExample {
         userExtraInfoDTO2List.add(new UserExtraInfoDTO2(5, "设计模式", 2));
 
         List<UserDetailDTO2> result = DataTool.getListFromBaseList(userInfoDTOList,
-                                                                   UserDetailDTO2::new,
-                                                                   UserDetailDTO2::getUserId,
-                                                                   userExtraInfoDTO2List,
-                                                                   UserExtraInfoDTO2::getUserId,
-                                                                   UserDetailDTO2::addReadBookInfo);
+                UserDetailDTO2::new,
+                UserDetailDTO2::getUserId,
+                userExtraInfoDTO2List,
+                UserExtraInfoDTO2::getUserId,
+                UserDetailDTO2::addReadBookInfo);
         System.out.println("result  = " + new Gson().toJson(result));
     }
 
@@ -310,7 +311,7 @@ public class DataToolExample {
 
     private static void assertEquals(Object expected, Object actual) {
         boolean b = objectsAreEqual(expected, actual);
-        if(!b) {
+        if (!b) {
             throw new RuntimeException("\nexpected = " + expected + ", actual = " + actual);
         }
     }
@@ -323,7 +324,7 @@ public class DataToolExample {
     }
 
     private static void assertNull(Object object) {
-        if(object == null) {
+        if (object == null) {
             return;
         }
         throw new RuntimeException(object + "校验为空失败");

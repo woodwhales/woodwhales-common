@@ -69,13 +69,14 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 集合操作
-     * @param sourceList1 集合 A
+     *
+     * @param sourceList1  集合 A
      * @param keyFunction1 集合 A 生成 set 的接口
-     * @param sourceList2 集合 B
+     * @param sourceList2  集合 B
      * @param keyFunction2 集合 B 生成 set 的接口
-     * @param <K> 要比较的数据类型
-     * @param <M> 集合 A 的数据类型
-     * @param <N> 集合 B 的数据类型
+     * @param <K>          要比较的数据类型
+     * @param <M>          集合 A 的数据类型
+     * @param <N>          集合 B 的数据类型
      * @return CollectionMathResult
      */
     public static <K, M, N> CollectionMathResult<K, M, N> compute(List<M> sourceList1,
@@ -87,14 +88,15 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 集合操作
-     * @param sourceList1 集合 A
+     *
+     * @param sourceList1  集合 A
      * @param keyFunction1 集合 A 生成 set 的接口
-     * @param sourceList2 集合 B
+     * @param sourceList2  集合 B
      * @param keyFunction2 集合 B 生成 set 的接口
-     * @param lazyCompute 是否懒计算
-     * @param <K> 要比较的数据类型
-     * @param <M> 集合 A 的数据类型
-     * @param <N> 集合 B 的数据类型
+     * @param lazyCompute  是否懒计算
+     * @param <K>          要比较的数据类型
+     * @param <M>          集合 A 的数据类型
+     * @param <N>          集合 B 的数据类型
      * @return CollectionMathResult
      */
     public static <K, M, N> CollectionMathResult<K, M, N> compute(List<M> sourceList1,
@@ -103,13 +105,13 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
                                                                   Function<N, K> keyFunction2,
                                                                   final boolean lazyCompute) {
         CollectionMathResult<K, M, N> collectionMathResult = new CollectionMathResult<>(sourceList1, keyFunction1,
-                                                                                        sourceList2, keyFunction2,
-                                                                                        lazyCompute);
-        if(lazyCompute) {
+                sourceList2, keyFunction2,
+                lazyCompute);
+        if (lazyCompute) {
             return collectionMathResult;
         }
 
-        if(isNotEmpty(sourceList1) && isEmpty(sourceList2)) {
+        if (isNotEmpty(sourceList1) && isEmpty(sourceList2)) {
             checkNotNull(keyFunction1, "keyFunction1 不允许为空");
             Set<CollectionFieldComparable<K>> set = DataTool.toSet(sourceList1, source1 -> CollectionContainer.build(source1, keyFunction1));
             collectionMathResult.setUnionSet(set)
@@ -119,7 +121,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
             return collectionMathResult;
         }
 
-        if(isEmpty(sourceList1) && isNotEmpty(sourceList2)) {
+        if (isEmpty(sourceList1) && isNotEmpty(sourceList2)) {
             checkNotNull(keyFunction1, "keyFunction2 不允许为空");
             Set<CollectionFieldComparable<K>> set = DataTool.toSet(sourceList2, source2 -> CollectionContainer.build(source2, keyFunction2));
             collectionMathResult.setUnionSet(set)
@@ -181,6 +183,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 正差集 A - B
+     *
      * @return 正差集 A - B
      */
     @Override
@@ -190,6 +193,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 正差集 A - B
+     *
      * @return 正差集 A - B
      */
     @Override
@@ -199,6 +203,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 正差集 A - B
+     *
      * @return 正差集 A - B
      */
     @Override
@@ -208,6 +213,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 负差集 B - A
+     *
      * @return 负差集 B - A
      */
     @Override
@@ -217,6 +223,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 负差集 B - A
+     *
      * @return 负差集 B - A
      */
     @Override
@@ -226,6 +233,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     /**
      * 负差集 B - A
+     *
      * @return 负差集 B - A
      */
     @Override
@@ -271,7 +279,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     private Set<CollectionFieldComparable<K>> getSet(Set<CollectionFieldComparable<K>> set,
                                                      BinaryOperator<Set<CollectionFieldComparable<K>>> setFunction) {
-        if(!lazyCompute) {
+        if (!lazyCompute) {
             return set;
         }
         Set<CollectionFieldComparable<K>> set1 = DataTool.toSet(sourceList1, source1 -> CollectionContainer.build(source1, keyFunction1));
@@ -280,13 +288,13 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
     }
 
     private <T, K> List<T> getList(List<T> list, Set<CollectionFieldComparable<K>> set, Function<T, K> keyFunction) {
-        if(isEmpty(list)) {
+        if (isEmpty(list)) {
             return emptyList();
         }
 
         Set<K> keySet = set.stream()
-                            .map(CollectionFieldComparable::getDataKey)
-                            .collect(Collectors.toSet());
+                .map(CollectionFieldComparable::getDataKey)
+                .collect(Collectors.toSet());
 
         return DataTool.filter(list, source -> keySet.contains(keyFunction.apply(source)));
     }

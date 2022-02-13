@@ -8,7 +8,6 @@ import java.util.Objects;
  * 业务数据响应体
  *
  * @author: woodwhales on 2020-09-18 22:05
- *
  */
 public class OpResult<T> {
 
@@ -44,6 +43,7 @@ public class OpResult<T> {
 
     /**
      * 获取数据对象
+     *
      * @return 数据对象
      */
     public T getData() {
@@ -52,6 +52,7 @@ public class OpResult<T> {
 
     /**
      * 获取响应状态码对象
+     *
      * @return 响应状态码对象
      */
     public BaseRespResult getBaseRespResult() {
@@ -60,6 +61,7 @@ public class OpResult<T> {
 
     /**
      * 数据是否为空
+     *
      * @return 数据是否为空
      */
     public boolean dataIsNull() {
@@ -68,6 +70,7 @@ public class OpResult<T> {
 
     /**
      * 数据是否不为空
+     *
      * @return 数据是否不为空
      */
     public boolean dataIsNonNull() {
@@ -76,6 +79,7 @@ public class OpResult<T> {
 
     /**
      * 是否响应成功
+     *
      * @return 是否响应成功
      */
     public boolean isSuccessful() {
@@ -84,6 +88,7 @@ public class OpResult<T> {
 
     /**
      * 是否响应失败
+     *
      * @return 是否响应失败
      */
     public boolean isFailure() {

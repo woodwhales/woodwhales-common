@@ -20,17 +20,18 @@ public class CollectionTool {
 
     /**
      * set1 和 set2 集合进行差集运算
+     *
      * @param set1 集合1
      * @param set2 集合2
-     * @param <E> 数据泛型
+     * @param <E>  数据泛型
      * @return set
      */
     public static <E> Set<E> difference(Set<E> set1, Set<E> set2) {
-        if(isEmpty(set1)) {
+        if (isEmpty(set1)) {
             return emptySet();
         }
 
-        if(isEmpty(set2)) {
+        if (isEmpty(set2)) {
             return set1;
         }
 
@@ -39,14 +40,15 @@ public class CollectionTool {
 
     /**
      * 从原始 set 集合生成新的 set
-     * @param set 源数据集合
+     *
+     * @param set      源数据集合
      * @param function 生成新的 set 集合接口
-     * @param <T> 源数据类型
-     * @param <R> 目标数据类型
+     * @param <T>      源数据类型
+     * @param <R>      目标数据类型
      * @return set
      */
     public static <T, R> Set<R> toSet(Set<T> set, Function<T, R> function) {
-        if(isEmpty(set)) {
+        if (isEmpty(set)) {
             return emptySet();
         }
 

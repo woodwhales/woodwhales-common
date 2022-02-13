@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 /**
  * 数据存储对象
+ *
  * @author woodwhales
  * 2020-12-07 22:27
  */
@@ -37,6 +38,7 @@ public class ChineseDataContainer<T> {
 
     /**
      * 对中文字段进行比较
+     *
      * @param chineseDataContainer 中文数据容器
      * @return 比较结果值
      */

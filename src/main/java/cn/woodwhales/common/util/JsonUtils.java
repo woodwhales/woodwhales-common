@@ -45,7 +45,7 @@ public final class JsonUtils {
     /**
      * 将Java对象转成Json，默认约束规则JsonInclude.Include.NON_EMPTY
      *
-     * @param object object 对象
+     * @param object  object 对象
      * @param include JsonInclude.Include
      * @return json字符串
      */
@@ -73,9 +73,9 @@ public final class JsonUtils {
     /**
      * 将Json转成Java对象
      *
-     * @param json json 字符串
+     * @param json  json 字符串
      * @param clazz Class对象
-     * @param <T> 返回结果类型
+     * @param <T>   返回结果类型
      * @return 返回对象
      */
     public static <T> T toObject(String json, Class<T> clazz) {
@@ -93,9 +93,9 @@ public final class JsonUtils {
     /**
      * 将Json转成Java对象
      *
-     * @param json json 字符串
+     * @param json          json 字符串
      * @param typeReference TypeReference
-     * @param <T> TypeReference泛型中的泛型
+     * @param <T>           TypeReference泛型中的泛型
      * @return TypeReference泛型中的对象
      */
     public static <T> T toTypeReference(String json, TypeReference<T> typeReference) {
@@ -113,9 +113,9 @@ public final class JsonUtils {
     /**
      * 将Json转成Java对象
      *
-     * @param json json 字符串
+     * @param json     json 字符串
      * @param javaType JavaType
-     * @param <T> JavaType的泛型
+     * @param <T>      JavaType的泛型
      * @return JavaType的泛型对象
      */
     public static <T> T toJavaType(String json, JavaType javaType) {

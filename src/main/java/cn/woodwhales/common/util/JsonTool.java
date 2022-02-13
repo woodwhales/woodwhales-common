@@ -24,21 +24,21 @@ public class JsonTool {
      * 解析 jsonStr 为 对象
      * json字符串中 key 映射对象中属性，可以使用 @JsonProperty 指定
      *
-     * @param jsonStr json字符串
+     * @param jsonStr       json字符串
      * @param typeReference 对象类型
-     * @param replaceMap 字符替换集合
-     * @param <T> 对象类型
+     * @param replaceMap    字符替换集合
+     * @param <T>           对象类型
      * @return 解析后的实例
      */
     public static <T> T parse(String jsonStr, TypeReference<T> typeReference, Map<String, String> replaceMap) {
-        if(isBlank(jsonStr)) {
+        if (isBlank(jsonStr)) {
             log.warn("this jsonStr is blank");
             return null;
         }
 
-        if(MapUtils.isNotEmpty(replaceMap)) {
+        if (MapUtils.isNotEmpty(replaceMap)) {
             for (Map.Entry<String, String> replaceEntry : replaceMap.entrySet()) {
-                if(contains(jsonStr, replaceEntry.getKey())) {
+                if (contains(jsonStr, replaceEntry.getKey())) {
                     jsonStr = replace(jsonStr, replaceEntry.getKey(), replaceEntry.getValue());
                 }
             }
@@ -60,9 +60,9 @@ public class JsonTool {
      * 解析 jsonStr 为 对象
      * json字符串中 key 映射对象中属性，可以使用 @JsonProperty 指定
      *
-     * @param jsonStr json字符串
+     * @param jsonStr       json字符串
      * @param typeReference TypeReference对象
-     * @param <T> 对象类型
+     * @param <T>           对象类型
      * @return 解析后的实例
      */
     public static <T> T parse(String jsonStr, TypeReference<T> typeReference) {

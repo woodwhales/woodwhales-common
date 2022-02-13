@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * webhook使用示例
+ *
  * @author woodwhales on 2021-09-15 12:13
  */
 @Log4j2
@@ -38,6 +39,7 @@ public class ApplicationEventConfig {
 
     /**
      * 注入 webhook 插件
+     *
      * @return WebhookExtraInfo
      */
     @Bean
@@ -47,6 +49,7 @@ public class ApplicationEventConfig {
 
     /**
      * 监听 WebhookEvent 事件
+     *
      * @param webhookEvent WebhookEvent 事件
      */
     @EventListener

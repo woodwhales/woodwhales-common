@@ -42,33 +42,33 @@ public class IndexController {
 
     private void example1(String content) {
         applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                                    .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
-                                                                    .consumer(request -> {
-                                                                        request.addContent("content：", content);
-                                                                        request.addContent("key：", content);
-                                                                    })
-                                                                    .build());
+                .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
+                .consumer(request -> {
+                    request.addContent("content：", content);
+                    request.addContent("key：", content);
+                })
+                .build());
     }
 
     private void example2(String content) {
         applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                                    .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
-                                                                    .consumer(request -> {
-                                                                        request.addContent("content：", content);
-                                                                        request.addContent("key：", content);
-                                                                    })
-                                                                    .userIdList(Arrays.asList("xxx")).build());
+                .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
+                .consumer(request -> {
+                    request.addContent("content：", content);
+                    request.addContent("key：", content);
+                })
+                .userIdList(Arrays.asList("xxx")).build());
     }
 
     private void example3(String content) {
         applicationEventPublisher.publishEvent(WebhookEvent.Builder.build(this, "测试标题")
-                                                .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
-                                                .consumer(request -> {
-                                                    request.addContent("content：", content);
-                                                    request.addContent("key：", content);
-                                                })
-                                                // 发送到指定webhook，不使用默认配置的webhook
-                                                .noticeUrl("https://oapi.dingtalk.com/robot/send?access_token=yyy").build()
+                .throwable(exception, "cn.woodwhales", "cn.cloudcoders")
+                .consumer(request -> {
+                    request.addContent("content：", content);
+                    request.addContent("key：", content);
+                })
+                // 发送到指定webhook，不使用默认配置的webhook
+                .noticeUrl("https://oapi.dingtalk.com/robot/send?access_token=yyy").build()
         );
     }
 

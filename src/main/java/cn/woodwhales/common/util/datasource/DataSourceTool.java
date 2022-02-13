@@ -77,13 +77,14 @@ public class DataSourceTool {
      * 数字 2 = '2'
      * 空值 null = 'NULL'
      * 字符串 "woodwhales" = 'woodwhales'
+     *
      * @param object 要包装的数据
      * @return 使用单引号包装后的字符串数据
      */
     public static String wrappedField(Object object) {
         StringBuilder sb = new StringBuilder();
         sb.append("'");
-        if(Objects.isNull(object)) {
+        if (Objects.isNull(object)) {
             sb.append("NULL");
         } else {
             sb.append(object);
@@ -94,12 +95,13 @@ public class DataSourceTool {
 
     /**
      * 格式化 sql 语句
-     * @param sql 原始 sql
+     *
+     * @param sql  原始 sql
      * @param args 占位符对应的参数
      * @return 已格式化的 sql 语句
      */
-    public static String formatSql(String sql, Object ...args) {
-        if(Objects.isNull(args)) {
+    public static String formatSql(String sql, Object... args) {
+        if (Objects.isNull(args)) {
             return sql;
         }
 
@@ -119,7 +121,7 @@ public class DataSourceTool {
             int i = 0;
             StringBuilder sbuf = new StringBuilder(messagePattern.length() + 50);
 
-            for(int L = 0; L < argArray.length; ++L) {
+            for (int L = 0; L < argArray.length; ++L) {
                 int j = messagePattern.indexOf("{}", i);
                 if (j == -1) {
                     if (i == 0) {
@@ -160,23 +162,23 @@ public class DataSourceTool {
             if (!o.getClass().isArray()) {
                 safeObjectAppend(sbuf, o);
             } else if (o instanceof boolean[]) {
-                booleanArrayAppend(sbuf, (boolean[])o);
+                booleanArrayAppend(sbuf, (boolean[]) o);
             } else if (o instanceof byte[]) {
-                byteArrayAppend(sbuf, (byte[])o);
+                byteArrayAppend(sbuf, (byte[]) o);
             } else if (o instanceof char[]) {
-                charArrayAppend(sbuf, (char[])o);
+                charArrayAppend(sbuf, (char[]) o);
             } else if (o instanceof short[]) {
-                shortArrayAppend(sbuf, (short[])o);
+                shortArrayAppend(sbuf, (short[]) o);
             } else if (o instanceof int[]) {
-                intArrayAppend(sbuf, (int[])o);
+                intArrayAppend(sbuf, (int[]) o);
             } else if (o instanceof long[]) {
-                longArrayAppend(sbuf, (long[])o);
+                longArrayAppend(sbuf, (long[]) o);
             } else if (o instanceof float[]) {
-                floatArrayAppend(sbuf, (float[])o);
+                floatArrayAppend(sbuf, (float[]) o);
             } else if (o instanceof double[]) {
-                doubleArrayAppend(sbuf, (double[])o);
+                doubleArrayAppend(sbuf, (double[]) o);
             } else {
-                objectArrayAppend(sbuf, (Object[])o, seenMap);
+                objectArrayAppend(sbuf, (Object[]) o, seenMap);
             }
 
         }
@@ -186,7 +188,7 @@ public class DataSourceTool {
         sbuf.append('[');
         int len = a.length;
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             sbuf.append(a[i]);
             if (i != len - 1) {
                 sbuf.append(", ");
@@ -200,7 +202,7 @@ public class DataSourceTool {
         sbuf.append('[');
         int len = a.length;
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             sbuf.append(a[i]);
             if (i != len - 1) {
                 sbuf.append(", ");
@@ -214,7 +216,7 @@ public class DataSourceTool {
         sbuf.append('[');
         int len = a.length;
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             sbuf.append(a[i]);
             if (i != len - 1) {
                 sbuf.append(", ");
@@ -228,7 +230,7 @@ public class DataSourceTool {
         sbuf.append('[');
         int len = a.length;
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             sbuf.append(a[i]);
             if (i != len - 1) {
                 sbuf.append(", ");
@@ -242,7 +244,7 @@ public class DataSourceTool {
         sbuf.append('[');
         int len = a.length;
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             sbuf.append(a[i]);
             if (i != len - 1) {
                 sbuf.append(", ");
@@ -256,7 +258,7 @@ public class DataSourceTool {
         sbuf.append('[');
         int len = a.length;
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             sbuf.append(a[i]);
             if (i != len - 1) {
                 sbuf.append(", ");
@@ -270,7 +272,7 @@ public class DataSourceTool {
         sbuf.append('[');
         int len = a.length;
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             sbuf.append(a[i]);
             if (i != len - 1) {
                 sbuf.append(", ");
@@ -287,10 +289,10 @@ public class DataSourceTool {
     private static void objectArrayAppend(StringBuilder sbuf, Object[] a, Map<Object[], Object> seenMap) {
         sbuf.append('[');
         if (!seenMap.containsKey(a)) {
-            seenMap.put(a, (Object)null);
+            seenMap.put(a, (Object) null);
             int len = a.length;
 
-            for(int i = 0; i < len; ++i) {
+            for (int i = 0; i < len; ++i) {
                 deeplyAppendParameter(sbuf, a[i], seenMap);
                 if (i != len - 1) {
                     sbuf.append(", ");
@@ -309,7 +311,7 @@ public class DataSourceTool {
         sbuf.append('[');
         int len = a.length;
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             sbuf.append(a[i]);
             if (i != len - 1) {
                 sbuf.append(", ");
@@ -368,8 +370,8 @@ public class DataSourceTool {
 
     public <T> List<T> queryList(String sql, Class<T> clazz) throws Exception {
         return this.queryList(sql,
-                              resultSet -> this.cacheDbColumnMapping(clazz, resultSet),
-                              resultSet -> this.getDataFromResultSet(clazz, resultSet));
+                resultSet -> this.cacheDbColumnMapping(clazz, resultSet),
+                resultSet -> this.getDataFromResultSet(clazz, resultSet));
     }
 
     private <T> List<Field> getNeedFillFieldList(Class<T> clazz) {
@@ -467,12 +469,13 @@ public class DataSourceTool {
 
     public <T> T queryOne(String sql, Class<T> clazz) throws Exception {
         return this.queryOne(sql,
-                             resultSet -> this.cacheDbColumnMapping(clazz, resultSet),
-                             resultSet -> this.getDataFromResultSet(clazz, resultSet));
+                resultSet -> this.cacheDbColumnMapping(clazz, resultSet),
+                resultSet -> this.getDataFromResultSet(clazz, resultSet));
     }
 
     /**
      * 执行 DML SQL 操作
+     *
      * @param sql 要执行的 sql
      * @return 影响行数
      */
@@ -490,7 +493,7 @@ public class DataSourceTool {
 
 
         try {
-            if(!resultSet.next()) {
+            if (!resultSet.next()) {
                 return target;
             }
             target = clazz.newInstance();

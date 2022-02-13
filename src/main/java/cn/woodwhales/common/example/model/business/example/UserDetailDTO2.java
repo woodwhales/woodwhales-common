@@ -24,7 +24,7 @@ public class UserDetailDTO2 {
 
     public static void addReadBookInfo(UserDetailDTO2 userDetailDTO2, List<UserExtraInfoDTO2> userExtraInfoDTO2List) {
         userDetailDTO2.getReadBookInfoList().addAll(DataTool.toList(userExtraInfoDTO2List,
-                                                                 userExtraInfoDTO2 -> new ReadBookInfoDTO(userExtraInfoDTO2.getBookName(), userExtraInfoDTO2.getCompleteReadCount())));
+                userExtraInfoDTO2 -> new ReadBookInfoDTO(userExtraInfoDTO2.getBookName(), userExtraInfoDTO2.getCompleteReadCount())));
     }
 
     @Data

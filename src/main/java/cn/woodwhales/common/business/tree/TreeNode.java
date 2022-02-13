@@ -50,10 +50,11 @@ public class TreeNode<K, T> {
 
     /**
      * 构建 TreeNode 对象
-     * @param data 源数据
+     *
+     * @param data              源数据
      * @param treeNodeGenerator TreeNode 生成器
-     * @param <K> 节点 id 类型
-     * @param <T> 源数据类型
+     * @param <K>               节点 id 类型
+     * @param <T>               源数据类型
      * @return TreeNode
      */
     public static <K, T> TreeNode<K, T> build(T data, TreeNodeGenerator<K, T> treeNodeGenerator) {
@@ -62,11 +63,12 @@ public class TreeNode<K, T> {
 
     /**
      * 构建 TreeNode 对象
-     * @param data 原始数据
+     *
+     * @param data              原始数据
      * @param treeNodeGenerator 树节点生成器
-     * @param withData 是否携带数据
-     * @param <K> key泛型
-     * @param <T> value泛型
+     * @param withData          是否携带数据
+     * @param <K>               key泛型
+     * @param <T>               value泛型
      * @return 返回数节点对象，根节点
      */
     public static <K, T> TreeNode<K, T> build(T data,
@@ -75,7 +77,7 @@ public class TreeNode<K, T> {
         TreeNode<K, T> treeNode = new TreeNode<>();
         treeNode.setId(treeNodeGenerator.getId(data));
 
-        if(withData) {
+        if (withData) {
             treeNode.setData(data);
         }
 
@@ -96,7 +98,7 @@ public class TreeNode<K, T> {
         T data = treeNode.getData();
 
         // 设置当前节点id
-        if(nonNull(overNodeIdFunction) && nonNull(data)) {
+        if (nonNull(overNodeIdFunction) && nonNull(data)) {
             map.put(treeAttributeMapper.getNodeId(), overNodeIdFunction.apply(data));
         } else {
             map.put(treeAttributeMapper.getNodeId(), treeNode.getId());
@@ -109,7 +111,7 @@ public class TreeNode<K, T> {
         // 设置当前节点的排序值
         map.put(treeAttributeMapper.getSortName(), treeNode.getSort());
         // 设置当前节点的子节点
-        if(isNotEmpty(treeNode.getChildren())) {
+        if (isNotEmpty(treeNode.getChildren())) {
             map.put(treeAttributeMapper.getChildrenName(), treeNode.getChildren().stream()
                     .map(node -> TreeNode.toMap(node, treeAttributeMapper, extraFunction, withData, needDropData))
                     .collect(toList()));
@@ -118,20 +120,20 @@ public class TreeNode<K, T> {
         }
 
         // 设置当前节点是否携带源数据
-        if(withData) {
+        if (withData) {
             map.put(treeAttributeMapper.getDataName(), data);
         } else {
             map.put(treeAttributeMapper.getDataName(), null);
         }
 
         // 设置当前节点的扩展数据
-        if(nonNull(extraFunction) && nonNull(data)) {
+        if (nonNull(extraFunction) && nonNull(data)) {
             map.put(treeAttributeMapper.getExtraName(), extraFunction.apply(data));
         } else {
             map.put(treeAttributeMapper.getExtraName(), null);
         }
 
-        if(needDropData) {
+        if (needDropData) {
             map.remove(treeAttributeMapper.getDataName());
         }
 

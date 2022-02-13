@@ -49,6 +49,7 @@ public abstract class BaseWebhookRequestBody {
 
     /**
      * 对内容签名并返回 url
+     *
      * @param executeParam 请求对象
      * @return 签名的通知地址
      */
@@ -56,11 +57,12 @@ public abstract class BaseWebhookRequestBody {
 
     /**
      * 添加用户id集合
+     *
      * @param userIdList 用户id集合
      * @return BaseWebhookRequestBody 对象
      */
     public BaseWebhookRequestBody addUserIdList(List<String> userIdList) {
-        if(userIdList != null && userIdList.size() > 0) {
+        if (userIdList != null && userIdList.size() > 0) {
             this.userIdList = userIdList;
         }
         return this;
@@ -68,11 +70,12 @@ public abstract class BaseWebhookRequestBody {
 
     /**
      * 添加用户手机号集合
+     *
      * @param userMobileList 用户手机号集合
      * @return BaseWebhookRequestBody 对象
      */
     public BaseWebhookRequestBody addUserMobileList(List<String> userMobileList) {
-        if(userMobileList != null && userMobileList.size() > 0) {
+        if (userMobileList != null && userMobileList.size() > 0) {
             this.userMobileList = userMobileList;
         }
         return this;

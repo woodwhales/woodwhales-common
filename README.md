@@ -1,7 +1,7 @@
 # woodwhales-common
 
 > free business tools for develop business code quikcly
-> 
+>
 > 本项目已发布至 maven 中央仓库：https://mvnrepository.com/artifact/cn.woodwhales.common/woodwhales-common
 
 ## 一、常用小工具
@@ -36,13 +36,13 @@
 
 ### 1.6 DataSourceTool
 
->   数据库执行器
+> 数据库执行器
 
 使用示例：[cn/woodwhales/common/example/util/datasource/DataSourceToolExample.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/util/datasource/DataSourceToolExample.java)
 
 ### 1.7 TreeTool
 
->   list 转 tree
+> list 转 tree
 
 使用示例：[cn/woodwhales/common/example/business/tree/TreeToolExample.java](https://github.com/woodwhales/woodwhales-common/blob/master/src/main/java/cn/woodwhales/common/example/business/tree/TreeToolExample.java)
 

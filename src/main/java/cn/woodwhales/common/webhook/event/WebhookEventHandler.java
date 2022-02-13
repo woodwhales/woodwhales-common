@@ -38,13 +38,13 @@ public class WebhookEventHandler {
 
         log.info("监听到异常报警事件，消息标题：{}, 发布时间：{}", webhookEvent.getTitle(), DateFormatUtils.format(new Date(), DatePattern.NORM_DATETIME_MS_PATTERN));
         WebhookExecutorFactory.Builder
-                                .build(finalNoticeUrl, webhookEvent.getTitle(), webhookEvent.getBaseWebhookRequestBody())
-                                .throwable(webhookEvent.getThrowable(), finalBasePackageNames)
-                                .userIdList(webhookEvent.getUserIdList())
-                                .userMobileList(webhookEvent.getUserMobileList())
-                                .secret(finalSecret)
-                                .webhookExtraInfo(webhookExtraInfo)
-                                .execute();
+                .build(finalNoticeUrl, webhookEvent.getTitle(), webhookEvent.getBaseWebhookRequestBody())
+                .throwable(webhookEvent.getThrowable(), finalBasePackageNames)
+                .userIdList(webhookEvent.getUserIdList())
+                .userMobileList(webhookEvent.getUserMobileList())
+                .secret(finalSecret)
+                .webhookExtraInfo(webhookExtraInfo)
+                .execute();
     }
 
 }

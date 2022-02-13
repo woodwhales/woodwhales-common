@@ -58,7 +58,7 @@ public class DingTalkRequestBody extends BaseWebhookRequestBody {
     @Override
     public void preToJsonSting() {
         StringBuilder stringBuilder = new StringBuilder();
-        if(Objects.nonNull(this.map) && !this.map.isEmpty()) {
+        if (Objects.nonNull(this.map) && !this.map.isEmpty()) {
             this.map.entrySet().stream().forEach(entry ->
                     stringBuilder.append(entry.getKey())
                             .append(entry.getValue())
@@ -66,7 +66,7 @@ public class DingTalkRequestBody extends BaseWebhookRequestBody {
             );
         }
         this.markdown.setText(stringBuilder.toString());
-        if(CollectionUtils.isNotEmpty(this.userIdList) || CollectionUtils.isNotEmpty(this.userMobileList)) {
+        if (CollectionUtils.isNotEmpty(this.userIdList) || CollectionUtils.isNotEmpty(this.userMobileList)) {
             this.at = new AtDTO(this.userIdList, this.userMobileList);
         }
     }
@@ -87,10 +87,10 @@ public class DingTalkRequestBody extends BaseWebhookRequestBody {
         private List<String> atUserIds;
 
         public AtDTO(List<String> userMobileList, List<String> userIdList) {
-            if(userMobileList != null && userMobileList.size() > 0) {
+            if (userMobileList != null && userMobileList.size() > 0) {
                 this.atMobiles = userMobileList;
             }
-            if(userIdList != null && userIdList.size() > 0) {
+            if (userIdList != null && userIdList.size() > 0) {
                 this.atUserIds = userIdList;
             }
         }

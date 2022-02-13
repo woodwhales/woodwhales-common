@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 请求参数对象
+ *
  * @author woodwhales on 2021-07-16 21:38
  */
 public class ExecuteParam {
@@ -35,7 +36,7 @@ public class ExecuteParam {
     }
 
     public String getNoticeUrl() {
-        if(StringUtils.isBlank(this.secret)) {
+        if (StringUtils.isBlank(this.secret)) {
             return this.url;
         } else {
             return requestBody.getUrlAndSignContent(this);

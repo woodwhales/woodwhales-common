@@ -11,14 +11,14 @@ import java.util.Objects;
 
 /**
  * 钉钉webhook请求执行器
- * @author woodwhales on 2021-07-19 9:34
  *
+ * @author woodwhales on 2021-07-19 9:34
+ * <p>
  * 正常响应报文：
  * {
- *     "errcode": 0,
- *     "errmsg": "ok"
+ * "errcode": 0,
+ * "errmsg": "ok"
  * }
- *
  */
 @Slf4j
 public class DingTalkWebhookExecutor<RequestBody extends BaseWebhookRequestBody> extends BaseWebhookExecutor<DingTalkRequestBody, DingTalkResponse> {

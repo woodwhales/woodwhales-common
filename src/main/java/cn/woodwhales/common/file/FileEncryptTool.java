@@ -23,6 +23,7 @@ public class FileEncryptTool {
 
     /**
      * 加密文件，将文件加密成 png 格式的文件
+     *
      * @param originFileName 要加密的文件绝对路径
      * @return 已成功加密的新文件名
      */
@@ -37,13 +38,14 @@ public class FileEncryptTool {
      * <p>
      * 加密成功之后，文件变为指定 fileTypeHexStrEnum.suffix 的后缀名
      * </p>
-     * @param originFileName 要加密的文件绝对路径
+     *
+     * @param originFileName     要加密的文件绝对路径
      * @param fileTypeHexStrEnum 要加密的条件枚举
      * @return 已成功加密的新文件名
      */
     public static String encodeFile(String originFileName, FileTypeHexStrEnum fileTypeHexStrEnum) {
         File originFile = new File(originFileName);
-        if(!originFile.exists()) {
+        if (!originFile.exists()) {
             throw new RuntimeException(originFile + " 文件不存在");
         }
 
@@ -51,7 +53,7 @@ public class FileEncryptTool {
         String fileName = StringUtils.substringBeforeLast(originFileName, ".");
 
 
-        if(!StringUtils.equalsIgnoreCase(suffix, "zip")) {
+        if (!StringUtils.equalsIgnoreCase(suffix, "zip")) {
             File zipFile = ZipUtil.zip(originFileName, fileName + ".zip");
             originFileName = zipFile.getAbsolutePath();
         }
@@ -60,6 +62,7 @@ public class FileEncryptTool {
 
     /**
      * 解密文件，将读取 encodeOriginFileName 的文件名信息，进行解密操作
+     *
      * @param encodeOriginFileName 要解密的文件（文件已加密）绝对路径
      * @return 解密成功之后的文件名
      */
@@ -69,7 +72,8 @@ public class FileEncryptTool {
         return unzipFile.getAbsolutePath();
     }
 
-    private FileEncryptTool() {}
+    private FileEncryptTool() {
+    }
 
     /**
      * <p>
@@ -78,14 +82,15 @@ public class FileEncryptTool {
      * <p>
      * 加密成功之后，文件变为指定 encodeSuffix 的后缀名
      * </p>
+     *
      * @param originFileName 要加密的文件绝对路径
-     * @param encodeHexStr 要加密的 HEX 字节信息
-     * @param encodeSuffix 要加密成的文件后缀
+     * @param encodeHexStr   要加密的 HEX 字节信息
+     * @param encodeSuffix   要加密成的文件后缀
      * @return 已成功加密的新文件名
      */
     private static String encode(String originFileName, String encodeHexStr, String encodeSuffix) {
         File originFile = new File(originFileName);
-        if(!originFile.exists()) {
+        if (!originFile.exists()) {
             throw new RuntimeException(originFile + " 文件不存在");
         }
 
@@ -95,7 +100,7 @@ public class FileEncryptTool {
         String originHexStr = null;
 
         try (
-            RandomAccessFile randomAccessFile = new RandomAccessFile(originFile, "rw")) {
+                RandomAccessFile randomAccessFile = new RandomAccessFile(originFile, "rw")) {
             // 读取原始字节信息
             byte[] buffer = new byte[4];
             randomAccessFile.seek(0);
@@ -112,26 +117,27 @@ public class FileEncryptTool {
         }
 
         String encodedFileName = "" + subOriginFileName
-                                    + "_"
-                                    + encodeHexStr
-                                    + "_"
-                                    + originHexStr
-                                    + "_"
-                                    + subOriginFileSuffix
-                                    + "."
-                                    + encodeSuffix;
+                + "_"
+                + encodeHexStr
+                + "_"
+                + originHexStr
+                + "_"
+                + subOriginFileSuffix
+                + "."
+                + encodeSuffix;
         originFile.renameTo(new File(encodedFileName));
         return encodedFileName;
     }
 
     /**
      * 解密文件，将读取 encodeOriginFileName 的文件名信息，进行解密操作
+     *
      * @param encodeOriginFileName 要解密的文件（文件已加密）绝对路径
      * @return 解密成功之后的文件名
      */
     private static String decode(String encodeOriginFileName) {
         File encodeOriginFile = new File(encodeOriginFileName);
-        if(!encodeOriginFile.exists()) {
+        if (!encodeOriginFile.exists()) {
             new RuntimeException(encodeOriginFileName + " 文件不存在");
         }
 
@@ -142,7 +148,7 @@ public class FileEncryptTool {
         String decodeHexStr = split[split.length - 2];
         String encodedHexStr = split[split.length - 3];
 
-        try(RandomAccessFile randomAccessFile = new RandomAccessFile(encodeOriginFile, "rw")) {
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(encodeOriginFile, "rw")) {
             byte[] fillBytes = Hex.decodeHex(decodeHexStr);
             randomAccessFile.seek(0);
             randomAccessFile.write(fillBytes, 0, fillBytes.length);

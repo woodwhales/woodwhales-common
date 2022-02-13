@@ -23,13 +23,15 @@ class JsonToolTest {
 
     @Test
     public void test2() {
-        List<DemoData> demoDataList = JsonTool.parse(getJson2(), new TypeReference<List<DemoData>>() {}, replaceMap);
+        List<DemoData> demoDataList = JsonTool.parse(getJson2(), new TypeReference<List<DemoData>>() {
+        }, replaceMap);
         demoDataList.stream().forEach(System.out::println);
     }
 
     @Test
     public void test1() {
-        DemoData demoData1 = JsonTool.parse(getJson1(), new TypeReference<DemoData>() {}, replaceMap);
+        DemoData demoData1 = JsonTool.parse(getJson1(), new TypeReference<DemoData>() {
+        }, replaceMap);
         System.out.println(demoData1);
     }
 

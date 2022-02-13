@@ -14,8 +14,8 @@ import java.util.function.Function;
 
 /**
  * 通用响应视图
- * @author woodwhales on 2020-08-25
  *
+ * @author woodwhales on 2020-08-25
  */
 @Data
 @Builder
@@ -67,7 +67,7 @@ public class RespVO<T> {
 
     public static <S, T> RespVO<T> resp(OpResult<S> opResult, @NotNull Function<S, T> function) {
         Objects.requireNonNull(function, "对象转换接口不允许为空");
-        if(opResult.isSuccessful()) {
+        if (opResult.isSuccessful()) {
             return success(function.apply(opResult.getData()));
         }
 
@@ -76,7 +76,7 @@ public class RespVO<T> {
     }
 
     public static <T> RespVO<T> resp(OpResult<T> opResult) {
-        if(opResult.isSuccessful()) {
+        if (opResult.isSuccessful()) {
             return success(opResult.getData());
         }
 

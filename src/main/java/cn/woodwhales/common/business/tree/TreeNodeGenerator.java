@@ -8,6 +8,7 @@ public interface TreeNodeGenerator<K, T> {
 
     /**
      * 获取当前节点 id
+     *
      * @param data 原始数据
      * @return 获取当前节点 id
      */
@@ -15,6 +16,7 @@ public interface TreeNodeGenerator<K, T> {
 
     /**
      * 获取父级节点
+     *
      * @param data 原始数据
      * @return 获取父级节点
      */
@@ -22,6 +24,7 @@ public interface TreeNodeGenerator<K, T> {
 
     /**
      * 获取节点名称
+     *
      * @param data 原始数据
      * @return 获取节点名称
      */
@@ -29,6 +32,7 @@ public interface TreeNodeGenerator<K, T> {
 
     /**
      * 是否为根节点
+     *
      * @param data 原始数据
      * @return 是否为根节点
      */
@@ -36,6 +40,7 @@ public interface TreeNodeGenerator<K, T> {
 
     /**
      * 获取排序字段
+     *
      * @param data 原始数据
      * @return 获取排序字段
      */

@@ -20,7 +20,7 @@ public class ExcelToolExample {
 
     private static void testParseData1() {
         InputStream resourceAsStream = ExcelToolExample.class.getClassLoader()
-                                                             .getResourceAsStream("demo.xlsx");
+                .getResourceAsStream("demo.xlsx");
         ExcelTool.parseData(resourceAsStream, (index, row) -> {
             String name = ExcelTool.getStringValue(row, 0);
             int age = ExcelTool.getIntegerValue(row, 1);
@@ -45,7 +45,7 @@ public class ExcelToolExample {
 
     public static void testParseData2() {
         InputStream resourceAsStream = ExcelToolExample.class.getClassLoader()
-                                                               .getResourceAsStream("demo.xlsx");
+                .getResourceAsStream("demo.xlsx");
         List<ExcelTempData> excelTempData = ExcelTool.parseData(resourceAsStream, ExcelTempData.class);
         excelTempData.stream().forEach(System.out::println);
     }

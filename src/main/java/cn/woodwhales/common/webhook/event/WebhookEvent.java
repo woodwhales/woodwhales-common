@@ -170,8 +170,8 @@ public class WebhookEvent extends ApplicationEvent {
 
         public WebhookEvent build() {
             return new WebhookEvent(this.source, this.throwable, this.basePackageNames,
-                                    this.title, this.noticeUrl, this.secret,
-                                    this.consumer, this.userIdList, this.userMobileList);
+                    this.title, this.noticeUrl, this.secret,
+                    this.consumer, this.userIdList, this.userMobileList);
         }
     }
 

@@ -12,6 +12,7 @@ import static cn.woodwhales.common.file.FileEncryptTool.encodeFileToPng;
 
 /**
  * FileEncryptTool 使用示例
+ *
  * @author woodwhales created on 2021-10-01 17:53
  */
 class FileEncryptToolExample {
@@ -28,8 +29,8 @@ class FileEncryptToolExample {
 
     private static void init() {
         URL resource = FileEncryptToolExample.class
-                           .getClassLoader()
-                           .getResource("test.png");
+                .getClassLoader()
+                .getResource("test.png");
 
         originFileName = resource.getFile();
         File parentFile = new File(originFileName).getParentFile();
@@ -51,14 +52,14 @@ class FileEncryptToolExample {
     public static void testDecode() {
         init();
         String encodeFileName = encodeFile(FileEncryptToolExample.originFileName,
-                                           FileTypeHexStrEnum.PNG);
+                FileTypeHexStrEnum.PNG);
         String decodeFileName = FileEncryptTool.decodeFile(encodeFileName);
         assertEquals(originFileParentAbsolutePath + File.separator + "test", decodeFileName);
     }
 
     private static void assertEquals(Object expected, Object actual) {
         boolean b = objectsAreEqual(expected, actual);
-        if(!b) {
+        if (!b) {
             throw new RuntimeException("\nexpected = " + expected + ", actual = " + actual);
         }
     }

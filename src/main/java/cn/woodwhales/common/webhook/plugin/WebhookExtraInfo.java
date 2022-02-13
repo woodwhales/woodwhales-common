@@ -21,6 +21,7 @@ import static java.util.Objects.nonNull;
 
 /**
  * webhook 扩展信息对象
+ *
  * @author woodwhales on 2021-09-15 15:35
  */
 @Slf4j
@@ -63,12 +64,12 @@ public class WebhookExtraInfo {
 
     public void fillGitProperties() {
         try (InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("git.properties")) {
-            if(Objects.isNull(resourceAsStream)) {
+            if (Objects.isNull(resourceAsStream)) {
                 return;
             }
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream,
                     Charset.defaultCharset().name()));
-            if(nonNull(bufferedReader)) {
+            if (nonNull(bufferedReader)) {
                 this.gitProperties = new Properties();
                 this.gitProperties.load(bufferedReader);
             }

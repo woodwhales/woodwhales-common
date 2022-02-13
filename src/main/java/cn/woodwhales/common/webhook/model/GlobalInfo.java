@@ -49,7 +49,7 @@ public class GlobalInfo {
         this.webhookProductEnum = webhookProductEnum;
         this.throwable = throwable;
         this.basePackageNames = basePackageNames;
-        if(Objects.nonNull(webhookExtraInfo)) {
+        if (Objects.nonNull(webhookExtraInfo)) {
             this.machineInfoMap = webhookExtraInfo.getMachineInfoMap();
             this.gitProperties = webhookExtraInfo.getGitProperties();
         }
@@ -68,7 +68,7 @@ public class GlobalInfo {
     }
 
     public List<Pair<String, String>> getAllInfoPair(WebhookProductEnum webhookProductEnum) {
-        if(Objects.isNull(this.webhookProductEnum)) {
+        if (Objects.isNull(this.webhookProductEnum)) {
             this.webhookProductEnum = webhookProductEnum;
         }
 
@@ -89,13 +89,13 @@ public class GlobalInfo {
     }
 
     private void generateGitProperties(List<Pair<String, String>> allInfoPair) {
-        if(nonNull(this.gitProperties)) {
+        if (nonNull(this.gitProperties)) {
             allInfoPair.add(Pair.of("部署分支：", this.gitProperties.getProperty("git.branch")));
         }
     }
 
     private void generateMachineInfoMap(List<Pair<String, String>> allInfoPair) {
-        if(nonNull(this.machineInfoMap) && !this.machineInfoMap.isEmpty()) {
+        if (nonNull(this.machineInfoMap) && !this.machineInfoMap.isEmpty()) {
             this.machineInfoMap.entrySet().stream().forEach(
                     entry -> allInfoPair.add(Pair.of(entry.getKey(), entry.getValue()))
             );
@@ -103,11 +103,11 @@ public class GlobalInfo {
     }
 
     private void generateThrowable(List<Pair<String, String>> allInfoPair) {
-        if(nonNull(this.throwable)) {
+        if (nonNull(this.throwable)) {
             allInfoPair.add(Pair.of("异常类名：", this.throwable.getClass().getName()));
             String errorMessage = this.throwable.getMessage();
 
-            if(isNotBlank(errorMessage)) {
+            if (isNotBlank(errorMessage)) {
                 allInfoPair.add(Pair.of("异常原因：", errorMessage));
             } else {
                 if (this.throwable instanceof NullPointerException) {
@@ -131,9 +131,9 @@ public class GlobalInfo {
                                     stackTraceElement.getLineNumber()))
                             .collect(Collectors.toList());
 
-                    if(CollectionUtils.isNotEmpty(systemStackInfoList)) {
+                    if (CollectionUtils.isNotEmpty(systemStackInfoList)) {
                         allInfoPair.add(Pair.of(String.format("本系统 %s 包下异常栈信息：\n\r", Joiner.on(",").join(this.basePackageNames)),
-                                                Joiner.on("\n\r").join(systemStackInfoList)));
+                                Joiner.on("\n\r").join(systemStackInfoList)));
                     }
                 }
 
@@ -154,7 +154,7 @@ public class GlobalInfo {
         final Iterator<String> iterator = basePackageNameSet.iterator();
         while (iterator.hasNext()) {
             final String basePackageName = iterator.next();
-            if(StringUtils.containsIgnoreCase(className, basePackageName)) {
+            if (StringUtils.containsIgnoreCase(className, basePackageName)) {
                 return true;
             }
         }
