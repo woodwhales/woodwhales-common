@@ -3,6 +3,7 @@ package cn.woodwhales.common.mybatisplus;
 import cn.woodwhales.common.business.DataTool;
 import cn.woodwhales.common.model.field.PageQueryInterface;
 import cn.woodwhales.common.model.vo.PageRespVO;
+import cn.woodwhales.common.model.vo.RespVO;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -217,10 +218,10 @@ public class MybatisPlusExecutor {
      * @param <Mapper>                   mapper泛型
      * @return PageRespVO
      */
-    public static <Entity, DTO, Mapper extends BaseMapper<Entity>> PageRespVO<DTO> executeQueryPage(Mapper mapper,
-                                                                                                    PageQueryInterface queryParam,
-                                                                                                    Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
-                                                                                                    Function<Entity, DTO> mapping) {
+    public static <Entity, DTO, Mapper extends BaseMapper<Entity>> RespVO<PageRespVO<DTO>> executeQueryPage(Mapper mapper,
+                                                                                                            PageQueryInterface queryParam,
+                                                                                                            Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer,
+                                                                                                            Function<Entity, DTO> mapping) {
         IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, lambdaQueryWrapperConsumer);
         return PageRespVO.buildPageRespVO(pageResult, mapping);
     }
@@ -235,7 +236,7 @@ public class MybatisPlusExecutor {
      * @param <Mapper>                   mapper泛型
      * @return PageRespVO
      */
-    public static <Entity, Mapper extends BaseMapper<Entity>> PageRespVO<Entity> executeQueryPage(Mapper mapper,
+    public static <Entity, Mapper extends BaseMapper<Entity>> RespVO<PageRespVO<Entity>> executeQueryPage(Mapper mapper,
                                                                                                   PageQueryInterface queryParam,
                                                                                                   Consumer<LambdaQueryWrapper<Entity>> lambdaQueryWrapperConsumer) {
         IPage<Entity> pageResult = executeSelectPage(mapper, queryParam, lambdaQueryWrapperConsumer);
@@ -252,7 +253,7 @@ public class MybatisPlusExecutor {
      * @param <Mapper>   mapper泛型
      * @return PageRespVO
      */
-    public static <Entity, Mapper extends BaseMapper<Entity>> PageRespVO<Entity> executeQueryPage(Mapper mapper,
+    public static <Entity, Mapper extends BaseMapper<Entity>> RespVO<PageRespVO<Entity>> executeQueryPage(Mapper mapper,
                                                                                                   PageQueryInterface queryParam,
                                                                                                   Wrapper<Entity> wrapper) {
         Page<Entity> page = new Page<>(queryParam.getPage(), queryParam.getLimit());
