@@ -9,8 +9,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import java.util.Date;
 import java.util.Objects;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.split;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * @author woodwhales on 2021-09-15 16:40
@@ -33,6 +32,9 @@ public class WebhookEventHandler {
                                          String basePackageName,
                                          WebhookExtraInfo webhookExtraInfo) {
         final String finalNoticeUrl = defaultIfBlank(webhookEvent.getNoticeUrl(), noticeUrl);
+        if(isBlank(webhookEvent.getNoticeUrl())) {
+            webhookEvent.setNoticeUrl(finalNoticeUrl);
+        }
         final String finalSecret = defaultIfBlank(webhookEvent.getSecret(), secret);
         final String[] finalBasePackageNames = Objects.nonNull(webhookEvent.getBasePackageNames()) ? webhookEvent.getBasePackageNames() : split(basePackageName, ",");
 

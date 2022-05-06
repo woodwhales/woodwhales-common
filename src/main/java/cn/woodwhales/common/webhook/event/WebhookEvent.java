@@ -95,9 +95,6 @@ public class WebhookEvent extends ApplicationEvent {
             this.userMobileList = userMobileList;
         }
         this.fillField();
-        if (Objects.nonNull(this.baseWebhookRequestBody) && Objects.nonNull(this.consumer)) {
-            this.consumer.accept(this.baseWebhookRequestBody);
-        }
     }
 
     private void fillField() {
@@ -105,6 +102,9 @@ public class WebhookEvent extends ApplicationEvent {
             this.webhookProductEnum = WebhookProductEnum.getWebhookProductEnumByNoticeUrl(this.noticeUrl);
             this.globalInfo = new GlobalInfo(this.webhookProductEnum, this.throwable, this.basePackageNames, null);
             this.baseWebhookRequestBody = WebhookRequestBodyFactory.newInstance(this.webhookProductEnum, this.title, this.consumer, this.getUserIdList(), this.userMobileList);
+        }
+        if (Objects.nonNull(this.baseWebhookRequestBody) && Objects.nonNull(this.consumer)) {
+            this.consumer.accept(this.baseWebhookRequestBody);
         }
     }
 
@@ -201,6 +201,11 @@ public class WebhookEvent extends ApplicationEvent {
 
     public String getNoticeUrl() {
         return noticeUrl;
+    }
+
+    public void setNoticeUrl(String noticeUrl) {
+        this.noticeUrl = noticeUrl;
+        this.fillField();
     }
 
     public String getSecret() {
