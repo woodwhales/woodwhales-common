@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.*;
@@ -379,7 +378,7 @@ public class ExcelTool {
         Workbook workbook = null;
         try {
             workbook = WorkbookFactory.create(inputStream);
-        } catch (InvalidFormatException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return workbook;
