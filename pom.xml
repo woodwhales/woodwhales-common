@@ -5,7 +5,7 @@
 
     <groupId>cn.woodwhales.common</groupId>
     <artifactId>woodwhales-common</artifactId>
-    <version>3.7.5</version>
+    <version>3.7.6</version>
     <name>woodwhales-common</name>
 
     <!-- 项目描述 -->
@@ -18,13 +18,13 @@
         <lombok.version>1.18.12</lombok.version>
         <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
         <apache-commons-collections4.version>4.4</apache-commons-collections4.version>
-        <slf4j-api.version>2.0.0-alpha7</slf4j-api.version>
-        <guava.version>30.0-jre</guava.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
+        <guava.version>31.1-jre</guava.version>
         <hutool.version>5.5.2</hutool.version>
         <gson.version>2.9.0</gson.version>
-        <commons-lang3.version>3.11</commons-lang3.version>
-        <icu4j.version>68.1</icu4j.version>
-        <spring-boot.version>2.6.7</spring-boot.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <icu4j.version>71.1</icu4j.version>
+        <spring-boot.version>2.7.0</spring-boot.version>
         <easyexcel.version>3.1.1</easyexcel.version>
         <persistence-api.verison>1.0</persistence-api.verison>
         <jackson.version>2.13.3</jackson.version>
@@ -124,7 +124,7 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>slf4j-reload4j</artifactId>
             <version>${slf4j-api.version}</version>
             <scope>compile</scope>
         </dependency>
