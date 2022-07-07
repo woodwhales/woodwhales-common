@@ -28,4 +28,11 @@ public @interface ExcelDateField {
      */
     String pattern() default "yyyy-MM-dd HH:mm:ss";
 
+    /**
+     * 空值处理器
+     * 实现 cn.woodwhales.common.util.excel.NullValueHandler 接口
+     * @return NullValueHandler 接口实现的Class对象
+     */
+    Class<?> nullValueHandler() default Void.class;
+
 }

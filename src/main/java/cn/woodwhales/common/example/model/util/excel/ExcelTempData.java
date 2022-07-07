@@ -1,8 +1,8 @@
 package cn.woodwhales.common.example.model.util.excel;
 
-import lombok.Data;
 import cn.woodwhales.common.util.excel.ExcelDateField;
 import cn.woodwhales.common.util.excel.ExcelField;
+import lombok.Data;
 
 /**
  * @author woodwhales on 2021-07-29 9:57
@@ -24,8 +24,11 @@ public class ExcelTempData extends BaseExcelTempData {
 
     private String memo;
 
-    @ExcelField(jsonFlag = true)
+    @ExcelField(jsonFlag = true, nullValueHandler = MyNullValueHandler2.class)
     private Desc desc;
+
+    @ExcelField(nullValueHandler = MyNullValueHandler.class , type = Integer.class)
+    private Integer test;
 
     @Data
     public static class Desc {

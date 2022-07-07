@@ -36,7 +36,7 @@ public class ExcelTool {
      * @param <T>      返回数据泛型
      * @return list
      */
-    public static <T> List<T> parseData(String filePath, BiFunction<Integer, Row, T> function) {
+    public static <T> List<T> parseData(String filePath, BiFunction<ParseDataModel, Row, T> function) {
         return parseData(filePath, 0, 1, function);
     }
 
@@ -45,19 +45,64 @@ public class ExcelTool {
      * 默认解析：
      * 第一个 sheet
      * 跳过第一行数据
+     * 示例参见：cn.woodwhales.common.example.util.excel.ExcelToolExample#testParseData1()
      *
      * @param inputStream 文件输入流
      * @param function    解析接口
      * @param <T>         返回数据泛型
      * @return list
      */
-    public static <T> List<T> parseData(InputStream inputStream, BiFunction<Integer, Row, T> function) {
+    public static <T> List<T> parseData(InputStream inputStream, BiFunction<ParseDataModel, Row, T> function) {
         return parseData(buildWorkbook(inputStream), 0, 1, function, null);
     }
 
     /**
+     * 解析 excel 中的内容为 list 集合数据
+     * @param inputStream 文件输入流
+     * @param sheetIndex 读取sheet索引位置
+     * @param skipLineNumbers 跳过第skipLineNumbers行开始读取数据
+     * @param function 解析接口
+     * @param <T> 集合数据类型
+     * @return 成功解析的集合
+     */
+    public static <T> List<T> parseData(InputStream inputStream,
+                                        int sheetIndex,
+                                        int skipLineNumbers,
+                                        BiFunction<ParseDataModel, Row, T> function) {
+        return parseData(buildWorkbook(inputStream), sheetIndex, skipLineNumbers, function, null);
+    }
+
+    /**
      * 解析数据
-     *
+     * 示例：cn.woodwhales.common.example.util.excel.ExcelToolExample#testParseData2()
+     * @param fileName    解析的文件路径
+     * @param clazz       解析数据对象类型
+     * @param <T>         解析数据对象类型泛型
+     * @return 解析数据集合
+     */
+    public static <T> List<T> parseData(String fileName, Class<T> clazz) {
+        return parseData(fileName, clazz);
+    }
+
+    /**
+     * 解析数据
+     * 示例：cn.woodwhales.common.example.util.excel.ExcelToolExample#testParseData2()
+     * @param file        要解析的文件对象
+     * @param clazz       解析数据对象类型
+     * @param <T>         解析数据对象类型泛型
+     * @return 解析数据集合
+     */
+    public static <T> List<T> parseData(File file, Class<T> clazz) {
+        try {
+            return parseData(new FileInputStream(file), clazz);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 解析数据
+     * 示例：cn.woodwhales.common.example.util.excel.ExcelToolExample#testParseData2()
      * @param inputStream 输入流
      * @param clazz       解析数据对象类型
      * @param <T>         解析数据对象类型泛型
@@ -70,20 +115,20 @@ public class ExcelTool {
 
         AtomicReference<Map<Integer, ExcelFieldConfig>> excelFieldConfigMap2 = new AtomicReference<>();
 
-        return parseData(buildWorkbook(inputStream), 0, 1, (index, row) -> {
-            int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+        return parseData(buildWorkbook(inputStream), 0, 1, (parseDataModel, row) -> {
+            int maxCellNumber = parseDataModel.maxCellNumber;
             T target = null;
             Cell cell = null;
             try {
                 target = clazz.newInstance();
-                for (int cellIndex = 0; cellIndex < physicalNumberOfCells; cellIndex++) {
+                for (int cellIndex = 0; cellIndex < maxCellNumber; cellIndex++) {
                     cell = row.getCell(cellIndex);
                     ExcelFieldConfig excelFieldConfig = excelFieldConfigMap2.get()
-                            .get(cellIndex);
+                                                                .get(cellIndex);
                     fillFieldValue(target, row, cell, excelFieldConfig);
                 }
             } catch (Exception e) {
-                System.err.printf("index = %s, cell value = [%s], parese error, cause by : %s\n", index, cell, e.getMessage());
+                System.err.printf("index = %s, cell value = [%s], parese error, cause by : %s\n", parseDataModel.rowIndex, cell, e.getMessage());
                 e.printStackTrace();
             }
             return target;
@@ -102,12 +147,15 @@ public class ExcelTool {
         });
     }
 
-    private static <T> void fillFieldValue(T target, Row row, Cell cell, ExcelFieldConfig excelFieldConfig) throws IllegalAccessException {
-        if (isNull(cell) || isNull(excelFieldConfig)) {
+    private static <T> void fillFieldValue(T target,
+                                           Row row,
+                                           Cell cell,
+                                           ExcelFieldConfig excelFieldConfig) throws IllegalAccessException {
+        if (isNull(excelFieldConfig)) {
             return;
         }
 
-        excelFieldConfig.fillField(target, row, cell);
+        excelFieldConfig.fillField(target, row, cell, excelFieldConfig);
     }
 
     /**
@@ -153,7 +201,7 @@ public class ExcelTool {
     public static <T> List<T> parseData(String filePath,
                                         int sheetIndex,
                                         int skipLineNumbers,
-                                        BiFunction<Integer, Row, T> function) {
+                                        BiFunction<ParseDataModel, Row, T> function) {
         File file = new File(filePath);
         if (!file.exists()) {
             throw new RuntimeException(filePath + " 文件不存在");
@@ -166,7 +214,7 @@ public class ExcelTool {
     private static <T> List<T> parseData(Workbook workbook,
                                          int sheetIndex,
                                          int skipLineNumbers,
-                                         BiFunction<Integer, Row, T> function,
+                                         BiFunction<ParseDataModel, Row, T> function,
                                          BiConsumer<Integer, Row> skipConsumer) {
         Objects.requireNonNull(function, "function不允许为空");
 
@@ -186,6 +234,7 @@ public class ExcelTool {
 
         List<T> dataList = new ArrayList<>(sheet.getLastRowNum());
         int rowIndex = 0;
+        Integer maxCellNumber = 0;
         while (rowIndex <= sheet.getLastRowNum()) {
             Row row = sheet.getRow(rowIndex);
             if (Objects.isNull(row)) {
@@ -196,8 +245,11 @@ public class ExcelTool {
             // 跳过行数
             if (row.getRowNum() < skipLineNumbers) {
                 if (Objects.nonNull(skipConsumer)) {
-                    int physicalNumberOfCells = row.getPhysicalNumberOfCells();
-                    for (int cellIndex = 0; cellIndex < physicalNumberOfCells; cellIndex++) {
+                    int lastCellNum = row.getLastCellNum();
+                    if(lastCellNum > maxCellNumber) {
+                        maxCellNumber = lastCellNum;
+                    }
+                    for (int cellIndex = 0; cellIndex < lastCellNum; cellIndex++) {
                         skipConsumer.accept(cellIndex, row);
                     }
                 }
@@ -206,7 +258,7 @@ public class ExcelTool {
             }
 
             Integer tmpRowIndex = rowIndex;
-            T data = function.apply(tmpRowIndex, row);
+            T data = function.apply(new ParseDataModel(tmpRowIndex, maxCellNumber), row);
             dataList.add(data);
             rowIndex++;
         }
@@ -411,6 +463,7 @@ public class ExcelTool {
         public Class<?> clazz;
         public String excelFieldName;
         public String pattern;
+        public NullValueHandler nullValueHandler;
 
         private ExcelFieldConfig() {
         }
@@ -424,6 +477,14 @@ public class ExcelTool {
                 this.jsonFlag = excelField.jsonFlag();
                 this.clazz = excelField.type();
                 this.excelFieldName = StringUtils.defaultIfBlank(excelField.value(), field.getName());
+                Class<?> nullValueHandlerClass = excelField.nullValueHandler();
+                if(Objects.nonNull(nullValueHandlerClass) && NullValueHandler.class.isAssignableFrom(nullValueHandlerClass)) {
+                    try {
+                        this.nullValueHandler = (NullValueHandler) nullValueHandlerClass.newInstance();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
 
             ExcelDateField excelDateField = field.getAnnotation(ExcelDateField.class);
@@ -432,6 +493,14 @@ public class ExcelTool {
                 this.clazz = String.class;
                 this.excelFieldName = excelDateField.value();
                 this.pattern = excelDateField.pattern();
+                Class<?> nullValueHandlerClass = excelDateField.nullValueHandler();
+                if(Objects.nonNull(nullValueHandlerClass) && nullValueHandlerClass.isAssignableFrom(NullValueHandler.class)) {
+                    try {
+                        this.nullValueHandler = (NullValueHandler) nullValueHandlerClass.newInstance();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
 
             if (isNull(excelField) && isNull(excelDateField)) {
@@ -450,36 +519,58 @@ public class ExcelTool {
             return this.cellIndex;
         }
 
-        public void fillField(Object target, Row row, Cell cell) throws IllegalAccessException {
+        public void fillField(Object target, Row row, Cell cell, ExcelFieldConfig excelFieldConfig) throws IllegalAccessException {
             boolean accessible = this.field.isAccessible();
             this.field.setAccessible(true);
             String typeName = this.clazz.getName();
-
-            if (this.jsonFlag) {
-                final String jsonStr = getStringValue(row, this.cellIndex);
-                if (StringUtils.isNotBlank(jsonStr)) {
-                    this.field.set(target, new Gson().fromJson(jsonStr, this.field.getType()));
+            try {
+                if (this.jsonFlag) {
+                    final String jsonStr = getStringValue(row, this.cellIndex);
+                    if (StringUtils.isNotBlank(jsonStr)) {
+                        this.field.set(target, new Gson().fromJson(jsonStr, this.field.getType()));
+                    } else {
+                        this.defaultValueWhenExcelDataIsNull(target, excelFieldConfig);
+                    }
+                    return;
                 }
-                return;
-            }
 
-            if (String.class.getName().equals(typeName)) {
-                if (ExcelFieldType.DATE_STR.equals(this.excelFieldType)) {
-                    this.field.set(target, DateFormatUtils.format(getDateValue(row, this.cellIndex), this.pattern));
-                } else {
-                    this.field.set(target, cell.getStringCellValue());
+                if(Objects.isNull(cell)) {
+                    this.defaultValueWhenExcelDataIsNull(target, excelFieldConfig);
+                    return;
                 }
-            } else if (Integer.class.getName().equals(typeName)) {
-                this.field.set(target, getIntegerValue(row, this.cellIndex));
-            } else if (Double.class.getName().equals(typeName)) {
-                this.field.set(target, getDoubleValue(row, this.cellIndex));
-            } else if (Date.class.getName().equals(typeName)) {
-                this.field.set(target, getDateValue(row, this.cellIndex));
-            } else if (Byte.class.getName().equals(typeName)) {
-                this.field.set(target, getByteValue(row, this.cellIndex));
-            }
 
-            this.field.setAccessible(accessible);
+                if (String.class.getName().equals(typeName)) {
+                    if (ExcelFieldType.DATE_STR.equals(this.excelFieldType)) {
+                        this.field.set(target, DateFormatUtils.format(getDateValue(row, this.cellIndex), this.pattern));
+                    } else {
+                        this.field.set(target, cell.getStringCellValue());
+                    }
+                } else if (Integer.class.getName().equals(typeName)) {
+                    this.field.set(target, getIntegerValue(row, this.cellIndex));
+                } else if (Double.class.getName().equals(typeName)) {
+                    this.field.set(target, getDoubleValue(row, this.cellIndex));
+                } else if (Date.class.getName().equals(typeName)) {
+                    this.field.set(target, getDateValue(row, this.cellIndex));
+                } else if (Byte.class.getName().equals(typeName)) {
+                    this.field.set(target, getByteValue(row, this.cellIndex));
+                }
+            } finally {
+                this.field.setAccessible(accessible);
+            }
+        }
+
+        private void defaultValueWhenExcelDataIsNull(Object target, ExcelFieldConfig excelFieldConfig) throws IllegalAccessException {
+            if(Objects.nonNull(excelFieldConfig.nullValueHandler)) {
+                Object defaultValue = excelFieldConfig.nullValueHandler.defaultValueIfExcelDataIdNull();
+                if(Objects.nonNull(defaultValue)) {
+                    if(!defaultValue.getClass().isAssignableFrom(excelFieldConfig.field.getType())) {
+                        throw new RuntimeException(String.format("字段[%s]设置的默认值类不合法", excelFieldConfig.excelFieldName));
+                    }
+                    excelFieldConfig.field.set(target, defaultValue);
+                }
+            }
         }
     }
+
+
 }

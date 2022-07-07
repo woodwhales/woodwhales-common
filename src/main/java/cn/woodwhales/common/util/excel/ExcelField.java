@@ -35,4 +35,11 @@ public @interface ExcelField {
      */
     boolean jsonFlag() default false;
 
+    /**
+     * 空值处理器
+     * 实现 cn.woodwhales.common.util.excel.NullValueHandler 接口
+     * @return NullValueHandler 接口实现的Class对象
+     */
+    Class<?> nullValueHandler() default Void.class;
+
 }
