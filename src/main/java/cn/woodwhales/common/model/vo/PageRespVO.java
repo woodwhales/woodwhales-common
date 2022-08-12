@@ -4,9 +4,9 @@ import cn.woodwhales.common.model.enums.RespCodeEnum;
 import cn.woodwhales.common.model.result.BaseRespResult;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -89,8 +89,8 @@ public class PageRespVO<T> {
     }
 
     public static <T> RespVO<PageRespVO<T>> buildPageRespVO(@NotNull BaseRespResult baseRespResult,
-                                                    Long count,
-                                                    List<T> data) {
+                                                            Long count,
+                                                            List<T> data) {
         Objects.requireNonNull(baseRespResult, "baseRespResult不允许为空");
         return build(baseRespResult.getCode(), baseRespResult.getMessage(), count, data);
     }

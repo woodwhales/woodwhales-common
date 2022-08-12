@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -65,7 +64,7 @@ public class RespVO<T> {
         return build(baseRespResult.getCode(), baseRespResult.getMessage(), data);
     }
 
-    public static <S, T> RespVO<T> resp(OpResult<S> opResult, @NotNull Function<S, T> function) {
+    public static <S, T> RespVO<T> resp(OpResult<S> opResult, Function<S, T> function) {
         Objects.requireNonNull(function, "对象转换接口不允许为空");
         if (opResult.isSuccessful()) {
             return success(function.apply(opResult.getData()));

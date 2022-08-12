@@ -1,9 +1,10 @@
 package cn.woodwhales.common.model.field;
 
 /**
- * @author: woodwhales on 2020-09-18 22:15
- * <p>
  * 分页查询请求对象接口
+ * <p>
+ * @author woodwhales on 2020-09-18 22:15
+ *
  */
 public interface PageQueryInterface {
 

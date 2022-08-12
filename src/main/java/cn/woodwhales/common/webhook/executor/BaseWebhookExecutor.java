@@ -6,12 +6,13 @@ import cn.woodwhales.common.webhook.model.request.BaseWebhookRequestBody;
 import cn.woodwhales.common.webhook.model.response.ExecuteResponse;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import java.lang.reflect.ParameterizedType;
 import java.nio.charset.StandardCharsets;
@@ -132,13 +133,10 @@ public abstract class BaseWebhookExecutor<RequestBody extends BaseWebhookRequest
             post.setHeader("Accept", "aplication/json");
             post.setHeader("Content-Type", "application/json;charset=UTF-8");
             final String noticeContent = executeParam.getNoticeContent();
-            StringEntity se = new StringEntity(noticeContent, StandardCharsets.UTF_8);
-            se.setContentEncoding("UTF-8");
-            se.setContentType("application/json");
+            StringEntity se = new StringEntity(noticeContent, ContentType.APPLICATION_JSON, StandardCharsets.UTF_8.name(), false);
             post.setEntity(se);
             CloseableHttpResponse response = httpClient.execute(post);
-
-            int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = response.getCode();
             String originResponseContent = EntityUtils.toString(response.getEntity());
             executeResponse = new ExecuteResponse<>(noticeUrl, noticeContent, statusCode, originResponseContent);
         } catch (Exception e) {
