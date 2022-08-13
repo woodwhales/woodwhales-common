@@ -7,7 +7,7 @@ public interface DefaultPageQueryInterface {
 
     /**
      * 获取当前页码
-     * @return
+     * @return 当前页码
      */
     Integer getCurrentPage();
 
@@ -19,7 +19,7 @@ public interface DefaultPageQueryInterface {
 
     /**
      * 获取每页记录数
-     * @return
+     * @return 每页记录数
      */
     Integer getPageSize();
 
