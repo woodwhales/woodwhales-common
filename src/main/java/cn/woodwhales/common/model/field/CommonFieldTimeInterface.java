@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * common
  *
- * @author: woodwhales
+ * @author woodwhales
  * 20.9.18 21:30
  */
 public interface CommonFieldTimeInterface {

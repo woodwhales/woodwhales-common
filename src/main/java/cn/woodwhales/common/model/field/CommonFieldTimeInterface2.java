@@ -3,7 +3,7 @@ package cn.woodwhales.common.model.field;
 import java.util.Date;
 
 /**
- * @author: woodwhales
+ * @author woodwhales
  * 2020.9.18 21:33
  */
 public interface CommonFieldTimeInterface2 {

@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * 业务数据响应体
  *
- * @author: woodwhales on 2020-09-18 22:05
+ * @author woodwhales on 2020-09-18 22:05
  */
 public class OpResult<T> {
 
