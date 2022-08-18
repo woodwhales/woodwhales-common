@@ -6,7 +6,15 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -453,6 +461,56 @@ public class ExcelTool {
     }
 
     private ExcelTool() {
+    }
+
+    /**
+     * 绘制单元格斜线
+     * @param drawSlashContext drawSlashContext
+     */
+    public static void drawSlash(DrawSlashContext drawSlashContext) {
+        Workbook workbook = drawSlashContext.workbook;
+        Sheet sheet = drawSlashContext.sheet;
+        CreationHelper helper = workbook.getCreationHelper();
+        // XLSX
+        if(workbook instanceof XSSFWorkbook) {
+            XSSFDrawing drawing = (XSSFDrawing) sheet.createDrawingPatriarch();
+            ClientAnchor anchor = helper.createClientAnchor();
+            // 设置斜线的开始位置
+            anchor.setCol1(drawSlashContext.col1);
+            anchor.setRow1(drawSlashContext.row1);
+            // 设置斜线的结束位置
+            anchor.setCol2(drawSlashContext.col2);
+            anchor.setRow2(drawSlashContext.row2);
+            XSSFSimpleShape shape = drawing.createSimpleShape((XSSFClientAnchor) anchor);
+            // 设置形状类型为线型
+            shape.setShapeType(ShapeTypes.LINE);
+            // 设置线宽
+            shape.setLineWidth(0.5);
+            // 设置线的风格
+            shape.setLineStyle(0);
+            // 设置线的颜色
+            shape.setLineStyleColor(0, 0, 0);
+        }
+        // XLS
+        if(workbook instanceof HSSFWorkbook) {
+            HSSFPatriarch drawing =  (HSSFPatriarch) sheet.createDrawingPatriarch();
+            ClientAnchor anchor = helper.createClientAnchor();
+            // 设置斜线的开始位置
+            anchor.setCol1(drawSlashContext.col1);
+            anchor.setRow1(drawSlashContext.row1);
+            // 设置斜线的结束位置
+            anchor.setCol2(drawSlashContext.col2);
+            anchor.setRow2(drawSlashContext.row2);
+            HSSFSimpleShape shape = drawing.createSimpleShape((HSSFClientAnchor) anchor);
+            // 设置形状类型为线型
+            shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+            // 设置线宽
+            shape.setLineWidth(6350);
+            // 设置线的风格
+            shape.setLineStyle(HSSFSimpleShape.LINESTYLE_SOLID);
+            // 设置线的颜色
+            shape.setLineStyleColor(0, 0, 0);
+        }
     }
 
     private static class ExcelFieldConfig {

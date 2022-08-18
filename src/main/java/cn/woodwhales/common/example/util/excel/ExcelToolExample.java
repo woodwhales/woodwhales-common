@@ -1,8 +1,15 @@
 package cn.woodwhales.common.example.util.excel;
 
 import cn.woodwhales.common.example.model.util.excel.ExcelTempData;
+import cn.woodwhales.common.util.excel.DrawSlashContext;
 import cn.woodwhales.common.util.excel.ExcelTool;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,9 +20,10 @@ import java.util.List;
  */
 public class ExcelToolExample {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 //        testParseData1();
-        testParseData2();
+//        testParseData2();
+        testDrawSlash();
     }
 
     private static void testParseData1() {
@@ -48,5 +56,30 @@ public class ExcelToolExample {
                 .getResourceAsStream("demo.xlsx");
         List<ExcelTempData> excelTempData = ExcelTool.parseData(resourceAsStream, ExcelTempData.class);
         excelTempData.stream().forEach(System.out::println);
+    }
+
+    public static void testDrawSlash() throws Exception {
+        DrawSlashContext drawSlashContext = new DrawSlashContext();
+        drawSlashContext.outputStream = new FileOutputStream("D:\\temp\\test.xlsx");
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        // 设置高度
+        row.setHeightInPoints(30);
+        cell.setCellValue("test title");
+        sheet.setColumnWidth(0,2 * 9 * 256);
+
+        Row row1 = sheet.createRow(1);
+        Cell cell1 = row1.createCell(0);
+        cell1.setCellValue("2022-08-19 00:00");
+        drawSlashContext.workbook = workbook;
+        drawSlashContext.sheet = sheet;
+        drawSlashContext.col1 = 0;
+        drawSlashContext.row1 = 0;
+        drawSlashContext.col2 = 1;
+        drawSlashContext.row2 = 1;
+        ExcelTool.drawSlash(drawSlashContext);
+        drawSlashContext.export();
     }
 }
