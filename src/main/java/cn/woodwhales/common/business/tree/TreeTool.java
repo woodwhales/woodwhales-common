@@ -1,5 +1,7 @@
 package cn.woodwhales.common.business.tree;
 
+import cn.woodwhales.common.business.DataTool;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +10,6 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Collections.emptyList;
-import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
@@ -66,24 +67,10 @@ public class TreeTool {
                                                         final TreeNodeAttributeMapper<T> treeNodeAttributeMapper,
                                                         final Function<T, Object> extraFunction,
                                                         final boolean withData) {
-        Function<T, Object> overNodeIdFunction = treeNodeAttributeMapper.getOverNodeIdFunction();
-        if ((nonNull(overNodeIdFunction) || nonNull(extraFunction)) && !withData) {
-            return tree(sourceList, treeNodeGenerator, treeNodeAttributeMapper, extraFunction, true, true);
-        }
-
-        return tree(sourceList, treeNodeGenerator, treeNodeAttributeMapper, extraFunction, withData, !withData);
-    }
-
-    private static <K, T> List<Map<String, Object>> tree(List<T> sourceList,
-                                                         final TreeNodeGenerator<K, T> treeNodeGenerator,
-                                                         final TreeNodeAttributeMapper<T> treeNodeAttributeMapper,
-                                                         final Function<T, Object> extraFunction,
-                                                         final boolean withData,
-                                                         final boolean needDropData) {
         checkNotNull(treeNodeAttributeMapper, "treeNodeAttributeMapper must not null");
-        List<TreeNode<K, T>> treeNodeList = tree(sourceList, treeNodeGenerator, withData);
+        List<TreeNode<K, T>> treeNodeList = DataTool.toList(sourceList, source -> TreeNode.build(source, treeNodeGenerator, treeNodeAttributeMapper));
         return treeNodeList.stream()
-                .map(treeNode -> TreeNode.toMap(treeNode, treeNodeAttributeMapper, extraFunction, withData, needDropData))
+                .map(treeNode -> TreeNode.toMap(treeNode, treeNodeAttributeMapper, extraFunction, withData))
                 .collect(toList());
     }
 
@@ -105,6 +92,8 @@ public class TreeTool {
         return tree(sourceList, treeNodeGenerator, treeNodeAttributeMapper, null, withData);
     }
 
+
+
     /**
      * 树化数据
      *
@@ -116,22 +105,6 @@ public class TreeTool {
      */
     public static <K, T> List<TreeNode<K, T>> tree(List<T> sourceList,
                                                    final TreeNodeGenerator<K, T> treeNodeGenerator) {
-        return tree(sourceList, treeNodeGenerator, false);
-    }
-
-    /**
-     * 树化数据
-     *
-     * @param sourceList        源数据集合
-     * @param treeNodeGenerator TreeNode 生成器
-     * @param <K>               节点 id 类型
-     * @param <T>               数据源类型
-     * @param withData          是否携带源数据
-     * @return list
-     */
-    public static <K, T> List<TreeNode<K, T>> tree(List<T> sourceList,
-                                                   final TreeNodeGenerator<K, T> treeNodeGenerator,
-                                                   final boolean withData) {
         checkNotNull(treeNodeGenerator, "treeNodeGenerator must not null");
         if (isEmpty(sourceList)) {
             return emptyList();
@@ -139,7 +112,7 @@ public class TreeTool {
 
         List<TreeNode<K, T>> rootNodeList = sourceList.stream()
                 .filter(treeNodeGenerator::isRootNode)
-                .map(source -> TreeNode.build(source, treeNodeGenerator, withData))
+                .map(source -> TreeNode.build(source, treeNodeGenerator))
                 .sorted(Comparator.comparing(TreeNode::getSort))
                 .collect(toList());
 
@@ -149,7 +122,7 @@ public class TreeTool {
 
         Map<K, List<TreeNode<K, T>>> unRootNodeContainer = sourceList.stream()
                 .filter(source -> !treeNodeGenerator.isRootNode(source))
-                .map(source -> TreeNode.build(source, treeNodeGenerator, withData))
+                .map(source -> TreeNode.build(source, treeNodeGenerator))
                 .sorted(Comparator.comparing(TreeNode::getSort))
                 .collect(Collectors.groupingBy(TreeNode::getParentId));
 
