@@ -697,13 +697,29 @@ public class DataTool {
      * @param sourceEnumClass 数据源枚举 Class类
      * @param keyMapper       map 集合中的 key 获取规则
      * @param <K>             map 集合中的 key 类型
-     * @param <T>             map 集合中的 value 类型
+     * @param <T>             枚举类型 map 集合中的 value 类型
      * @return map 集合
      */
     public static <K, T extends Enum<T>> Map<K, T> enumMap(Class<T> sourceEnumClass,
                                                            Function<T, K> keyMapper) {
+        return enumMap(sourceEnumClass, keyMapper, Function.identity());
+    }
+
+    /**
+     * 枚举转 map 集合
+     * @param sourceEnumClass 数据源枚举 Class类
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param valueMapper map 集合中的 value 获取规则
+     * @return map 集合
+     * @param <K> map 集合中的 key 类型
+     * @param <V> map 集合中的 value 类型
+     * @param <T> 枚举类型
+     */
+    public static <K, V, T extends Enum<T>> Map<K, V> enumMap(Class<T> sourceEnumClass,
+                                                           Function<T, K> keyMapper,
+                                                           Function<T, V> valueMapper) {
         EnumSet<T> enumSet = EnumSet.allOf(sourceEnumClass);
-        return enumSet.stream().collect(Collectors.toMap(keyMapper, Function.identity()));
+        return enumSet.stream().collect(Collectors.toMap(keyMapper, valueMapper));
     }
 
     /**
