@@ -23,13 +23,13 @@ public class ApplicationEventConfig {
     /**
      * 在 application.yml 中配置 notice.url
      */
-    @Value("${notice.url}")
+    @Value("${notice.url:}")
     private String noticeUrl;
 
     /**
      * 在 application.yml 中配置 notice.secret
      */
-    @Value("${notice.secret}")
+    @Value("${notice.secret:}")
     private String secret = "";
 
     /**
