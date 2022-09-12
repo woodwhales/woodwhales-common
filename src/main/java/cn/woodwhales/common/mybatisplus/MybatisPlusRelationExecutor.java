@@ -42,10 +42,10 @@ public class MybatisPlusRelationExecutor {
                     RelationService extends ServiceImpl<RelationMapper, RelationEntity>,
                     RelationMapper extends BaseMapper<RelationEntity>,
                     RelationEntity> List<RelationEntity> executeQuery(LeftId leftId,
-                                                            LeftService leftService,
-                                                            Function<LeftEntity, ?> getLeftIdFunction,
-                                                            RelationService relationService,
-                                                            SFunction<RelationEntity, LeftId> getLeftIdRelationFunction) {
+                                                                      LeftService leftService,
+                                                                      Function<LeftEntity, ?> getLeftIdFunction,
+                                                                      RelationService relationService,
+                                                                      SFunction<RelationEntity, LeftId> getLeftIdRelationFunction) {
         LeftEntity leftEntity = leftService.getById(leftId);
         if(Objects.isNull(leftEntity)) {
             return Collections.emptyList();
@@ -62,11 +62,11 @@ public class MybatisPlusRelationExecutor {
      * 多对多查询
      * <p>
      * 通过用户查询对应的角色列表
-     * user -> roleList
+     * user - roleList
      *
-     * user1 -> role1
-     *       -> role2
-     *       -> role3
+     * user1 - role1
+     *       - role2
+     *       - role3
      * </p>
      * user [user主键]
      * user_role [user主键,role主键]
