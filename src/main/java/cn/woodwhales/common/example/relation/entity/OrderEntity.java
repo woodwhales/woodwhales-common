@@ -10,11 +10,14 @@ import lombok.Data;
  * @author woodwhales on 2022-09-12 17:41
  */
 @Data
-@TableName("order")
+@TableName("user_order")
 public class OrderEntity {
 
     @TableId(type = IdType.AUTO)
     private Long id;
+
+    @TableField("user_id")
+    private Long userId;
 
     @TableField("order_name")
     private String orderName;

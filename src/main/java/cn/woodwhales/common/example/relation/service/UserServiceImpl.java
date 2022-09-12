@@ -40,7 +40,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> {
 
     public List<OrderEntity> getOrderListByUserId(Long userId) {
         return MybatisPlusRelationExecutor.executeQuery(userId, this, UserEntity::getId, orderService,
-                OrderEntity::getId);
+                                                                            OrderEntity::getUserId);
     }
 
 }
