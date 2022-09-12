@@ -1,9 +1,10 @@
-package cn.woodwhales.common.example.model.business.relation.service;
+package cn.woodwhales.common.example.relation.service;
 
-import cn.woodwhales.common.example.model.business.relation.RoleEntity;
-import cn.woodwhales.common.example.model.business.relation.UserEntity;
-import cn.woodwhales.common.example.model.business.relation.UserRoleEntity;
-import cn.woodwhales.common.example.model.business.relation.mapper.UserMapper;
+import cn.woodwhales.common.example.relation.entity.OrderEntity;
+import cn.woodwhales.common.example.relation.entity.RoleEntity;
+import cn.woodwhales.common.example.relation.entity.UserEntity;
+import cn.woodwhales.common.example.relation.entity.UserRoleEntity;
+import cn.woodwhales.common.example.relation.mapper.UserMapper;
 import cn.woodwhales.common.mybatisplus.MybatisPlusRelationExecutor;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> {
     @Autowired
     private UserRoleServiceImpl userRoleService;
 
+    @Autowired
+    private OrderServiceImpl orderService;
+
     public List<RoleEntity> getRoleListByUserId(Long userId) {
         return MybatisPlusRelationExecutor.executeQuery(userId,
                                                 this,
@@ -32,6 +36,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> {
                                                         UserRoleEntity::getRoleId,
                                                         roleService,
                                                         RoleEntity::getId);
+    }
+
+    public List<OrderEntity> getOrderListByUserId(Long userId) {
+        return MybatisPlusRelationExecutor.executeQuery(userId, this, UserEntity::getId, orderService,
+                OrderEntity::getId);
     }
 
 }

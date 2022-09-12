@@ -1,6 +1,6 @@
-package cn.woodwhales.common.example.model.business.relation.mapper;
+package cn.woodwhales.common.example.relation.mapper;
 
-import cn.woodwhales.common.example.model.business.relation.UserEntity;
+import cn.woodwhales.common.example.relation.entity.UserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

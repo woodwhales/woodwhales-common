@@ -1,7 +1,7 @@
-package cn.woodwhales.common.example.model.business.relation.service;
+package cn.woodwhales.common.example.relation.service;
 
-import cn.woodwhales.common.example.model.business.relation.UserRoleEntity;
-import cn.woodwhales.common.example.model.business.relation.mapper.UserRoleMapper;
+import cn.woodwhales.common.example.relation.entity.UserRoleEntity;
+import cn.woodwhales.common.example.relation.mapper.UserRoleMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
