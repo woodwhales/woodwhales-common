@@ -89,7 +89,7 @@ public class ExcelTool {
      * @return 解析数据集合
      */
     public static <T> List<T> parseData(String fileName, Class<T> clazz) {
-        return parseData(fileName, clazz);
+        return parseData(new File(fileName), clazz);
     }
 
     /**
