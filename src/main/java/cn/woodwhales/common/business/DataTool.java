@@ -528,6 +528,21 @@ public class DataTool {
     }
 
     /**
+     * 将 枚举分组 集合分组
+     *
+     * @param sourceEnumClass     枚举class类
+     * @param classifier          分组规则
+     * @param <K>        map 集合中的 key 类型
+     * @param <S>        map 集合中的 value 集合元素类型
+     * @return list
+     */
+    public static <K, S extends Enum<S>> Map<K, List<S>> enumGroupingBy(Class<S> sourceEnumClass,
+                                                                        Function<? super S, ? extends K> classifier) {
+        EnumSet<S> enumSet = EnumSet.allOf(sourceEnumClass);
+        return enumSet.stream().collect(Collectors.groupingBy(classifier));
+    }
+
+    /**
      * 将过滤的 list 集合分组
      *
      * @param source     数据源集合

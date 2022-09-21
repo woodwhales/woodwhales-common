@@ -27,7 +27,8 @@ public class DataToolExample {
 //        toMap1();
 //        toMap2();
 //        testGetListFromBaseList();
-        testGetListFromBaseList2();
+//        testGetListFromBaseList2();
+        testEnumGroupingBy();
     }
 
     public static void enumMap1() {
@@ -328,5 +329,14 @@ public class DataToolExample {
             return;
         }
         throw new RuntimeException(object + "校验为空失败");
+    }
+
+    public static void testEnumGroupingBy() {
+        Map<String, List<MyEnum>> mapList = DataTool.enumGroupingBy(MyEnum.class, MyEnum::getType);
+        System.out.println("mapList = " + mapList);
+        assertEquals(3, mapList.size());
+        assertEquals(2, mapList.get("A").size());
+        assertEquals(2, mapList.get("B").size());
+        assertEquals(1, mapList.get("C").size());
     }
 }
