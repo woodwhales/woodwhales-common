@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,10 @@ import static org.apache.commons.lang3.StringUtils.*;
 public class JsonTool {
 
     private static final Logger log = LoggerFactory.getLogger(JsonTool.class);
+
+    public static String toJSONString(Object object) {
+        return new Gson().toJson(object);
+    }
 
     /**
      * 解析 jsonStr 为 对象

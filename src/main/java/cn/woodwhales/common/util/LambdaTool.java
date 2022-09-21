@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * 通过lambda表达式获取属性名称
  * @author woodwhales on 2022-09-16 22:29
  */
 public class LambdaTool {

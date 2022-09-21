@@ -233,6 +233,11 @@
             <version>${spring-boot-starter-web.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.9.1</version>
+        </dependency>
     </dependencies>
 
     <!-- distributionManagement -->

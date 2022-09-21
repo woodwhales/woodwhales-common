@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class JsonToolTest {
+class JsonToolExampleTest {
 
     private static Map<String, String> replaceMap;
 
