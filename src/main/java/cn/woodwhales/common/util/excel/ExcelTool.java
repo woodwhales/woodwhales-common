@@ -128,7 +128,7 @@ public class ExcelTool {
             T target = null;
             Cell cell = null;
             try {
-                target = clazz.newInstance();
+                target = clazz.getDeclaredConstructor().newInstance();
                 for (int cellIndex = 0; cellIndex < maxCellNumber; cellIndex++) {
                     cell = row.getCell(cellIndex);
                     ExcelFieldConfig excelFieldConfig = excelFieldConfigMap2.get()
