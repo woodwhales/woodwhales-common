@@ -1,7 +1,5 @@
 package cn.woodwhales.common.business.tree;
 
-import cn.woodwhales.common.business.DataTool;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +65,8 @@ public class TreeTool {
                                                         final TreeNodeAttributeMapper<T> treeNodeAttributeMapper,
                                                         final Function<T, Object> extraFunction,
                                                         final boolean withData) {
-        checkNotNull(treeNodeAttributeMapper, "treeNodeAttributeMapper must not null");
-        List<TreeNode<K, T>> treeNodeList = DataTool.toList(sourceList, source -> TreeNode.build(source, treeNodeGenerator, treeNodeAttributeMapper));
-        return treeNodeList.stream()
+        List<TreeNode<K, T>> rootNodeList = tree(sourceList, treeNodeGenerator);
+        return rootNodeList.stream()
                 .map(treeNode -> TreeNode.toMap(treeNode, treeNodeAttributeMapper, extraFunction, withData))
                 .collect(toList());
     }

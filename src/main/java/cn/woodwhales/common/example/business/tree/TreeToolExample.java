@@ -33,7 +33,6 @@ public class TreeToolExample {
         test5();
 
         test6();
-
     }
 
     public static void init() {
@@ -51,6 +50,8 @@ public class TreeToolExample {
                 .setExtraInfo1("有三里屯")
                 .setExtraInfo2("有朝阳大悦城")
         );
+        list.add(new TreeToolTempMenu(10, 3, "三里屯", 1, "三里屯"));
+        list.add(new TreeToolTempMenu(11, 3, "双井站", 2, "双井站"));
         list.add(new TreeToolTempMenu(9, 1, "东城", 0, "北京的东边"));
 
         list.add(new TreeToolTempMenu(5, null, "安徽", 20, "有很多山")
