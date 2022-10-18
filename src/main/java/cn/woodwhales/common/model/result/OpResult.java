@@ -1,6 +1,7 @@
 package cn.woodwhales.common.model.result;
 
 import cn.woodwhales.common.model.enums.RespCodeEnum;
+import lombok.Data;
 
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ import java.util.Objects;
  *
  * @author woodwhales on 2020-09-18 22:05
  */
+@Data
 public class OpResult<T> {
 
     /**
@@ -39,6 +41,34 @@ public class OpResult<T> {
 
     public static <T> OpResult<T> failure(BaseRespResult baseRespResult, T data) {
         return new OpResult<T>(baseRespResult, data);
+    }
+
+    public static <T> OpResult<T> error(String errorMsg) {
+        return new OpResult<T>(new BaseRespResult() {
+            @Override
+            public String getMessage() {
+                return errorMsg;
+            }
+
+            @Override
+            public Integer getCode() {
+                return RespCodeEnum.ERROR.getCode();
+            }
+        }, null);
+    }
+
+    public static <T> OpResult<T> error(Integer errorCode, String errorMsg) {
+        return new OpResult<T>(new BaseRespResult() {
+            @Override
+            public String getMessage() {
+                return errorMsg;
+            }
+
+            @Override
+            public Integer getCode() {
+                return errorCode;
+            }
+        }, null);
     }
 
     /**

@@ -10,6 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +38,7 @@ public class RequestAspectTool {
     /**
      * 对请求controller进行切面
      * 使用uuid作为请求流水号，请求之前将请求流水号设置为当前线程名称
+     *
      * @param joinPoint joinPoint
      * @return 请求执行结果
      * @throws Throwable 异常对象
@@ -49,10 +53,11 @@ public class RequestAspectTool {
 
     /**
      * 对请求controller进行切面
-     * @param joinPoint joinPoint
+     *
+     * @param joinPoint         joinPoint
      * @param requestIdSupplier 请求流水号生成接口
-     * @param beforeConsumer 请求执行之前的接口
-     * @param afterConsumer 请求执行之后的接口
+     * @param beforeConsumer    请求执行之前的接口
+     * @param afterConsumer     请求执行之后的接口
      * @return 请求执行结果
      * @throws Throwable 异常对象
      */
@@ -75,20 +80,20 @@ public class RequestAspectTool {
                 .getName();
         String fullMethodName = declaringTypeName + "#" + signature.getName();
         StringBuilder requestParamBuilder = new StringBuilder();
-        String clientIP;
+        String clientIpAddress;
         String requestUrl = null;
         HttpServletRequest request;
         try {
             log.info("======================= {} start =======================", fullMethodName);
             request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            clientIP = IpTool.getIpAddress(request);
+            clientIpAddress = IpTool.getIpAddress(request);
             String methodType = request.getMethod();
             requestUrl = String.format("[ %s ] %s", methodType, request.getRequestURL()
                     .toString());
             // 请求地址
             log.info("request_url={}", requestUrl);
             // 请求ip
-            log.info("request_ip={}", clientIP);
+            log.info("request_ip={}", clientIpAddress);
             // 请求参数
             log.info("request_param={}", requestParamBuilder.append(getParamStringFromRequest(request)));
             if (!StringUtils.equals(RequestMethod.GET.name(), methodType)) {
@@ -102,9 +107,7 @@ public class RequestAspectTool {
                 beforeConsumer.accept(request);
             }
             Object result = joinPoint.proceed();
-            if (null != result) {
-                log.info("request_responseBody={}", JsonTool.toJSONString(result));
-            }
+            printResponseBody(result);
             if (Objects.nonNull(afterConsumer)) {
                 afterConsumer.accept(request, result);
             }
@@ -118,6 +121,34 @@ public class RequestAspectTool {
             log.info("requestUrl = {}, consume : {} ms", requestUrl, costTime);
             log.info("======================= {} end =======================", fullMethodName);
         }
+    }
+
+    private static void printResponseBody(Object result) {
+        if(Objects.isNull(result)) {
+            log.info("request_responseBody={}", "响应报文为空");
+            return;
+        }
+
+        // 文件流不打印响应报文
+        if (result instanceof ResponseEntity) {
+            ResponseEntity<?> responseEntity = (ResponseEntity<?>) result;
+            HttpHeaders headers = responseEntity.getHeaders();
+            MediaType contentType = headers.getContentType();
+            if (Objects.nonNull(contentType) && MediaType.APPLICATION_OCTET_STREAM.getType().equals(contentType.getType())) {
+                log.info("request_responseBody={}", "响应报文为文件流, 不打印响应报文");
+            } else {
+                log.info("request_responseBody={}", JsonTool.toJSONString(result));
+            }
+            return;
+        }
+
+        // 数组不打印响应报文
+        if (result.getClass().isArray()) {
+            log.info("request_responseBody={}", "响应报文为数组, 不打印响应报文");
+            return;
+        }
+
+        log.info("request_responseBody={}", JsonTool.toJSONString(result));
     }
 
     private static Object collectRequestBodyParam(Object[] args, Signature signature) {

@@ -1,11 +1,12 @@
 package cn.woodwhales.common.model.param;
 
 import cn.woodwhales.common.model.field.DefaultPageQueryInterface;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author woodwhales on 22.8.12 11:08
