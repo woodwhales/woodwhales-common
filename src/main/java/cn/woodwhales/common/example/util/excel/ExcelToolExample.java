@@ -54,6 +54,7 @@ public class ExcelToolExample {
     public static void testParseData2() {
         InputStream resourceAsStream = ExcelToolExample.class.getClassLoader()
                 .getResourceAsStream("demo.xlsx");
+        // 解析excel文件为数据对象，属性需要使用 @ExcelField、@ExcelDateField 注解修饰
         List<ExcelTempData> excelTempData = ExcelTool.parseData(resourceAsStream, ExcelTempData.class);
         excelTempData.stream().forEach(System.out::println);
     }

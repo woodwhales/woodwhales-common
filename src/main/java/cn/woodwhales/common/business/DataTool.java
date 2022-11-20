@@ -63,6 +63,28 @@ public class DataTool {
 
     /**
      * list 转 map 集合
+     * @param source 数据源集合
+     * @param predicate
+     * @param keyMapper map 集合中的 key 获取规则
+     * @param valueMapper map 集合中的 value 获取规则
+     * @return map 集合
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> map 集合中的 value 类型
+     */
+    public static <K, S, T> Map<K, T> toMap(List<S> source,
+                                            Predicate<S> predicate,
+                                            Function<? super S, ? extends K> keyMapper,
+                                            Function<? super S, ? extends T> valueMapper) {
+        if (isEmpty(source)) {
+            return Collections.emptyMap();
+        }
+
+        return source.stream().filter(predicate).collect(Collectors.toMap(keyMapper, valueMapper));
+    }
+
+    /**
+     * list 转 map 集合
      *
      * @param source        数据源集合
      * @param keyMapper     map 集合中的 key 获取规则
@@ -97,6 +119,22 @@ public class DataTool {
     public static <K, S> Map<K, S> toMap(List<S> source,
                                          Function<? super S, ? extends K> keyMapper) {
         return toMap(source, keyMapper, identity());
+    }
+
+    /**
+     * list 转 map 集合
+     * map 的 value 为集合元素本身
+     * @param source 数据源集合
+     * @param predicate 过滤规则
+     * @param keyMapper map 集合中的 key 获取规则
+     * @return map 集合
+     * @param <K> map 集合中的 key 类型
+     * @param <S> 数据源集合中元素的类型
+     */
+    public static <K, S> Map<K, S> toMap(List<S> source,
+                                         Predicate<S> predicate,
+                                         Function<? super S, ? extends K> keyMapper) {
+        return toMap(source, predicate, keyMapper, identity());
     }
 
     /**
@@ -164,7 +202,7 @@ public class DataTool {
      * @param <S>       数据源集合中元素的类型
      * @param <T>       目标数据的类型
      * @param <K>       map 集合中的 key 类型
-     * @return list
+     * @return map 集合
      */
     public static <S, T, K> Map<K, T> toMapFromList(List<S> source,
                                                     Function<? super S, ? extends T> mapper,
@@ -174,6 +212,29 @@ public class DataTool {
         }
 
         return toMap(source.stream().map(mapper).collect(Collectors.toList()), keyMapper);
+    }
+
+    /**
+     * 将原始的 list 按照 mapper 规则转成新的 list
+     * 再按照新的 list 按照 keyMapper 为生成 key 规则转成 map 集合
+     * @param source 数据源集合
+     * @param predicate 过滤规则
+     * @param mapper list 转 map 的规则
+     * @param keyMapper 数据源集合中元素的类型
+     * @return map 集合
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> 目标数据的类型
+     * @param <K> map 集合中的 key 类型
+     */
+    public static <S, T, K> Map<K, T> toMapFromList(List<S> source,
+                                                    Predicate<S> predicate,
+                                                    Function<? super S, ? extends T> mapper,
+                                                    Function<? super T, ? extends K> keyMapper) {
+        if (isEmpty(source)) {
+            return Collections.emptyMap();
+        }
+
+        return toMap(source.stream().filter(predicate).map(mapper).collect(Collectors.toList()), keyMapper);
     }
 
     /**
@@ -1071,6 +1132,20 @@ public class DataTool {
         }
 
         return list.get(list.size() - 1);
+    }
+
+    /**
+     * 遍历集合
+     * @param collection 集合
+     * @param action 遍历规则
+     * @param <T> 集合元素的类型
+     */
+    public <T> void foreach(Collection<T> collection, Consumer<? super T> action) {
+        if(isEmpty(collection)) {
+            return;
+        }
+
+        collection.stream().forEach(action);
     }
 
 }

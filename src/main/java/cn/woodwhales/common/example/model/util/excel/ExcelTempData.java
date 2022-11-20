@@ -3,11 +3,13 @@ package cn.woodwhales.common.example.model.util.excel;
 import cn.woodwhales.common.util.excel.ExcelDateField;
 import cn.woodwhales.common.util.excel.ExcelField;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author woodwhales on 2021-07-29 9:57
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ExcelTempData extends BaseExcelTempData {
 
     @ExcelField("姓名")
