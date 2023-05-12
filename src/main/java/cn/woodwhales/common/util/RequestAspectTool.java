@@ -40,7 +40,7 @@ public class RequestAspectTool {
     /**
      * 请求 traceId
      */
-    public static final String TRACE_ID = "TRACE_ID";
+    public static final String TRACE_ID = "trace_id";
 
     /**
      * 对请求controller进行切面
@@ -76,29 +76,27 @@ public class RequestAspectTool {
         RequestDto requestDto = new RequestDto();
         StopWatch stopWatch = new StopWatch();
         String fullMethodName = null;
-        try {
-            String traceId = null;
-            // 获取 traceId 并设置到当前线程名中
-            if (Objects.nonNull(traceIdSupplier)) {
-                traceId = traceIdSupplier.get();
-                if (StringUtils.isBlank(traceId)) {
-                    traceId = UUID.randomUUID().toString();
-                }
-            } else {
+        String traceId = null;
+        // 获取 traceId 并设置到当前线程名中
+        if (Objects.nonNull(traceIdSupplier)) {
+            traceId = traceIdSupplier.get();
+            if (StringUtils.isBlank(traceId)) {
                 traceId = UUID.randomUUID().toString();
             }
+        } else {
+            traceId = UUID.randomUUID().toString();
+        }
 
-            requestDto.traceId = traceId;
-            Thread.currentThread().setName(traceId);
-
+        requestDto.traceId = traceId;
+        Thread.currentThread().setName(traceId);
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        try {
             stopWatch.start();
             Signature signature = joinPoint.getSignature();
             String declaringTypeName = signature.getDeclaringType().getName();
             fullMethodName = declaringTypeName + "#" + signature.getName();
-
             log.info("======================= {} start =======================", fullMethodName);
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
             // 请求ip
             requestDto.clientIpAddress = IpTool.getIpAddress(request);
 
@@ -132,8 +130,6 @@ public class RequestAspectTool {
             if (Objects.nonNull(afterResponseConsumer)) {
                 afterResponseConsumer.accept(request, result);
             }
-            // 响应头中增加 traceId
-            response.addHeader(TRACE_ID, requestDto.traceId);
             return result;
         } catch (Throwable throwable) {
             log.error("请求响应异常, errorMsg={}, 请求url：{}, 请求参数：{}, 请求报文：{}",
@@ -147,6 +143,8 @@ public class RequestAspectTool {
                 finalConsumer.accept(requestDto);
             }
             log.info("======================= {} end =======================", fullMethodName);
+            // 响应头中增加 traceId
+            response.addHeader(TRACE_ID, requestDto.traceId);
         }
     }
 

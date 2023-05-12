@@ -16,7 +16,7 @@ class RandomExtractorTest {
 
     @Test
     public void test2() {
-        List<Integer> sampleList = RandomExtractor.randomDrawWithCount(Arrays.asList(1, 2, 3, 4, 5), 2);
+        List<Integer> sampleList = RandomExtractor.randomDrawWithCount(Arrays.asList(1, 2, 3, 4, 5), 7);
         sampleList.stream().forEach(System.out::println);
     }
 }

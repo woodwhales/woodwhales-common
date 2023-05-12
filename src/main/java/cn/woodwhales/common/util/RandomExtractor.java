@@ -1,5 +1,6 @@
 package cn.woodwhales.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Objects;
  * 随机抽取器
  * @author woodwhales on 2023-04-16 11:06
  */
+@Slf4j
 public class RandomExtractor {
 
     /**
@@ -36,8 +38,18 @@ public class RandomExtractor {
         if(CollectionUtils.isEmpty(dataList) || Objects.equals(randomDrawCount, 0)) {
             return result;
         }
+
+        int resultSize;
+        int dataListSize = CollectionUtils.size(dataList);
+        if(randomDrawCount > dataListSize) {
+            log.warn("randomDrawCount={} > dataListSize ={}, 只获取 {} 个元素", randomDrawCount, dataListSize, dataListSize);
+            resultSize = dataListSize;
+        } else {
+            resultSize = randomDrawCount;
+        }
+
         List<Integer> randomIndexList = randomIndexList(dataList.size());
-        for (int i = 0; i < randomDrawCount; i++) {
+        for (int i = 0; i < resultSize; i++) {
             int index = randomIndexList.get(i);
             result.add(dataList.get(index));
         }
