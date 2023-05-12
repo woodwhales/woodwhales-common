@@ -65,6 +65,7 @@ public class RequestAspectTool {
      * @param traceIdSupplier 请求流水号生成接口
      * @param beforeRequestConsumer    请求执行之前的接口
      * @param afterResponseConsumer     请求执行之后的接口
+     * @param finalConsumer     finally 代码块中的回调函数
      * @return 请求执行结果
      * @throws Throwable 异常对象
      */

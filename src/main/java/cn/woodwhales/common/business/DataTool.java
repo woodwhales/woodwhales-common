@@ -64,7 +64,7 @@ public class DataTool {
     /**
      * list 转 map 集合
      * @param source 数据源集合
-     * @param predicate
+     * @param predicate 过滤规则
      * @param keyMapper map 集合中的 key 获取规则
      * @param valueMapper map 集合中的 value 获取规则
      * @return map 集合
