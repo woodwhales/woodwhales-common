@@ -76,6 +76,7 @@ public class RequestAspectTool {
                                 Consumer<RequestDto> finalConsumer) throws Throwable {
         RequestDto requestDto = new RequestDto();
         StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         String fullMethodName = null;
         String traceId = null;
         // 获取 traceId 并设置到当前线程名中
@@ -93,7 +94,6 @@ public class RequestAspectTool {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
         try {
-            stopWatch.start();
             Signature signature = joinPoint.getSignature();
             String declaringTypeName = signature.getDeclaringType().getName();
             fullMethodName = declaringTypeName + "#" + signature.getName();
@@ -138,6 +138,7 @@ public class RequestAspectTool {
             requestDto.throwable = throwable;
             throw throwable;
         } finally {
+            stopWatch.stop();
             requestDto.costTime = stopWatch.getTotalTimeMillis();
             log.info("请求url：{}, 响应耗时：{} ms", requestDto.requestUrl, requestDto.costTime);
             if(Objects.nonNull(finalConsumer)) {
