@@ -35,6 +35,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AspectTool {
 
+    public static Object aspect(ProceedingJoinPoint joinPoint) throws Throwable {
+        return aspect(joinPoint, null, requestDto -> {
+            // 发送业务报警
+        });
+    }
+
     /**
      *
      * @param joinPoint
@@ -63,7 +69,11 @@ public class AspectTool {
 
         public static final String TRACE_ID_HEADER = "Trace_Id";
 
+
+        public ProceedingJoinPoint joinPoint;
+
         public StopWatch stopWatch;
+
         /**
          * 执行类和方法名称
          */
@@ -78,20 +88,30 @@ public class AspectTool {
 
         public HttpServletResponse response;
 
+        /**
+         * 请求流水号
+         */
         public String traceId;
 
-        public String clientIP;
+        /**
+         * 请求者IP
+         */
+        public String clientIpAddress;
 
         /**
          * 是否为请求触发
          */
         public boolean fromRequest;
 
-        public String methodType;
+        /**
+         * 请求方法
+         */
+        public String requestMethodType;
 
+        /**
+         * 请求链接
+         */
         public String requestUrl;
-
-        public ProceedingJoinPoint joinPoint;
 
         /**
          * 请求报文
@@ -147,10 +167,10 @@ public class AspectTool {
         private void printRequestParam() {
             StringBuilder requestParamBuilder = new StringBuilder();
             if (fromRequest) {
-                this.clientIP = IpTool.getIpAddress(request);
-                this.methodType = request.getMethod();
-                this.requestUrl = String.format("[ %s ] %s", methodType, request.getRequestURL().toString());
-                if(!StringUtils.equals(RequestMethod.GET.name(), this.methodType)) {
+                this.clientIpAddress = IpTool.getIpAddress(request);
+                this.requestMethodType = request.getMethod();
+                this.requestUrl = String.format("[ %s ] %s", requestMethodType, request.getRequestURL().toString());
+                if(!StringUtils.equals(RequestMethod.GET.name(), this.requestMethodType)) {
                     Object requestBodyParam = collectRequestBodyParam(joinPoint.getArgs(), joinPoint.getSignature());
                     if (null != requestBodyParam) {
                         requestParamBuilder.append(JsonTool.toJSONString(requestBodyParam));
@@ -223,7 +243,7 @@ public class AspectTool {
 
                 } else {
                     if(this.fromRequest) {
-                        log.info("clientIP={}, requestUrl={}, requestBody={}, responseBody={}, consume={}ms", this.clientIP, this.requestUrl, this.requestBody, this.responseBody, this.costTime);
+                        log.info("clientIP={}, requestUrl={}, requestBody={}, responseBody={}, consume={}ms", this.clientIpAddress, this.requestUrl, this.requestBody, this.responseBody, this.costTime);
                     } else {
                         log.info("requestBody={}, responseBody={}, consume={}ms", this.requestBody, this.responseBody, this.costTime);
                     }
