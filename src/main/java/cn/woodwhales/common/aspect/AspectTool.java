@@ -233,7 +233,7 @@ public class AspectTool {
         }
 
         public Object execute() throws Throwable {
-            if(!this.ignoreAspect) {
+            if(this.ignoreAspect) {
                 return this.joinPoint.proceed();
             }
 
