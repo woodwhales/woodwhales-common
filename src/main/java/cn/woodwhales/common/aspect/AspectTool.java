@@ -1,6 +1,8 @@
-package cn.woodwhales.common.util;
+package cn.woodwhales.common.aspect;
 
 import cn.hutool.core.lang.UUID;
+import cn.woodwhales.common.util.IpTool;
+import cn.woodwhales.common.util.JsonTool;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.EnumerationUtils;
@@ -35,6 +37,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AspectTool {
 
+    /**
+     * aop 切面
+     * @param joinPoint 切入点
+     * @return 执行业务请求的响应结果
+     * @throws Throwable 业务异常
+     */
     public static Object aspect(ProceedingJoinPoint joinPoint) throws Throwable {
         return aspect(joinPoint, null, requestDto -> {
             // 发送业务报警
@@ -42,11 +50,12 @@ public class AspectTool {
     }
 
     /**
-     *
-     * @param joinPoint
+     * aop 切面
+     * @param joinPoint 切入点
+     * @param getTraceIdFunction 获取 traceId 接口
      * @param systemErrorProcessConsumer 接口异常回调函数
-     * @return
-     * @throws Throwable
+     * @return 执行业务请求的响应结果
+     * @throws Throwable 业务异常
      */
     public static Object aspect(ProceedingJoinPoint joinPoint,
                                 Function<RequestDto, String> getTraceIdFunction,
@@ -60,7 +69,6 @@ public class AspectTool {
             }
         };
         requestDto.getTraceIdFunction = getTraceIdFunction;
-
         return requestDto.execute();
     }
 
@@ -122,13 +130,28 @@ public class AspectTool {
          */
         public String responseBody;
 
+        /**
+         * 是否忽略切面拦截
+         */
+        public boolean ignoreAspect;
+
         public RequestDto(ProceedingJoinPoint joinPoint) {
-            this.stopWatch = new StopWatch();
-            this.start();
             this.joinPoint = joinPoint;
             Signature signature = joinPoint.getSignature();
-            String declaringTypeName = signature.getDeclaringType().getName();
-            this.fullMethodName = declaringTypeName + "#" + signature.getName();
+            Class declaringType = signature.getDeclaringType();
+            if(declaringType.isAnnotationPresent(IgnoreAspect.class)) {
+                this.ignoreAspect = true;
+                return;
+            } else {
+                Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+                if (method.isAnnotationPresent(IgnoreAspect.class)) {
+                    this.ignoreAspect = true;
+                }
+            }
+
+            this.stopWatch = new StopWatch();
+            this.start();
+            this.fullMethodName = declaringType.getName() + "#" + signature.getName();
             this.fromRequest = Objects.nonNull(RequestContextHolder.getRequestAttributes());
             this.printTraceId();
             this.printRequestParam();
@@ -209,7 +232,11 @@ public class AspectTool {
             }
         }
 
-        public Object execute() {
+        public Object execute() throws Throwable {
+            if(!this.ignoreAspect) {
+                return this.joinPoint.proceed();
+            }
+
             Object result = null;
             boolean systemError = false;
             Throwable throwable = null;
