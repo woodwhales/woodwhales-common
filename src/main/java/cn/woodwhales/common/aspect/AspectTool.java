@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import reactor.core.publisher.Mono;
@@ -74,9 +73,10 @@ public class AspectTool {
 
 
     public static class RequestDto {
-
-        public static final String TRACE_ID_HEADER = "Trace_Id";
-
+        /**
+         * 请求头携带 key 为 Trace-Id
+         */
+        public static final String TRACE_ID_HEADER = "Trace-Id";
 
         public ProceedingJoinPoint joinPoint;
 
@@ -125,6 +125,10 @@ public class AspectTool {
          * 请求报文
          */
         public String requestBody;
+        /**
+         * 请求参数
+         */
+        public String requestParam;
         /**
          * 响应报文
          */
@@ -193,27 +197,15 @@ public class AspectTool {
                 this.clientIpAddress = IpTool.getIpAddress(request);
                 this.requestMethodType = request.getMethod();
                 this.requestUrl = String.format("[ %s ] %s", requestMethodType, request.getRequestURL().toString());
-                if(!StringUtils.equals(RequestMethod.GET.name(), this.requestMethodType)) {
-                    Object requestBodyParam = collectRequestBodyParam(joinPoint.getArgs(), joinPoint.getSignature());
-                    if (null != requestBodyParam) {
-                        requestParamBuilder.append(JsonTool.toJSONString(requestBodyParam));
-                        this.requestBody = requestParamBuilder.toString();
-                    }
-                } else {
-                    this.requestBody = getParamStringFromRequest(this.request);
+                Object requestBodyParam = collectRequestBodyParam(joinPoint.getArgs(), joinPoint.getSignature());
+                if (null != requestBodyParam) {
+                    requestParamBuilder.append(JsonTool.toJSONString(requestBodyParam));
+                    this.requestBody = requestParamBuilder.toString();
                 }
+                this.requestParam = getParamStringFromRequest(this.request);
             } else {
                 Object[] args = this.joinPoint.getArgs();
-                if(Objects.nonNull(args)) {
-                    Map<String, Object> map = new HashMap<>();
-                    int index = 1;
-                    for (Object arg : args) {
-                        map.put("param" + index, arg);
-                        index++;
-                    }
-                    requestParamBuilder.append(JsonTool.toJSONString(map));
-                }
-                this.requestBody = requestParamBuilder.toString();
+                this.requestBody = JsonTool.toJSONString(args);
             }
         }
 
@@ -250,7 +242,7 @@ public class AspectTool {
             } catch (Throwable e) {
                 systemError = true;
                 throwable = e;
-                throw new RuntimeException(e);
+                throw e;
             } finally {
                 this.printResponseBody(result);
                 this.fillResponseHeader();
