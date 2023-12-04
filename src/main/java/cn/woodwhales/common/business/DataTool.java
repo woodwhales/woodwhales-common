@@ -9,8 +9,6 @@ import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
@@ -33,11 +31,22 @@ public class DataTool {
      */
     public static <S, T> Set<T> toSet(List<S> source,
                                       Function<? super S, ? extends T> mapper) {
+        return toSet(source, null, mapper);
+    }
+
+    public static <S, T> Set<T> toSet(List<S> source,
+                                      Predicate<S> predicate,
+                                      Function<? super S, ? extends T> mapper) {
         if (isEmpty(source)) {
-            return Collections.emptySet();
+            return new HashSet<>();
         }
 
-        return source.stream().map(mapper).collect(Collectors.toSet());
+        Stream<S> stream = source.stream();
+        if(Objects.nonNull(predicate)) {
+            stream = stream.filter(predicate);
+        }
+
+        return stream.map(mapper).collect(Collectors.toSet());
     }
 
     /**
@@ -55,7 +64,7 @@ public class DataTool {
                                             Function<? super S, ? extends K> keyMapper,
                                             Function<? super S, ? extends T> valueMapper) {
         if (isEmpty(source)) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
 
         return source.stream().collect(Collectors.toMap(keyMapper, valueMapper));
@@ -77,7 +86,7 @@ public class DataTool {
                                             Function<? super S, ? extends K> keyMapper,
                                             Function<? super S, ? extends T> valueMapper) {
         if (isEmpty(source)) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
 
         return source.stream().filter(predicate).collect(Collectors.toMap(keyMapper, valueMapper));
@@ -100,7 +109,7 @@ public class DataTool {
                                             Function<? super S, ? extends T> valueMapper,
                                             BinaryOperator<T> mergeFunction) {
         if (isEmpty(source)) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
 
         return source.stream().collect(Collectors.toMap(keyMapper, valueMapper, mergeFunction));
@@ -150,7 +159,7 @@ public class DataTool {
     public static <K, S> Map<K, S> toMap(S[] source,
                                          Function<? super S, ? extends K> keyMapper) {
         if (Objects.isNull(source)) {
-            return emptyMap();
+            return new HashMap<>();
         }
         return toMap(Arrays.asList(source), keyMapper, identity());
     }
@@ -170,7 +179,7 @@ public class DataTool {
                                          Function<? super S, ? extends K> keyMapper,
                                          BinaryOperator<S> mergeFunction) {
         if (Objects.isNull(source)) {
-            return emptyMap();
+            return new HashMap<>();
         }
         return toMap(Arrays.asList(source), keyMapper, identity(), mergeFunction);
     }
@@ -208,7 +217,7 @@ public class DataTool {
                                                     Function<? super S, ? extends T> mapper,
                                                     Function<? super T, ? extends K> keyMapper) {
         if (isEmpty(source)) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
 
         return toMap(source.stream().map(mapper).collect(Collectors.toList()), keyMapper);
@@ -231,10 +240,15 @@ public class DataTool {
                                                     Function<? super S, ? extends T> mapper,
                                                     Function<? super T, ? extends K> keyMapper) {
         if (isEmpty(source)) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
 
-        return toMap(source.stream().filter(predicate).map(mapper).collect(Collectors.toList()), keyMapper);
+        Stream<S> stream = source.stream();
+        if(Objects.nonNull(predicate)) {
+            stream = stream.filter(predicate);
+        }
+
+        return stream.map(mapper).collect(Collectors.toMap(keyMapper, Function.identity()));
     }
 
     /**
@@ -347,7 +361,7 @@ public class DataTool {
                                         Function<? super S, ? extends T> mapper,
                                         boolean distinct) {
         if (isEmpty(source)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         if (distinct) {
@@ -383,11 +397,11 @@ public class DataTool {
         }
 
         if (isEmpty(source)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         if (MapUtils.isEmpty(map)) {
-            map = emptyMap();
+            map = new HashMap<>();
         }
 
         List<T> result = new ArrayList<>();
@@ -465,7 +479,7 @@ public class DataTool {
                                         Function<? super S, ? extends T> mapper,
                                         boolean distinct) {
         if (isEmpty(source)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         Stream<? extends T> stream = source.stream()
@@ -495,7 +509,7 @@ public class DataTool {
                                         Function<? super S, ? extends T> mapper,
                                         boolean distinct) {
         if (Objects.isNull(source)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         Stream<? extends T> stream = Stream.of(source)
@@ -538,7 +552,7 @@ public class DataTool {
     public static <K, T, R> List<R> toListByMap(Map<K, T> map,
                                                 BiFunction<K, T, R> function) {
         if (MapUtils.isEmpty(map)) {
-            return emptyList();
+            return new ArrayList<>();
         }
 
         return map.entrySet().stream()
@@ -561,7 +575,7 @@ public class DataTool {
                                                 BiPredicate<K, T> filterMapMapper,
                                                 BiFunction<K, T, R> function) {
         if (MapUtils.isEmpty(map)) {
-            return emptyList();
+            return new ArrayList<>();
         }
 
         return map.entrySet().stream()
@@ -582,7 +596,7 @@ public class DataTool {
     public static <K, S> Map<K, List<S>> groupingBy(List<S> source,
                                                     Function<? super S, ? extends K> classifier) {
         if (isEmpty(source)) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
 
         return source.stream().collect(Collectors.groupingBy(classifier));
@@ -617,7 +631,7 @@ public class DataTool {
                                                     Predicate<S> filter,
                                                     Function<? super S, ? extends K> classifier) {
         if (isEmpty(source)) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
 
         return source.stream()
@@ -729,7 +743,7 @@ public class DataTool {
                                                              Function<T, K> getDeduplicatedKeyFunction,
                                                              boolean remainFirst) {
         if (isEmpty(source)) {
-            return new DeduplicateResult<K, T>(source, emptyList(), emptyList(), emptyList(), emptyList());
+            return new DeduplicateResult<K, T>(source, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
 
         Map<K, T> container = new LinkedHashMap<>();
@@ -879,7 +893,7 @@ public class DataTool {
     public static <T> List<T> filter(List<T> source,
                                      Predicate<? super T> filter) {
         if (isEmpty(source)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         return source.stream()
@@ -898,7 +912,7 @@ public class DataTool {
     public static <T> List<T> filter(T[] source,
                                      Predicate<? super T> filter) {
         if (Objects.isNull(source)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         return Stream.of(source)
@@ -942,7 +956,7 @@ public class DataTool {
     public static <K, T> Map<K, T> handleMap(Map<K, T> map,
                                              BiConsumer<K, T> handlerMapper) {
         if (MapUtils.isEmpty(map)) {
-            return emptyMap();
+            return new HashMap<>();
         }
 
         for (Map.Entry<K, T> entry : map.entrySet()) {
@@ -980,7 +994,7 @@ public class DataTool {
     public static <K, V, R> List<R> mapValueToList(Map<K, V> map,
                                                    Function<V, R> function) {
         if (MapUtils.isEmpty(map)) {
-            return emptyList();
+            return new ArrayList<>();
         }
         return map.values()
                 .stream()
@@ -1001,7 +1015,7 @@ public class DataTool {
     public static <K, V, R> List<R> mapToList(Map<K, V> map,
                                               BiFunction<K, V, R> function) {
         if (MapUtils.isEmpty(map)) {
-            return emptyList();
+            return new ArrayList<>();
         }
 
         return map.entrySet()
@@ -1025,7 +1039,7 @@ public class DataTool {
                                               BiPredicate<K, V> predicate,
                                               BiFunction<K, V, R> function) {
         if (MapUtils.isEmpty(map)) {
-            return emptyList();
+            return new ArrayList<>();
         }
 
         return map.entrySet()
