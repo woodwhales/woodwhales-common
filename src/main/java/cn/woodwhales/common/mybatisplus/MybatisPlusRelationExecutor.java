@@ -24,11 +24,9 @@ public class MybatisPlusRelationExecutor {
      * <p>
      * 通过 userId 查询与之关联的 roleList
      * </p>
-     * <p>
-     *     根据 leftId 查询 LeftEntity<br/>
-     *     如果为空，则直接返回空集合<br/>
-     *     如果不为空，则根据 getLeftIdFunction 查询 RelationEntity，再根据 getLeftIdRelationFunction 得到关联的id集合查询 RelationEntity 集合<br/>
-     * </p>
+     * <p>根据 leftId 查询 LeftEntity</p>
+     * <p>如果为空，则直接返回空集合</p>
+     * <p>如果不为空，则根据 getLeftIdFunction 查询 RelationEntity，再根据 getLeftIdRelationFunction 得到关联的id集合查询 RelationEntity 集合</p>
      *
      * 一对多查询
      * @param leftId 业务id

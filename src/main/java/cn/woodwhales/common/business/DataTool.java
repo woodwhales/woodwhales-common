@@ -34,6 +34,16 @@ public class DataTool {
         return toSet(source, null, mapper);
     }
 
+
+    /**
+     * list 转 set 集合
+     * @param source 数据源集合
+     * @param predicate 过滤原始数据的过滤函数
+     * @param mapper 按照源数据的 mapper 规则生成 set 元素
+     * @return set 集合
+     * @param <S> 数据源集合中元素的类型
+     * @param <T> set 集合中元素的类型
+     */
     public static <S, T> Set<T> toSet(List<S> source,
                                       Predicate<S> predicate,
                                       Function<? super S, ? extends T> mapper) {
