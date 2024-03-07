@@ -2,6 +2,7 @@ package cn.woodwhales.common.example.util.datasource;
 
 import cn.woodwhales.common.example.model.util.datasource.DataSourceToolTempMusic;
 import cn.woodwhales.common.util.datasource.DataSourceTool;
+import lombok.Data;
 
 import java.util.List;
 
@@ -12,14 +13,15 @@ import java.util.List;
 public class DataSourceToolExample {
 
     public static void main(String[] args) throws Exception {
-        testFormatSql();
+        test();
+        //testFormatSql();
     }
 
     private static void test() throws Exception {
         DataSourceTool dataSourceTool = DataSourceTool.newMysql("jdbc:mysql://127.0.0.1:3306/open_music?useUnicode=true&characterEncoding=utf8&autoReconnect=true&autoReconnectForPools=true&zeroDateTimeBehavior=convertToNull&useSSL=false",
                 "root", "root1234");
 
-        List<DataSourceToolTempMusic> musicList = dataSourceTool.queryList("select * from music", DataSourceToolTempMusic.class);
+        List<DataSourceToolTempMusic> musicList = dataSourceTool.queryList("select id, title, artist, sort, gmt_created, gmt_modified from music", DataSourceToolTempMusic.class);
         musicList.stream().forEach(System.out::println);
 
         System.out.println(" ================ ");

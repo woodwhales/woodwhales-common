@@ -376,24 +376,20 @@ public class DataSourceTool {
 
     private <T> List<Field> getNeedFillFieldList(Class<T> clazz) {
         List<Field> needFillFieldList = null;
-        if (!this.dbColumnMapping.containsKey(clazz)) {
-            Field[] declaredFields = FieldUtils.getAllFields(clazz);
-            needFillFieldList = new ArrayList<>(declaredFields.length);
-            for (Field field : declaredFields) {
-                if (Objects.isNull(field.getAnnotation(DataSourceIgnore.class))) {
-                    needFillFieldList.add(field);
-                }
+        Field[] declaredFields = FieldUtils.getAllFields(clazz);
+        needFillFieldList = new ArrayList<>(declaredFields.length);
+        for (Field field : declaredFields) {
+            if (Objects.isNull(field.getAnnotation(DataSourceIgnore.class))) {
+                needFillFieldList.add(field);
             }
         }
         return needFillFieldList;
     }
 
     private void cacheDbColumnMapping(Class<?> clazz, ResultSet resultSet) {
-        if (!this.dbColumnMapping.containsKey(clazz)) {
-            List<Field> fieldList = this.getNeedFillFieldList(clazz);
-            List<ColumnDict> dbColumnDictList = this.getDbColumnDictList(resultSet);
-            this.dbColumnMapping.put(clazz, this.dbColumnMap(fieldList, dbColumnDictList));
-        }
+        List<Field> fieldList = this.getNeedFillFieldList(clazz);
+        List<ColumnDict> dbColumnDictList = this.getDbColumnDictList(resultSet);
+        this.dbColumnMapping.put(clazz, this.dbColumnMap(fieldList, dbColumnDictList));
     }
 
     private List<ColumnDict> getDbColumnDictList(ResultSet resultSet) {
@@ -440,7 +436,7 @@ public class DataSourceTool {
     public String getColumnName(ResultSetMetaData metaData, int columnIndex) {
         String columnName = null;
         try {
-            columnName = metaData.getColumnName(columnIndex);
+            columnName = metaData.getColumnLabel(columnIndex);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -490,12 +486,7 @@ public class DataSourceTool {
 
     public <T> T getDataFromResultSet(Class<T> clazz, ResultSet resultSet) {
         T target = null;
-
-
         try {
-            if (!resultSet.next()) {
-                return target;
-            }
             target = clazz.newInstance();
             LinkedHashMap<Field, ColumnDict> fieldHashMap = this.dbColumnMapping.get(clazz);
             if (MapUtils.isNotEmpty(fieldHashMap)) {
@@ -513,7 +504,7 @@ public class DataSourceTool {
                     }
                 }
             }
-        } catch (InstantiationException | IllegalAccessException | SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return target;
