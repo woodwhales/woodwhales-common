@@ -1,8 +1,10 @@
 package cn.woodwhales.common.business.collection;
 
-import com.google.common.collect.Sets;
 import cn.woodwhales.common.business.DataTool;
+import com.google.common.collect.Sets;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -10,8 +12,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
@@ -116,8 +116,8 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
             Set<CollectionFieldComparable<K>> set = DataTool.toSet(sourceList1, source1 -> CollectionContainer.build(source1, keyFunction1));
             collectionMathResult.setUnionSet(set)
                     .setPositiveDifferenceSet(set)
-                    .setIntersectionSet(emptySet())
-                    .setNegativeDifferenceSet(emptySet());
+                    .setIntersectionSet(new HashSet<>())
+                    .setNegativeDifferenceSet(new HashSet<>());
             return collectionMathResult;
         }
 
@@ -125,8 +125,8 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
             checkNotNull(keyFunction1, "keyFunction2 不允许为空");
             Set<CollectionFieldComparable<K>> set = DataTool.toSet(sourceList2, source2 -> CollectionContainer.build(source2, keyFunction2));
             collectionMathResult.setUnionSet(set)
-                    .setPositiveDifferenceSet(emptySet())
-                    .setIntersectionSet(emptySet())
+                    .setPositiveDifferenceSet(new HashSet<>())
+                    .setIntersectionSet(new HashSet<>())
                     .setNegativeDifferenceSet(set);
             return collectionMathResult;
         }
@@ -243,10 +243,10 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     private static <K, M, N> CollectionMathResult<K, M, N> empty() {
         return new CollectionMathResult<K, M, N>()
-                .setIntersectionSet(emptySet())
-                .setUnionSet(emptySet())
-                .setPositiveDifferenceSet(emptySet())
-                .setNegativeDifferenceSet(emptySet());
+                .setIntersectionSet(new HashSet<>())
+                .setUnionSet(new HashSet<>())
+                .setPositiveDifferenceSet(new HashSet<>())
+                .setNegativeDifferenceSet(new HashSet<>());
     }
 
     private CollectionMathResult(List<M> sourceList1,
@@ -289,7 +289,7 @@ public class CollectionMathResult<K, M, N> implements CollectionMath<K, M, N> {
 
     private <T, K> List<T> getList(List<T> list, Set<CollectionFieldComparable<K>> set, Function<T, K> keyFunction) {
         if (isEmpty(list)) {
-            return emptyList();
+            return new ArrayList<>();
         }
 
         Set<K> keySet = set.stream()

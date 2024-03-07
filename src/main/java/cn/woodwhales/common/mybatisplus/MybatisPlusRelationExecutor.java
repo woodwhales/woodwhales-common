@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -20,6 +20,14 @@ import java.util.function.Function;
 public class MybatisPlusRelationExecutor {
 
     /**
+     *
+     * <p>
+     * 通过 userId 查询与之关联的 roleList
+     * </p>
+     * <p>根据 leftId 查询 LeftEntity</p>
+     * <p>如果为空，则直接返回空集合</p>
+     * <p>如果不为空，则根据 getLeftIdFunction 查询 RelationEntity，再根据 getLeftIdRelationFunction 得到关联的id集合查询 RelationEntity 集合</p>
+     *
      * 一对多查询
      * @param leftId 业务id
      * @param leftService 业务service
@@ -48,12 +56,12 @@ public class MybatisPlusRelationExecutor {
                                                                       SFunction<RelationEntity, LeftId> getLeftIdRelationFunction) {
         LeftEntity leftEntity = leftService.getById(leftId);
         if(Objects.isNull(leftEntity)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         List<RelationEntity> relationList = relationService.list(Wrappers.<RelationEntity>lambdaQuery()
                                                             .eq(getLeftIdRelationFunction, getLeftIdFunction.apply(leftEntity)));
         if(CollectionUtils.isEmpty(relationList)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         return  relationList;
     }
@@ -113,12 +121,12 @@ public class MybatisPlusRelationExecutor {
                                                                 SFunction<RightEntity, ?> getRightIdFunction) {
         LeftEntity leftEntity = leftService.getById(leftId);
         if(Objects.isNull(leftEntity)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         List<RelationEntity> relationList = relationService.list(Wrappers.<RelationEntity>lambdaQuery()
                                                             .eq(getLeftIdRelationFunction, getLeftIdFunction.apply(leftEntity)));
         if(CollectionUtils.isEmpty(relationList)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         List<RightId> rightIdList = DataTool.toList(relationList, getRightIdRelationFunction);
         return rightService.list(Wrappers.<RightEntity>lambdaQuery()
